@@ -1,0 +1,95 @@
+[
+  {
+    "id": "1759141506160frnf3jr2y",
+    "title": "AI Ethics and Responsible Development",
+    "description": "Discussing the ethical implications of AI development and how we can build responsible AI systems that benefit society. What frameworks and practices should we adopt?",
+    "eventId": "17591415061602o9y66rnh",
+    "submittedBy": "17591415061598uwl53nn6",
+    "status": "active",
+    "tags": [
+      "ai",
+      "ethics",
+      "responsibility"
+    ],
+    "voteCount": 3,
+    "totalVoteWeight": 6,
+    "averageWeight": 2,
+    "lastVotedAt": "2025-09-29T10:28:05.541Z",
+    "createdAt": "2025-09-29T10:25:06.159Z",
+    "updatedAt": "2025-09-29T10:25:06.159Z"
+  },
+  {
+    "id": "1759141506160zuuozz1xp",
+    "title": "Sustainable Tech: Green Computing Practices",
+    "description": "Exploring ways to reduce the environmental impact of technology through green computing, efficient algorithms, and sustainable hardware practices.",
+    "eventId": "17591415061602o9y66rnh",
+    "submittedBy": "1759141506160yym9sbefy",
+    "status": "active",
+    "tags": [
+      "sustainability",
+      "environment",
+      "green-tech"
+    ],
+    "voteCount": 2,
+    "totalVoteWeight": 5,
+    "averageWeight": 2.5,
+    "lastVotedAt": "2025-09-29T10:28:05.541Z",
+    "createdAt": "2025-09-29T10:25:06.159Z",
+    "updatedAt": "2025-09-29T10:25:06.159Z"
+  },
+  {
+    "id": "17591415061606cgsvu7b4",
+    "title": "Remote Work: Tools and Culture Evolution",
+    "description": "Best practices for remote work collaboration, tools that enhance productivity, and building strong team culture in distributed organizations.",
+    "eventId": "17591415061602o9y66rnh",
+    "submittedBy": "1759141506160v8n4xvphj",
+    "status": "active",
+    "tags": [
+      "remote-work",
+      "collaboration",
+      "culture"
+    ],
+    "voteCount": 2,
+    "totalVoteWeight": 4,
+    "averageWeight": 2,
+    "lastVotedAt": "2025-09-29T10:28:05.541Z",
+    "createdAt": "2025-09-29T10:25:06.159Z",
+    "updatedAt": "2025-09-29T10:25:06.159Z"
+  },
+  {
+    "id": "1759141506160zqus9o2wy",
+    "title": "Blockchain Beyond Cryptocurrency",
+    "description": "Real-world applications of blockchain technology beyond financial systems - supply chain, identity verification, smart contracts, and decentralized governance.",
+    "eventId": "17591415061602o9y66rnh",
+    "submittedBy": "17591415061598uwl53nn6",
+    "status": "active",
+    "tags": [
+      "blockchain",
+      "innovation",
+      "decentralization"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "createdAt": "2025-09-29T10:25:06.159Z",
+    "updatedAt": "2025-09-29T10:25:06.159Z"
+  },
+  {
+    "id": "175914150616074p4srtzh",
+    "title": "Mental Health in Tech Workplaces",
+    "description": "Addressing burnout, stress management, and creating supportive environments for mental health in technology companies and startups.",
+    "eventId": "17591415061602o9y66rnh",
+    "submittedBy": "1759141506160yym9sbefy",
+    "status": "active",
+    "tags": [
+      "mental-health",
+      "workplace",
+      "wellbeing"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "createdAt": "2025-09-29T10:25:06.159Z",
+    "updatedAt": "2025-09-29T10:25:06.159Z"
+  }
+]

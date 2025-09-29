@@ -1,0 +1,123 @@
+config:
+  target: 'http://localhost:5173'
+  phases:
+    # Warm-up phase
+    - duration: 30
+      arrivalRate: 5
+      name: "HTTP Warm-up"
+    # Gradual ramp-up
+    - duration: 60
+      arrivalRate: 15
+      rampTo: 50
+      name: "HTTP Ramp-up"
+    # Peak load - 200 concurrent users
+    - duration: 120
+      arrivalRate: 100
+      rampTo: 200
+      name: "HTTP Peak load"
+    # Sustain load
+    - duration: 180
+      arrivalRate: 150
+      name: "HTTP Sustain"
+    # Cool down
+    - duration: 60
+      arrivalRate: 25
+      name: "HTTP Cool down"
+
+  # Performance expectations
+  expect:
+    - statusCode: [200, 201, 302, 304]
+    - maxResponseTime: 2000  # 2 seconds max
+
+  # Variables for dynamic content
+  variables:
+    eventId: "{{ $randomString() }}"
+    userId: "{{ $randomInt(1, 10000) }}"
+    sessionId: "{{ $randomString() }}"
+
+  # Test scenarios
+  scenarios:
+    - name: "Main page visitors"
+      weight: 35
+    - name: "Event participants"
+      weight: 40
+    - name: "API heavy users"
+      weight: 25
+
+  # Plugins for enhanced reporting
+  plugins:
+    metrics-by-endpoint:
+      useOnlyRequestNames: true
+    publish-metrics:
+      - type: json
+        output: "load-tests/results/http-metrics-{{ $timestamp }}.json"
+
+scenarios:
+  # Main page visitors - browse the site
+  - name: "Main page visitors"
+    flow:
+      - get:
+          url: "/"
+          capture:
+            - json: "$.title"
+              as: "pageTitle"
+      - think: "{{ $randomInt(2, 8) }}"
+      - get:
+          url: "/about"
+      - think: "{{ $randomInt(1, 5) }}"
+      - get:
+          url: "/events"
+      - think: "{{ $randomInt(3, 10) }}"
+
+  # Event participants - join events and interact
+  - name: "Event participants"
+    flow:
+      - get:
+          url: "/"
+      - think: "{{ $randomInt(1, 3) }}"
+      - get:
+          url: "/events"
+      - think: "{{ $randomInt(2, 5) }}"
+      # Navigate to specific event
+      - get:
+          url: "/events/{{ eventId }}"
+      - think: "{{ $randomInt(3, 8) }}"
+      # Simulate joining event
+      - post:
+          url: "/api/events/{{ eventId }}/join"
+          json:
+            userId: "{{ userId }}"
+            sessionId: "{{ sessionId }}"
+            isGuest: true
+      - think: "{{ $randomInt(5, 15) }}"
+      # Get event data
+      - get:
+          url: "/api/events/{{ eventId }}"
+      - think: "{{ $randomInt(2, 6) }}"
+      # Get topics for voting
+      - get:
+          url: "/api/events/{{ eventId }}/topics"
+      - think: "{{ $randomInt(8, 20) }}"
+
+  # API heavy users - lots of API calls
+  - name: "API heavy users"
+    flow:
+      # Multiple API requests to simulate heavy usage
+      - loop:
+          - get:
+              url: "/api/events"
+          - think: 1
+          - get:
+              url: "/api/events/{{ eventId }}/topics"
+          - think: 1
+          - post:
+              url: "/api/events/{{ eventId }}/topics"
+              json:
+                title: "Load test topic {{ $randomString() }}"
+                description: "Generated during load testing"
+                submittedBy: "{{ userId }}"
+          - think: 2
+          - get:
+              url: "/api/events/{{ eventId }}/analytics"
+          - think: 1
+        count: "{{ $randomInt(5, 12) }}"

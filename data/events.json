@@ -1,0 +1,32 @@
+[
+  {
+    "id": "17591415061602o9y66rnh",
+    "title": "Tech Innovation Unconference 2024",
+    "description": "A collaborative space for technologists, entrepreneurs, and innovators to share ideas, discuss emerging trends, and build connections. Join us for an engaging day of learning and networking!",
+    "status": "active",
+    "organizerId": "17591415061598uwl53nn6",
+    "maxParticipants": 100,
+    "accessCode": "DEMO2024",
+    "startTime": "2025-09-29T11:25:06.159Z",
+    "endTime": "2025-09-29T19:25:06.159Z",
+    "currentActivity": "voting",
+    "settings": {
+      "allowGuestAccess": true,
+      "requireRegistration": false,
+      "enableVoting": true,
+      "enableGroupIntelligence": true,
+      "enableDiscussionGroups": true,
+      "enableTeamDistribution": true,
+      "votingTimeLimit": 300,
+      "maxVotesPerTopic": 1,
+      "maxTopicsPerUser": 5,
+      "autoAdvanceActivities": false
+    },
+    "metadata": {
+      "isDemo": true,
+      "participantCount": 3
+    },
+    "createdAt": "2025-09-29T10:25:06.159Z",
+    "updatedAt": "2025-09-29T10:25:06.159Z"
+  }
+]

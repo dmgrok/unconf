@@ -1,0 +1,86 @@
+{
+	"testUsers": [
+		{
+			"email": "facilitator@test.com",
+			"password": "test-password-123",
+			"name": "Test Facilitator",
+			"role": "facilitator"
+		},
+		{
+			"email": "participant1@test.com",
+			"password": "test-password-123",
+			"name": "Test Participant 1",
+			"role": "participant"
+		},
+		{
+			"email": "participant2@test.com",
+			"password": "test-password-123",
+			"name": "Test Participant 2",
+			"role": "participant"
+		}
+	],
+	"testEvents": [
+		{
+			"id": "test-event-123",
+			"title": "Test Unconference",
+			"description": "Test event for E2E testing",
+			"code": "TEST123",
+			"status": "active"
+		},
+		{
+			"id": "test-event-456",
+			"title": "Sample Conference",
+			"description": "Another test event",
+			"code": "SAMPLE",
+			"status": "pending"
+		}
+	],
+	"testProposals": [
+		{
+			"id": "proposal-1",
+			"title": "Test Session: Web Development",
+			"description": "Discussion about modern web development practices",
+			"author": "participant1@test.com",
+			"votes": 0
+		},
+		{
+			"id": "proposal-2",
+			"title": "Test Session: DevOps Best Practices",
+			"description": "Sharing knowledge about DevOps tools and workflows",
+			"author": "participant2@test.com",
+			"votes": 0
+		}
+	],
+	"mockResponses": {
+		"websocket": {
+			"connection": {
+				"type": "connection",
+				"status": "connected",
+				"userId": "test-user-id"
+			},
+			"userJoined": {
+				"type": "user-joined",
+				"user": {
+					"id": "new-user-id",
+					"name": "New User",
+					"email": "newuser@test.com"
+				}
+			},
+			"proposalAdded": {
+				"type": "proposal-added",
+				"proposal": {
+					"id": "new-proposal-id",
+					"title": "New Test Proposal",
+					"description": "A new proposal added during testing",
+					"author": "test-author"
+				}
+			},
+			"voteUpdate": {
+				"type": "vote-update",
+				"proposalId": "proposal-1",
+				"votes": 1,
+				"voterCount": 1
+			}
+		}
+	}
+}

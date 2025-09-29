@@ -1,0 +1,33 @@
+[
+  {
+    "id": "1759141754380xwvbqj792",
+    "eventId": "17591415061602o9y66rnh",
+    "name": "Innovation Lab",
+    "capacity": 8,
+    "topicId": "1759141506160frnf3jr2y",
+    "participants": [
+      "17591415061598uwl53nn6",
+      "1759141506160yym9sbefy"
+    ],
+    "amenities": [
+      "whiteboard",
+      "projector"
+    ],
+    "createdAt": "2025-09-29T10:29:14.380Z"
+  },
+  {
+    "id": "175914175438114h8kgqt6",
+    "eventId": "17591415061602o9y66rnh",
+    "name": "Collaboration Space",
+    "capacity": 6,
+    "topicId": "1759141506160zuuozz1xp",
+    "participants": [
+      "1759141506160v8n4xvphj"
+    ],
+    "amenities": [
+      "flipchart",
+      "sticky_notes"
+    ],
+    "createdAt": "2025-09-29T10:29:14.381Z"
+  }
+]

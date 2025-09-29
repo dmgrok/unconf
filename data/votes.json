@@ -1,0 +1,79 @@
+[
+  {
+    "id": "1759141506160d0lyw5yi3",
+    "userId": "17591415061598uwl53nn6",
+    "topicId": "1759141506160frnf3jr2y",
+    "eventId": "17591415061602o9y66rnh",
+    "weight": "first",
+    "timestamp": "2025-09-29T10:25:06.159Z",
+    "isActive": true,
+    "createdAt": "2025-09-29T10:25:06.159Z",
+    "updatedAt": "2025-09-29T10:25:06.159Z"
+  },
+  {
+    "id": "1759141506160o37is0hbn",
+    "userId": "1759141506160yym9sbefy",
+    "topicId": "1759141506160frnf3jr2y",
+    "eventId": "17591415061602o9y66rnh",
+    "weight": "second",
+    "timestamp": "2025-09-29T10:25:06.159Z",
+    "isActive": true,
+    "createdAt": "2025-09-29T10:25:06.159Z",
+    "updatedAt": "2025-09-29T10:25:06.159Z"
+  },
+  {
+    "id": "1759141506160773eoh4qc",
+    "userId": "1759141506160yym9sbefy",
+    "topicId": "1759141506160zuuozz1xp",
+    "eventId": "17591415061602o9y66rnh",
+    "weight": "second",
+    "timestamp": "2025-09-29T10:25:06.159Z",
+    "isActive": true,
+    "createdAt": "2025-09-29T10:25:06.159Z",
+    "updatedAt": "2025-09-29T10:25:06.159Z"
+  },
+  {
+    "id": "1759141506160tjipfnr94",
+    "userId": "1759141506160v8n4xvphj",
+    "topicId": "17591415061606cgsvu7b4",
+    "eventId": "17591415061602o9y66rnh",
+    "weight": "third",
+    "timestamp": "2025-09-29T10:25:06.159Z",
+    "isActive": true,
+    "createdAt": "2025-09-29T10:25:06.159Z",
+    "updatedAt": "2025-09-29T10:25:06.159Z"
+  },
+  {
+    "id": "1759141685540r6yuk5xxt",
+    "userId": "17591415061598uwl53nn6",
+    "topicId": "1759141506160zuuozz1xp",
+    "eventId": "17591415061602o9y66rnh",
+    "weight": "first",
+    "timestamp": "2025-09-29T10:28:05.540Z",
+    "isActive": true,
+    "createdAt": "2025-09-29T10:28:05.541Z",
+    "updatedAt": "2025-09-29T10:28:05.541Z"
+  },
+  {
+    "id": "175914168554182djo7ye0",
+    "userId": "1759141506160yym9sbefy",
+    "topicId": "17591415061606cgsvu7b4",
+    "eventId": "17591415061602o9y66rnh",
+    "weight": "first",
+    "timestamp": "2025-09-29T10:28:05.541Z",
+    "isActive": true,
+    "createdAt": "2025-09-29T10:28:05.541Z",
+    "updatedAt": "2025-09-29T10:28:05.541Z"
+  },
+  {
+    "id": "1759141685541tj542302l",
+    "userId": "1759141506160v8n4xvphj",
+    "topicId": "1759141506160frnf3jr2y",
+    "eventId": "17591415061602o9y66rnh",
+    "weight": "third",
+    "timestamp": "2025-09-29T10:28:05.541Z",
+    "isActive": true,
+    "createdAt": "2025-09-29T10:28:05.541Z",
+    "updatedAt": "2025-09-29T10:28:05.541Z"
+  }
+]

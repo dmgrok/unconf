@@ -1,0 +1,269 @@
+config:
+  target: 'http://localhost:5173'
+  phases:
+    # Warm-up phase
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm-up"
+    # Gradual ramp-up to 50 concurrent users
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 25
+      name: "Ramp-up to 50 users"
+    # Sustain 100 concurrent users
+    - duration: 120
+      arrivalRate: 50
+      name: "Sustain 100 users"
+    # Peak load - 200 concurrent users
+    - duration: 180
+      arrivalRate: 100
+      rampTo: 200
+      name: "Peak load - 200 users"
+    # Cool down
+    - duration: 60
+      arrivalRate: 10
+      name: "Cool down"
+
+  # Socket.IO configuration
+  socketio:
+    query:
+      transport: "websocket"
+    reconnection: true
+    reconnectionDelay: 1000
+    reconnectionDelayMax: 5000
+    maxReconnectionAttempts: 5
+    timeout: 20000
+    forceNew: true
+
+  # Performance thresholds
+  expect:
+    - statusCode: 200
+    - contentType: json
+    - hasProperty: success
+
+  # Variables for test scenarios
+  variables:
+    eventId: "load-test-event-{{ $randomString() }}"
+    userId: "user-{{ $randomInt(1, 10000) }}"
+    topicId: "topic-{{ $randomInt(1, 100) }}"
+
+  # Test scenarios weights
+  scenarios:
+    - name: "Heavy voters"
+      weight: 40
+    - name: "Casual participants"
+      weight: 30
+    - name: "Organizers"
+      weight: 20
+    - name: "Real-time interactions"
+      weight: 10
+
+  # Plugins for enhanced reporting
+  plugins:
+    metrics-by-endpoint:
+      useOnlyRequestNames: true
+    publish-metrics:
+      - type: json
+        output: "load-tests/results/metrics-{{ $timestamp }}.json"
+
+scenarios:
+  # Heavy voting scenario - users who vote frequently
+  - name: "Heavy voters"
+    engine: socketio
+    flow:
+      - think: 1
+      - emit:
+          channel: "join_event"
+          data:
+            eventId: "{{ eventId }}"
+            userId: "{{ userId }}-voter"
+            role: "participant"
+            isGuest: false
+            sessionId: "session-{{ $randomString() }}"
+          acknowledge:
+            match:
+              success: true
+      - think: 2
+      # Submit multiple votes with random delays
+      - loop:
+          - emit:
+              channel: "submit_vote"
+              data:
+                eventId: "{{ eventId }}"
+                userId: "{{ userId }}-voter"
+                topicId: "{{ topicId }}"
+                weight: "{{ $randomString(['first', 'second', 'third']) }}"
+              acknowledge:
+                match:
+                  success: true
+          - think: "{{ $randomInt(1, 5) }}"
+          - emit:
+              channel: "heartbeat"
+              acknowledge: {}
+          - think: "{{ $randomInt(2, 8) }}"
+        count: "{{ $randomInt(5, 15) }}"
+      - emit:
+          channel: "leave_event"
+          data:
+            eventId: "{{ eventId }}"
+            userId: "{{ userId }}-voter"
+
+  # Casual participants - join, minimal interaction, leave
+  - name: "Casual participants"
+    engine: socketio
+    flow:
+      - think: 1
+      - emit:
+          channel: "join_event"
+          data:
+            eventId: "{{ eventId }}"
+            userId: "{{ userId }}-casual"
+            role: "participant"
+            isGuest: true
+            sessionId: "session-{{ $randomString() }}"
+          acknowledge:
+            match:
+              success: true
+      # Stay connected for a while with occasional heartbeats
+      - loop:
+          - think: "{{ $randomInt(10, 30) }}"
+          - emit:
+              channel: "heartbeat"
+              acknowledge: {}
+        count: "{{ $randomInt(3, 8) }}"
+      # Maybe submit one vote
+      - emit:
+          channel: "submit_vote"
+          data:
+            eventId: "{{ eventId }}"
+            userId: "{{ userId }}-casual"
+            topicId: "{{ topicId }}"
+            weight: "{{ $randomString(['first', 'second', 'third']) }}"
+          acknowledge:
+            match:
+              success: true
+        ifTrue: "{{ $randomInt(1, 100) < 60 }}"  # 60% chance to vote
+      - think: "{{ $randomInt(30, 120) }}"
+      - emit:
+          channel: "leave_event"
+          data:
+            eventId: "{{ eventId }}"
+            userId: "{{ userId }}-casual"
+
+  # Organizers - more control actions
+  - name: "Organizers"
+    engine: socketio
+    flow:
+      - think: 1
+      - emit:
+          channel: "join_event"
+          data:
+            eventId: "{{ eventId }}"
+            userId: "{{ userId }}-organizer"
+            role: "organizer"
+            isGuest: false
+            sessionId: "session-{{ $randomString() }}"
+          acknowledge:
+            match:
+              success: true
+      - think: 5
+      # Organizer actions
+      - emit:
+          channel: "switch_activity"
+          data:
+            eventId: "{{ eventId }}"
+            organizerId: "{{ userId }}-organizer"
+            newActivity: "{{ $randomString(['voting', 'groupIntelligence', 'discussionGroups', 'teamDistribution']) }}"
+            timerDuration: "{{ $randomInt(300, 1800) }}"
+            settings: {}
+          acknowledge:
+            match:
+              success: true
+      - think: "{{ $randomInt(10, 30) }}"
+      # Timer management
+      - loop:
+          - emit:
+              channel: "update_timer"
+              data:
+                eventId: "{{ eventId }}"
+                organizerId: "{{ userId }}-organizer"
+                duration: "{{ $randomInt(60, 600) }}"
+                action: "{{ $randomString(['start', 'pause', 'reset', 'extend']) }}"
+              acknowledge:
+                match:
+                  success: true
+          - think: "{{ $randomInt(15, 45) }}"
+          - emit:
+              channel: "heartbeat"
+              acknowledge: {}
+        count: "{{ $randomInt(3, 8) }}"
+      - emit:
+          channel: "leave_event"
+          data:
+            eventId: "{{ eventId }}"
+            userId: "{{ userId }}-organizer"
+
+  # Real-time interactions - heavy WebSocket usage
+  - name: "Real-time interactions"
+    engine: socketio
+    flow:
+      - think: 1
+      - emit:
+          channel: "join_event"
+          data:
+            eventId: "{{ eventId }}"
+            userId: "{{ userId }}-realtime"
+            role: "participant"
+            isGuest: false
+            sessionId: "session-{{ $randomString() }}"
+          acknowledge:
+            match:
+              success: true
+      # High-frequency interactions
+      - loop:
+          # Vote
+          - emit:
+              channel: "submit_vote"
+              data:
+                eventId: "{{ eventId }}"
+                userId: "{{ userId }}-realtime"
+                topicId: "{{ topicId }}"
+                weight: "{{ $randomString(['first', 'second', 'third']) }}"
+              acknowledge:
+                match:
+                  success: true
+          - think: 1
+          # Remove vote (simulate changing mind)
+          - emit:
+              channel: "remove_vote"
+              data:
+                eventId: "{{ eventId }}"
+                userId: "{{ userId }}-realtime"
+                topicId: "{{ topicId }}"
+              acknowledge:
+                match:
+                  success: true
+          - think: 2
+          # Vote again
+          - emit:
+              channel: "submit_vote"
+              data:
+                eventId: "{{ eventId }}"
+                userId: "{{ userId }}-realtime"
+                topicId: "{{ topicId }}"
+                weight: "{{ $randomString(['first', 'second', 'third']) }}"
+              acknowledge:
+                match:
+                  success: true
+          - think: 1
+          # Heartbeat
+          - emit:
+              channel: "heartbeat"
+              acknowledge: {}
+          - think: "{{ $randomInt(1, 3) }}"
+        count: "{{ $randomInt(10, 25) }}"
+      - emit:
+          channel: "leave_event"
+          data:
+            eventId: "{{ eventId }}"
+            userId: "{{ userId }}-realtime"

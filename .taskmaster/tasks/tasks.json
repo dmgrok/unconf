@@ -1,0 +1,2852 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize SvelteKit Project",
+        "description": "Set up the foundational SvelteKit application with TypeScript, ESLint, Prettier, and core dependencies",
+        "details": "Run `npm create svelte@latest .` with TypeScript, ESLint, and Prettier options. Configure vite.config.js for development and production builds. Install core dependencies: @sveltejs/adapter-vercel for deployment, socket.io-client for WebSocket functionality, and lucide-svelte for icons. Set up basic folder structure: src/lib, src/routes, src/components, src/stores, src/types.",
+        "testStrategy": "Verify project builds successfully with `npm run build`, dev server starts with `npm run dev`, and linting passes with `npm run lint`",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Run create-svelte command with TypeScript, ESLint, and Prettier",
+            "description": "Execute npm create svelte@latest command and select TypeScript, ESLint, and Prettier options during setup",
+            "dependencies": [],
+            "details": "Run `npm create svelte@latest .` in the project directory. When prompted, select: TypeScript for type checking, ESLint for code linting, Prettier for code formatting, and include additional options like playwright for testing if prompted. Verify the initial project structure is created correctly.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Configure vite.config.js and svelte.config.js",
+            "description": "Set up Vite configuration for development and production builds, and configure Svelte adapter settings",
+            "dependencies": [
+              "1.1"
+            ],
+            "details": "Configure vite.config.js with proper development server settings, build optimizations, and plugin configurations. Update svelte.config.js to use @sveltejs/adapter-vercel and configure preprocess options for TypeScript and SCSS if needed. Ensure hot module replacement works correctly.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Install core dependencies",
+            "description": "Install essential packages: @sveltejs/adapter-vercel, socket.io-client, and lucide-svelte",
+            "dependencies": [
+              "1.1"
+            ],
+            "details": "Run npm install commands to add @sveltejs/adapter-vercel for Vercel deployment, socket.io-client for WebSocket functionality, and lucide-svelte for icon components. Update package.json with proper version constraints and verify all dependencies install without conflicts.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Set up folder structure and verify commands",
+            "description": "Create organized directory structure and test that build, dev, and lint commands work correctly",
+            "dependencies": [
+              "1.2",
+              "1.3"
+            ],
+            "details": "Create src/lib, src/routes, src/components, src/stores, and src/types directories. Add basic index files where needed. Test that `npm run dev` starts development server, `npm run build` creates production build, and `npm run lint` checks code quality successfully.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Configure Environment and Deployment",
+        "description": "Set up environment variables, Vercel configuration, and deployment pipeline",
+        "details": "Create .env.local file with required API keys structure matching .env.example. Configure vercel.json for SvelteKit adapter and environment variables. Set up GitHub Actions workflow for CI/CD with lint, build, and test steps. Configure adapter-vercel in svelte.config.js for optimal Vercel deployment.",
+        "testStrategy": "Test local development environment loads correctly, environment variables are accessible, and deployment to Vercel staging succeeds",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create .env.local template matching .env.example",
+            "description": "Set up local environment variables file with required API key structure",
+            "dependencies": [],
+            "details": "Create .env.local file based on .env.example template. Include placeholders for all required API keys (OpenAI, Anthropic, etc.) with clear comments explaining each variable's purpose. Ensure file is properly gitignored and document setup process.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Configure vercel.json for SvelteKit adapter",
+            "description": "Set up Vercel configuration file for optimal SvelteKit deployment",
+            "dependencies": [],
+            "details": "Create vercel.json with proper SvelteKit configuration including build settings, environment variable mapping, and routing rules. Configure function regions, memory allocation, and timeout settings for serverless functions.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Set up GitHub Actions CI/CD workflow",
+            "description": "Create automated CI/CD pipeline with lint, build, and test steps",
+            "dependencies": [
+              "2.1"
+            ],
+            "details": "Create .github/workflows/ci.yml with Node.js setup, dependency installation, linting with ESLint, TypeScript checking, SvelteKit build process, and test execution. Include deployment to Vercel on main branch push.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Configure adapter-vercel in svelte.config.js",
+            "description": "Set up SvelteKit adapter for optimal Vercel deployment",
+            "dependencies": [
+              "2.2"
+            ],
+            "details": "Install and configure @sveltejs/adapter-vercel in svelte.config.js with appropriate prerender settings, edge function configuration, and static file handling. Ensure compatibility with Vercel's serverless environment.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Test deployment pipeline and environment variable access",
+            "description": "Validate entire deployment process and environment configuration",
+            "dependencies": [
+              "2.3",
+              "2.4"
+            ],
+            "details": "Test local development environment with .env.local, verify GitHub Actions workflow execution, validate Vercel deployment success, and confirm environment variables are accessible in both development and production environments. Document any issues and solutions.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Implement Data Models and Types",
+        "description": "Define TypeScript interfaces and types for all core entities based on domain model",
+        "details": "Create src/types/index.ts with interfaces for Event, User, Topic, Vote, Round, Room, ActivityState, Team, AuditLog. Include proper typing for role-based access (guest, participant, organizer, admin), event status enum, activity types enum (voting, intelligence, discussion, teams), and vote weights (first, second, third). Add validation schemas using zod for runtime type checking.",
+        "testStrategy": "Verify all types compile correctly, zod schemas validate expected data structures, and type safety is maintained across the application",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Core Entity Interfaces",
+            "description": "Create TypeScript interfaces for Event, User, Topic, and Vote entities",
+            "dependencies": [],
+            "details": "Define base interfaces for Event (id, title, description, status, createdAt, etc.), User (id, name, email, role, etc.), Topic (id, title, description, submittedBy, votes, etc.), and Vote (id, userId, topicId, weight, timestamp, etc.). Include proper typing for relationships between entities.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Create Activity State and Role Enums",
+            "description": "Define enums for event status, activity types, user roles, and vote weights",
+            "dependencies": [],
+            "details": "Create EventStatus enum (draft, active, paused, completed), ActivityType enum (voting, intelligence, discussion, teams), UserRole enum (guest, participant, organizer, admin), and VoteWeight enum (first, second, third). Export all enums with proper TypeScript typing.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Define Round, Room, and Team Interfaces",
+            "description": "Create interfaces for session management and team organization",
+            "dependencies": [
+              "3.1",
+              "3.2"
+            ],
+            "details": "Define Round interface (id, eventId, activityType, startTime, endTime, settings), Room interface (id, eventId, participants, currentActivity, state), and Team interface (id, name, members, roomId, score). Include proper references to core entities and activity states.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add AuditLog and Analytics Types",
+            "description": "Create interfaces for audit logging and analytics tracking",
+            "dependencies": [
+              "3.1",
+              "3.2"
+            ],
+            "details": "Define AuditLog interface (id, userId, action, entityType, entityId, timestamp, metadata), Analytics interface for event metrics, and ActivityState interface for real-time state management. Include proper typing for action types and metadata structures.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Install and Configure Zod for Validation",
+            "description": "Set up zod library and create validation schemas for all interfaces",
+            "dependencies": [
+              "3.1",
+              "3.2",
+              "3.3",
+              "3.4"
+            ],
+            "details": "Install zod package, create validation schemas for all defined interfaces (EventSchema, UserSchema, TopicSchema, VoteSchema, etc.). Add runtime validation functions and error handling for schema validation failures. Include proper type inference from schemas.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Create Type Exports and Validation Functions",
+            "description": "Organize exports and create utility functions for type validation",
+            "dependencies": [
+              "3.5"
+            ],
+            "details": "Create centralized exports in src/types/index.ts for all interfaces, enums, and schemas. Add utility functions for type validation, type guards, and data transformation. Include helper functions for role-based access checking and entity relationship validation.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Set Up JSON File Storage System",
+        "description": "Implement MVP data persistence layer using JSON files with repository pattern",
+        "details": "Create src/lib/storage/ directory with abstract Repository interface and JSONRepository implementation. Implement EventRepository, UserRepository, TopicRepository with CRUD operations. Add file locking mechanism for concurrent access safety. Include data versioning and backup functionality with atomic writes. Create migration utilities for future database transition.",
+        "testStrategy": "Test concurrent read/write operations, data integrity after crashes, backup/restore functionality, and repository methods with valid/invalid data",
+        "priority": "high",
+        "dependencies": [
+          "3"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Abstract Repository Interface",
+            "description": "Define base repository interface with common CRUD operations and data validation methods",
+            "dependencies": [],
+            "details": "Create src/lib/storage/Repository.ts with abstract class defining create, read, update, delete, list, and validate methods. Include TypeScript generics for type safety and error handling interfaces.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement JSONRepository Base Class",
+            "description": "Build base JSON file operations class with file I/O and path management",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "Create JSONRepository class extending Repository interface with file read/write operations, JSON parsing/serialization, file path management, and basic error handling for file operations.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add File Locking and Atomic Write Mechanisms",
+            "description": "Implement file locking system and atomic write operations for concurrent access safety",
+            "dependencies": [
+              "4.2"
+            ],
+            "details": "Add file locking using node fs promises with exclusive locks, implement atomic writes using temporary files and rename operations, and add timeout handling for lock acquisition.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create EventRepository with CRUD Operations",
+            "description": "Implement event-specific repository with full CRUD operations and event validation",
+            "dependencies": [
+              "4.3"
+            ],
+            "details": "Build EventRepository extending JSONRepository with event-specific methods, validation rules for event data, search/filter capabilities, and event status management.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement UserRepository and TopicRepository",
+            "description": "Build user and topic repositories with their specific CRUD operations and validation",
+            "dependencies": [
+              "4.3"
+            ],
+            "details": "Create UserRepository with user management methods, profile handling, and authentication data storage. Build TopicRepository with topic CRUD, voting status tracking, and topic categorization.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Add Data Versioning and Backup Functionality",
+            "description": "Implement data versioning system with automatic backup creation and rotation",
+            "dependencies": [
+              "4.4",
+              "4.5"
+            ],
+            "details": "Add version tracking to data files, implement automatic backup creation before writes, add backup rotation with configurable retention policies, and include backup verification mechanisms.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Create Migration Utilities",
+            "description": "Build migration system for future database transition and data format changes",
+            "dependencies": [
+              "4.6"
+            ],
+            "details": "Create migration framework with version tracking, data transformation utilities, rollback capabilities, and export functionality for future database migration.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Add Comprehensive Error Handling and Recovery",
+            "description": "Implement robust error handling, data corruption detection, and automatic recovery mechanisms",
+            "dependencies": [
+              "4.7"
+            ],
+            "details": "Add comprehensive error handling for all file operations, implement data corruption detection with checksums, create automatic recovery from backups, and add logging for debugging and monitoring.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Implement Authentication System",
+        "description": "Build multi-provider OAuth authentication with guest access support",
+        "details": "Install and configure @auth/sveltekit with Google OAuth provider and credentials provider for email/password. Implement guest token generation with secure session management. Create authentication stores using Svelte stores for user state management. Add role-based access control middleware with proper session validation. Implement password reset and account recovery flows.",
+        "testStrategy": "Test OAuth flow with Google, guest authentication, password reset functionality, session persistence, and role-based route protection",
+        "priority": "high",
+        "dependencies": [
+          "4"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install and Configure @auth/sveltekit",
+            "description": "Set up the core authentication framework with initial configuration",
+            "dependencies": [],
+            "details": "Install @auth/sveltekit package and configure the base authentication setup with environment variables, secret keys, and basic configuration files. Set up the authentication API routes and initialize the auth system.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Set Up Google OAuth Provider",
+            "description": "Configure Google OAuth integration for social authentication",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "Configure Google OAuth provider with client ID and secret, set up OAuth callbacks, and implement Google sign-in flow. Test the OAuth redirect flow and token exchange process.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement Guest Token Generation and Validation",
+            "description": "Build secure guest access system with token-based authentication",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "Create guest token generation system using JWT or similar secure tokens. Implement token validation middleware and guest session management. Ensure proper security measures for anonymous users.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create Authentication Stores and Session Management",
+            "description": "Build Svelte stores for user state and session persistence",
+            "dependencies": [
+              "5.2",
+              "5.3"
+            ],
+            "details": "Implement Svelte stores for user authentication state, session data, and user profile information. Add session persistence across browser refreshes and proper state synchronization throughout the application.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add Role-Based Access Control Middleware",
+            "description": "Implement authorization system with role-based permissions",
+            "dependencies": [
+              "5.4"
+            ],
+            "details": "Create middleware for route protection based on user roles and permissions. Implement role checking functions and authorization guards for different user types (guest, authenticated, admin). Add proper session validation.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement Password Reset and Account Recovery Flows",
+            "description": "Build password reset and account recovery functionality",
+            "dependencies": [
+              "5.4"
+            ],
+            "details": "Create password reset flow with email verification, secure token generation, and password update functionality. Implement account recovery options and email templates for password reset communications.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Add Session Persistence and Security Measures",
+            "description": "Implement comprehensive session security and persistence features",
+            "dependencies": [
+              "5.5",
+              "5.6"
+            ],
+            "details": "Add session persistence across browser sessions, implement session timeout and refresh mechanisms, and add security measures like CSRF protection, secure cookies, and session invalidation. Include session monitoring and cleanup procedures.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Create WebSocket Real-time Infrastructure",
+        "description": "Implement WebSocket server and client for real-time activity orchestration",
+        "details": "Install socket.io and @types/socket.io. Create WebSocket server in src/lib/websocket/ with event-driven architecture for activity updates, voting updates, game state, and team assignments. Implement client-side socket store with reconnection logic, heartbeat monitoring, and offline detection. Add acknowledgment-based broadcasting with retry mechanisms to meet 1-second propagation target.",
+        "testStrategy": "Test WebSocket connection establishment, reconnection after disconnect, message broadcasting to multiple clients, and latency under load with 200 concurrent connections",
+        "priority": "high",
+        "dependencies": [
+          "3"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install and Configure Socket.IO Dependencies",
+            "description": "Install socket.io and @types/socket.io packages and set up basic WebSocket server configuration",
+            "dependencies": [],
+            "details": "Install socket.io and @types/socket.io packages. Create basic WebSocket server configuration in src/lib/websocket/ directory structure. Set up TypeScript types and initial server instance with CORS configuration for cross-origin requests.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Create Event-Driven Architecture for Activity Updates",
+            "description": "Implement WebSocket event system for activity updates, voting updates, game state, and team assignments",
+            "dependencies": [
+              "6.1"
+            ],
+            "details": "Design and implement event-driven architecture with typed event handlers for activity updates, voting state changes, game state transitions, and team assignment broadcasts. Create event namespaces and room management for different activity types.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement Client-Side Socket Store with Reconnection Logic",
+            "description": "Create client-side WebSocket store with automatic reconnection and connection state management",
+            "dependencies": [
+              "6.1"
+            ],
+            "details": "Build client-side socket store using Svelte stores for connection state management. Implement automatic reconnection logic with exponential backoff, connection status indicators, and graceful degradation when offline.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add Heartbeat Monitoring and Offline Detection",
+            "description": "Implement heartbeat mechanism and offline detection for reliable connection monitoring",
+            "dependencies": [
+              "6.3"
+            ],
+            "details": "Create heartbeat ping/pong mechanism between client and server. Implement offline detection with network status monitoring and user feedback for connection issues. Add connection quality indicators and automatic recovery attempts.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create Acknowledgment-Based Broadcasting System",
+            "description": "Implement acknowledgment system for reliable message delivery and broadcast confirmation",
+            "dependencies": [
+              "6.2"
+            ],
+            "details": "Build acknowledgment-based message broadcasting to ensure reliable delivery to all connected clients. Implement message queuing for unacknowledged messages and delivery confirmation tracking to meet 1-second propagation target.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement Retry Mechanisms and Error Handling",
+            "description": "Add comprehensive retry logic and error handling for failed message delivery",
+            "dependencies": [
+              "6.5"
+            ],
+            "details": "Implement retry mechanisms for failed message deliveries with configurable retry counts and intervals. Add comprehensive error handling for connection failures, message timeouts, and server errors with appropriate user feedback.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Add Latency Monitoring and Performance Metrics",
+            "description": "Implement latency tracking and performance monitoring for WebSocket communications",
+            "dependencies": [
+              "6.4"
+            ],
+            "details": "Create latency monitoring system to track message round-trip times and connection performance. Implement metrics collection for monitoring WebSocket performance and identifying bottlenecks to ensure 1-second propagation requirement.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Create Message Throttling System",
+            "description": "Implement message throttling to limit updates to 2 per second and prevent message flooding",
+            "dependencies": [
+              "6.6"
+            ],
+            "details": "Build message throttling mechanism to limit client updates to maximum 2 per second. Implement rate limiting with message queuing and batching to prevent server overload while maintaining real-time responsiveness.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 9,
+            "title": "Test Concurrent Connection Handling",
+            "description": "Test and optimize WebSocket server for handling 200 concurrent user connections",
+            "dependencies": [
+              "6.7",
+              "6.8"
+            ],
+            "details": "Create comprehensive load testing for 200 concurrent WebSocket connections. Test message broadcasting performance, memory usage, and connection stability under load. Optimize server configuration and implement connection pooling if necessary.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Build Event Management System",
+        "description": "Create event creation, configuration, and lifecycle management functionality",
+        "details": "Create src/routes/events/ with event CRUD operations. Implement event configuration forms with validation for duration (max 7 days), capacity (min 5 users), and settings. Add QR code generation using qrcode library and unique event code generation. Implement event status state machine (Draft → Active → Completed → Archived) with proper transitions and business rule validation.",
+        "testStrategy": "Test event creation with various configurations, QR code generation and scanning, event code validation, status transitions, and business rule enforcement",
+        "priority": "high",
+        "dependencies": [
+          "5",
+          "4"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Event CRUD API Endpoints",
+            "description": "Implement REST API endpoints for creating, reading, updating, and deleting events with proper request/response handling",
+            "dependencies": [],
+            "details": "Create src/routes/events/ directory with endpoints for POST /events (create), GET /events (list), GET /events/:id (detail), PUT /events/:id (update), DELETE /events/:id (delete). Include proper error handling, request validation, and response formatting.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Build Event Configuration Forms with Validation",
+            "description": "Create frontend forms for event configuration with comprehensive validation rules",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Implement event creation and editing forms with validation for duration (max 7 days), capacity (min 5 users), event name, description, and other settings. Include real-time validation feedback and error handling.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement QR Code Generation",
+            "description": "Add QR code generation functionality using qrcode library for event access",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Install qrcode library and implement QR code generation for events. Create endpoint to generate QR codes containing event access information and display them in event management interface.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add Unique Event Code Generation and Validation",
+            "description": "Implement system for generating and validating unique event access codes",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Create unique event code generation algorithm (alphanumeric, 6-8 characters). Implement code validation, collision detection, and expiration logic. Add database fields and API endpoints for code management.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create Event Status State Machine",
+            "description": "Implement state machine for event lifecycle with proper state transitions",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Design and implement state machine with states: Draft → Active → Completed → Archived. Define valid transitions, implement transition logic, and add state change validation with proper error handling.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Add Business Rule Validation",
+            "description": "Implement comprehensive business rule validation for event constraints",
+            "dependencies": [
+              "7.2",
+              "7.5"
+            ],
+            "details": "Add validation for duration limits (max 7 days), capacity constraints (min 5 users), state transition rules, and other business logic. Include server-side validation and appropriate error messages.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Implement Event Lifecycle Management",
+            "description": "Create comprehensive event lifecycle management system with automated transitions and monitoring",
+            "dependencies": [
+              "7.5",
+              "7.6"
+            ],
+            "details": "Implement automated event lifecycle management including scheduled state transitions, event expiration handling, cleanup processes, and monitoring dashboards for event health and status tracking.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Implement Topic Management System",
+        "description": "Build topic submission, editing, and management functionality for discussions",
+        "details": "Create topic submission forms with real-time validation and character limits. Implement topic editing with proper authorization (only proposer or organizer). Add topic status management (draft/active/frozen) with real-time updates via WebSocket. Include topic tagging system and search functionality. Add organizer controls for topic curation and approval workflows.",
+        "testStrategy": "Test topic submission by participants and organizers, real-time updates across clients, edit permissions, status changes, and search functionality",
+        "priority": "medium",
+        "dependencies": [
+          "7",
+          "6"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Topic Submission Forms with Validation",
+            "description": "Build topic submission forms with real-time validation, character limits, and input sanitization",
+            "dependencies": [],
+            "details": "Create Svelte components for topic submission forms with fields for title, description, category, and tags. Implement real-time validation for character limits (title: 100 chars, description: 500 chars), required fields, and content sanitization. Add form state management and error handling with user-friendly messages.",
+            "status": "done",
+            "testStrategy": "",
+            "updatedAt": "2025-09-29T09:36:50.493Z",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Topic Editing with Authorization",
+            "description": "Add topic editing functionality with role-based authorization checks",
+            "dependencies": [
+              "8.1"
+            ],
+            "details": "Create topic editing interface accessible only to topic proposers and organizers. Implement authorization middleware to verify edit permissions before allowing changes. Add edit history tracking and conflict resolution for concurrent edits. Include draft saving functionality for partial edits.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined",
+            "updatedAt": "2025-09-29T09:36:57.165Z"
+          },
+          {
+            "id": 3,
+            "title": "Add Topic Status Management",
+            "description": "Implement topic lifecycle with draft, active, and frozen status states",
+            "dependencies": [
+              "8.1"
+            ],
+            "details": "Create status management system with three states: draft (editable, not visible to participants), active (live discussion), and frozen (read-only archive). Add status transition controls for organizers and automatic status changes based on discussion timeline. Include status indicators in topic displays.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined",
+            "updatedAt": "2025-09-29T09:36:57.969Z"
+          },
+          {
+            "id": 4,
+            "title": "Integrate Real-time Updates via WebSocket",
+            "description": "Add WebSocket integration for real-time topic updates and notifications",
+            "dependencies": [
+              "8.2",
+              "8.3"
+            ],
+            "details": "Implement WebSocket event handlers for topic creation, edits, status changes, and new comments. Add real-time notifications for topic updates to subscribed users. Create event broadcasting system for topic changes and ensure proper event ordering and conflict resolution.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined",
+            "updatedAt": "2025-09-29T09:36:58.721Z"
+          },
+          {
+            "id": 5,
+            "title": "Add Topic Tagging and Search Functionality",
+            "description": "Implement tagging system and search capabilities for topic discovery",
+            "dependencies": [
+              "8.1"
+            ],
+            "details": "Create tag management system with predefined and custom tags. Implement search functionality with filtering by title, description, tags, status, and author. Add search indexing for performance and autocomplete suggestions. Include advanced search filters and sorting options.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined",
+            "updatedAt": "2025-09-29T09:36:59.496Z"
+          },
+          {
+            "id": 6,
+            "title": "Create Organizer Curation and Approval Workflows",
+            "description": "Build organizer dashboard for topic curation, approval, and moderation",
+            "dependencies": [
+              "8.3",
+              "8.4"
+            ],
+            "details": "Create organizer dashboard with topic queue management, approval workflows, and bulk actions. Implement topic moderation tools including editing, status changes, and deletion capabilities. Add approval notifications and workflow tracking. Include topic analytics and engagement metrics for organizers.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ],
+        "updatedAt": "2025-09-29T09:37:04.885Z"
+      },
+      {
+        "id": 9,
+        "title": "Build Weighted Voting System",
+        "description": "Implement 1st/2nd/3rd choice voting with real-time updates and transparency",
+        "details": "Create voting interface with drag-and-drop or button-based selection for 1st, 2nd, 3rd choices. Implement vote validation ensuring one vote per weight per user. Add real-time vote counting with WebSocket updates throttled to 2 updates/second. Include vote transparency features showing participant voting status without revealing specific choices. Add voting rule configuration (max votes per topic, voting windows).",
+        "testStrategy": "Test vote submission and validation, real-time vote updates, vote weight constraints, transparency features, and concurrent voting by multiple users",
+        "priority": "high",
+        "dependencies": [
+          "8",
+          "6"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Weighted Voting Interface",
+            "description": "Build drag-and-drop or button-based UI for 1st/2nd/3rd choice selection",
+            "dependencies": [],
+            "details": "Implement voting interface component with drag-and-drop functionality for ranking choices or alternative button-based selection. Include visual indicators for 1st, 2nd, and 3rd choice positions with clear weight distinctions.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Vote Validation Logic",
+            "description": "Ensure one vote per weight per user with proper validation",
+            "dependencies": [
+              "9.1"
+            ],
+            "details": "Create validation system to enforce one vote per weight category per user. Implement checks for duplicate votes, weight conflicts, and user authorization before accepting votes.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build Real-time Vote Counting System",
+            "description": "Implement WebSocket-based vote counting with live updates",
+            "dependencies": [
+              "9.2"
+            ],
+            "details": "Create real-time vote counting backend that processes weighted votes and calculates results. Implement WebSocket connections for live vote count updates to all connected clients.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add Vote Update Throttling",
+            "description": "Implement 2 updates per second throttling for WebSocket updates",
+            "dependencies": [
+              "9.3"
+            ],
+            "details": "Add throttling mechanism to limit WebSocket vote updates to maximum 2 per second. Implement update batching and queuing to ensure smooth performance under high voting load.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create Vote Transparency Features",
+            "description": "Show participant voting status without revealing specific choices",
+            "dependencies": [
+              "9.2"
+            ],
+            "details": "Implement transparency system showing who has voted and voting progress without exposing individual vote choices. Create participant status indicators and voting completion tracking.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement Voting Rule Configuration",
+            "description": "Add configuration for max votes per topic and voting windows",
+            "dependencies": [],
+            "details": "Create configuration system for voting rules including maximum votes per topic, voting time windows, and weight distribution rules. Implement admin interface for rule management.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Build Voting Status Indicators",
+            "description": "Create visual indicators for voting progress and status",
+            "dependencies": [
+              "9.5",
+              "9.6"
+            ],
+            "details": "Implement visual status indicators showing voting progress, remaining time, participant status, and voting rule compliance. Create progress bars and status badges for clear user feedback.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Test Concurrent Voting Scenarios",
+            "description": "Test system performance under concurrent voting load",
+            "dependencies": [
+              "9.4",
+              "9.7"
+            ],
+            "details": "Create comprehensive test suite for concurrent voting scenarios including multiple users voting simultaneously, vote conflicts, and system performance under load. Test throttling effectiveness and data consistency.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Create Activity State Management",
+        "description": "Implement activity orchestration system for organizers to switch between voting, games, discussions, and teams",
+        "details": "Create ActivityState management with four core activities: voting, group intelligence, discussion groups, and team distribution. Implement organizer dashboard with activity preview and 'Go Live' actions. Add timer configuration and countdown functionality with real-time synchronization. Include activity transition logging in AuditLog with latency metrics and acknowledgment tracking.",
+        "testStrategy": "Test activity switching with sub-1-second propagation to clients, timer functionality, organizer permissions, activity state persistence, and audit logging",
+        "priority": "high",
+        "dependencies": [
+          "6",
+          "5"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create ActivityState Core Management System",
+            "description": "Implement core ActivityState class with four activity types: voting, group intelligence, discussion groups, and team distribution",
+            "dependencies": [],
+            "details": "Create ActivityState enum and management class in src/lib/activity/ with state validation, transition rules, and activity configuration storage. Define interfaces for each activity type with their specific properties and validation rules.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Build Organizer Dashboard Interface",
+            "description": "Create organizer dashboard with activity preview and 'Go Live' action buttons",
+            "dependencies": [
+              "10.1"
+            ],
+            "details": "Build dashboard UI in src/routes/organizer/ with activity selection, preview functionality, and 'Go Live' buttons. Include activity status indicators and configuration panels for each activity type.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement Timer Configuration System",
+            "description": "Create timer configuration and countdown functionality for activities",
+            "dependencies": [
+              "10.1"
+            ],
+            "details": "Build timer management system with configurable durations, countdown display, and automatic activity transitions. Include pause/resume functionality and timer persistence across sessions.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add Real-time Activity State Synchronization",
+            "description": "Implement WebSocket-based real-time synchronization of activity state across all clients",
+            "dependencies": [
+              "10.1",
+              "10.2"
+            ],
+            "details": "Create WebSocket event handlers for activity state changes, implement broadcast mechanisms for state updates, and ensure sub-1-second propagation to all connected clients.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create Activity Transition Logging",
+            "description": "Implement comprehensive audit logging for activity transitions with latency metrics",
+            "dependencies": [
+              "10.1"
+            ],
+            "details": "Add logging to AuditLog system for all activity state changes, capture transition timestamps, measure propagation latency, and store organizer actions with context data.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement Acknowledgment Tracking System",
+            "description": "Build acknowledgment system to track successful broadcast delivery to clients",
+            "dependencies": [
+              "10.4"
+            ],
+            "details": "Create acknowledgment protocol for activity state broadcasts, implement retry mechanisms for failed deliveries, and maintain delivery status tracking for reliability monitoring.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Add Organizer Permission Validation",
+            "description": "Implement permission system to validate organizer authority for activity control",
+            "dependencies": [
+              "10.1"
+            ],
+            "details": "Create role-based permission checks for activity state changes, validate organizer credentials, and implement authorization middleware for activity management endpoints.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Create State Persistence and Recovery",
+            "description": "Implement activity state persistence and recovery mechanisms for reliability",
+            "dependencies": [
+              "10.1",
+              "10.3"
+            ],
+            "details": "Add database persistence for activity states, implement automatic recovery after server restarts, and ensure timer continuity across system interruptions.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 9,
+            "title": "Test Sub-1-Second Propagation Requirement",
+            "description": "Comprehensive testing of activity state propagation performance and reliability",
+            "dependencies": [
+              "10.4",
+              "10.6"
+            ],
+            "details": "Create performance tests for activity state broadcasting, measure end-to-end latency, validate sub-1-second propagation requirement, and test with high client loads up to 200 concurrent connections.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Implement Collaborative Word-Chain Game",
+        "description": "Build the multiplayer word-chain game for group intelligence activity",
+        "details": "Create word-chain game logic where each word starts with the last letter of the previous word. Implement word validation using local dictionary and optional API integration. Add real-time word submission and chain display with WebSocket broadcasting. Include turn-based rotation or simultaneous submission modes with conflict resolution (first valid wins). Add profanity filtering and rate limiting for abuse prevention.",
+        "testStrategy": "Test word validation logic, real-time word chain updates, turn management, conflict resolution, profanity filtering, and concurrent player submissions",
+        "priority": "medium",
+        "dependencies": [
+          "10",
+          "6"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create word-chain game logic and validation",
+            "description": "Implement core game logic for word chaining where each word must start with the last letter of the previous word",
+            "dependencies": [],
+            "details": "Create game state management, word chain validation rules, and basic game flow logic. Implement functions to check if a word follows the chain rule and track the current game state.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement word validation using dictionary API/local dictionary",
+            "description": "Add word validation system using both local dictionary and optional API integration",
+            "dependencies": [
+              "11.1"
+            ],
+            "details": "Integrate dictionary API or local word list to validate submitted words. Implement fallback mechanisms and caching for better performance and reliability.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add real-time word submission and display",
+            "description": "Implement WebSocket-based real-time word submission and chain display functionality",
+            "dependencies": [
+              "11.2"
+            ],
+            "details": "Create WebSocket handlers for word submissions and broadcast updates to all connected players. Implement real-time chain display with smooth updates and visual feedback.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create turn-based or simultaneous submission modes",
+            "description": "Implement different game modes for turn-based rotation and simultaneous submissions",
+            "dependencies": [
+              "11.3"
+            ],
+            "details": "Build game mode selection and management. Implement turn rotation logic for turn-based mode and concurrent submission handling for simultaneous mode.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement conflict resolution (first valid wins)",
+            "description": "Add conflict resolution system for handling simultaneous submissions",
+            "dependencies": [
+              "11.4"
+            ],
+            "details": "Implement timestamp-based conflict resolution where the first valid submission wins. Add proper handling of rejected submissions and user feedback.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Add profanity filtering and rate limiting",
+            "description": "Implement abuse prevention with profanity filtering and submission rate limiting",
+            "dependencies": [
+              "11.5"
+            ],
+            "details": "Integrate profanity filter for word submissions and implement rate limiting to prevent spam. Add user reporting and moderation features for inappropriate content.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Create game UI with chain timeline and input validation",
+            "description": "Build the user interface for the word-chain game with visual chain display and input validation",
+            "dependencies": [
+              "11.6"
+            ],
+            "details": "Create responsive game interface with word chain timeline, input field with validation feedback, player status indicators, and game controls. Include visual cues for turn order and submission status.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Build Discussion Group Assignment System",
+        "description": "Implement automatic participant assignment to discussion rooms based on voting preferences",
+        "details": "Create algorithm to assign participants to discussion topics based on 1st, 2nd, 3rd choice votes. Implement room capacity management and overflow handling. Add manual assignment override capabilities for organizers. Include room information display with capacity and amenities. Create round management with history tracking and participant notification system.",
+        "testStrategy": "Test assignment algorithm with various voting scenarios, room capacity limits, manual overrides, round transitions, and participant notifications",
+        "priority": "high",
+        "dependencies": [
+          "9",
+          "10"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Assignment Algorithm for Vote Preferences",
+            "description": "Implement core algorithm to assign participants to discussion topics based on 1st, 2nd, and 3rd choice votes",
+            "dependencies": [],
+            "details": "Build assignment algorithm that processes participant voting preferences and optimally assigns users to discussion rooms. Include logic for handling preference conflicts, maximizing satisfaction based on vote weights (1st choice = 3 points, 2nd = 2 points, 3rd = 1 point), and ensuring fair distribution across topics.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Room Capacity Management",
+            "description": "Build room capacity tracking and overflow handling system",
+            "dependencies": [
+              "12.1"
+            ],
+            "details": "Create room capacity management system that tracks current occupancy, enforces maximum limits, and handles overflow scenarios. Implement queuing system for overflow participants and automatic reassignment when rooms become available.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add Manual Assignment Override System",
+            "description": "Create organizer interface for manual participant assignment overrides",
+            "dependencies": [
+              "12.1",
+              "12.2"
+            ],
+            "details": "Build administrative interface allowing organizers to manually move participants between rooms, override automatic assignments, and handle special cases. Include drag-and-drop interface and validation to prevent capacity violations.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create Room Information Display",
+            "description": "Build comprehensive room information display with capacity and amenities",
+            "dependencies": [],
+            "details": "Implement room information system showing room capacity, current occupancy, amenities, location details, and accessibility features. Create responsive display components for both organizer and participant views.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement Round Management System",
+            "description": "Build round management with history tracking and state transitions",
+            "dependencies": [
+              "12.2",
+              "12.3"
+            ],
+            "details": "Create round management system that tracks assignment rounds, maintains history of participant movements, and manages round transitions. Include round status tracking, rollback capabilities, and audit trail for all assignment changes.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Add Participant Notification System",
+            "description": "Implement real-time notification system for assignment updates",
+            "dependencies": [
+              "12.5"
+            ],
+            "details": "Build notification system that informs participants of room assignments, changes, and round transitions. Include real-time WebSocket notifications, email notifications for major changes, and notification preferences management.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Create Assignment Preview and Validation",
+            "description": "Build preview system for assignment results before finalizing",
+            "dependencies": [
+              "12.3",
+              "12.4"
+            ],
+            "details": "Implement assignment preview interface allowing organizers to review proposed assignments before confirmation. Include validation checks for capacity violations, preference satisfaction metrics, and conflict detection with recommendations for resolution.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Test Assignment Scenarios and Edge Cases",
+            "description": "Comprehensive testing of voting scenarios and edge cases",
+            "dependencies": [
+              "12.6",
+              "12.7"
+            ],
+            "details": "Create comprehensive test suite covering various voting scenarios including tie-breaking, insufficient votes, room capacity constraints, and concurrent assignment operations. Test edge cases like participant leaving mid-assignment and room availability changes.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "title": "Implement Team Distribution Service",
+        "description": "Build participant allocation into teams with multiple distribution strategies",
+        "details": "Create CSV/Excel import functionality for participant rosters with column mapping wizard. Implement three distribution strategies: random (with constraints), mix for collaboration (category balancing), and manual override. Add team preview with validation warnings and conflict detection. Include late joiner handling and incremental assignment suggestions.",
+        "testStrategy": "Test CSV import and column mapping, all distribution strategies, team preview and validation, manual adjustments, and late joiner scenarios",
+        "priority": "medium",
+        "dependencies": [
+          "10",
+          "4"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create CSV/Excel import with column mapping wizard",
+            "description": "Build file upload interface with drag-and-drop support and column mapping wizard for participant roster import",
+            "dependencies": [],
+            "details": "Implement file upload component supporting CSV and Excel formats. Create column mapping wizard that automatically detects common fields (name, email, category) and allows manual mapping. Add data preview and validation with error highlighting for missing required fields or invalid formats.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement random distribution strategy with constraints",
+            "description": "Build random team assignment algorithm with configurable constraints and balancing rules",
+            "dependencies": [
+              "13.1"
+            ],
+            "details": "Create random distribution engine that respects team size limits, category distribution constraints, and exclusion rules. Implement constraint validation and rebalancing logic. Add configuration options for team size variance and category mixing preferences.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add mix for collaboration strategy with category balancing",
+            "description": "Implement intelligent team formation that optimizes for diverse collaboration and skill mixing",
+            "dependencies": [
+              "13.1"
+            ],
+            "details": "Build collaboration-focused distribution algorithm that balances participant categories, skills, and backgrounds across teams. Implement scoring system for team diversity and collaboration potential. Add optimization logic to maximize cross-category interactions.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create manual override functionality",
+            "description": "Build drag-and-drop interface for manual team adjustments and participant reassignment",
+            "dependencies": [
+              "13.2",
+              "13.3"
+            ],
+            "details": "Implement visual team editor with drag-and-drop participant movement between teams. Add conflict detection for manual changes that violate constraints. Include undo/redo functionality and change tracking with validation warnings.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add team preview with validation warnings",
+            "description": "Create comprehensive team preview interface with validation checks and conflict detection",
+            "dependencies": [
+              "13.4"
+            ],
+            "details": "Build team preview dashboard showing all teams with participant details, team balance metrics, and constraint compliance. Implement validation system that highlights conflicts, imbalances, and constraint violations. Add export functionality for final team assignments.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement late joiner handling and suggestions",
+            "description": "Build system for handling participants who join after initial team formation",
+            "dependencies": [
+              "13.5"
+            ],
+            "details": "Create late joiner workflow that analyzes existing teams and suggests optimal placement based on current team composition. Implement incremental assignment suggestions that maintain team balance. Add notification system for team changes and affected participants.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Create team assignment broadcast and confirmation tracking",
+            "description": "Build notification system for team assignments with participant confirmation and tracking",
+            "dependencies": [
+              "13.6"
+            ],
+            "details": "Implement multi-channel notification system (email, in-app) for team assignment announcements. Create confirmation tracking system where participants acknowledge their team assignment. Add reminder system for unconfirmed assignments and escalation procedures.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Create User Interface Components",
+        "description": "Build reusable UI components with consistent design system and accessibility",
+        "details": "Create component library in src/lib/components/ including Button, Input, Modal, Card, Timer, VotingCard, TopicCard, and GameCard components. Implement consistent styling with CSS custom properties for theme support (light/dark mode). Add WCAG 2.1 AA compliance with proper ARIA labels, keyboard navigation, and screen reader support. Use lucide-svelte for consistent iconography.",
+        "testStrategy": "Test component rendering, theme switching, keyboard navigation, screen reader compatibility, and responsive design across device sizes",
+        "priority": "medium",
+        "dependencies": [
+          "3"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Base UI Components",
+            "description": "Implement foundational components including Button, Input, Modal, and Card with consistent styling and props interface",
+            "dependencies": [],
+            "details": "Create src/lib/components/ directory structure. Implement Button component with variants (primary, secondary, danger), sizes, and disabled states. Build Input component with validation states, labels, and error messaging. Create Modal component with backdrop, close handlers, and focus management. Implement Card component with header, body, and footer slots. Establish consistent TypeScript props interfaces and component documentation.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Build Specialized Activity Components",
+            "description": "Create domain-specific components for Timer, VotingCard, TopicCard, and GameCard with interactive features",
+            "dependencies": [
+              "14.1"
+            ],
+            "details": "Implement Timer component with countdown display, start/stop controls, and real-time updates. Create VotingCard component with option selection, visual feedback, and submission handling. Build TopicCard component for discussion topics with category badges and interaction states. Implement GameCard component for game activities with progress indicators and action buttons. Use base components as building blocks for consistency.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement CSS Custom Properties Theme System",
+            "description": "Create theming infrastructure with CSS custom properties supporting light and dark modes",
+            "dependencies": [
+              "14.1"
+            ],
+            "details": "Define CSS custom properties for colors, spacing, typography, and shadows. Create theme files for light and dark modes with semantic color tokens. Implement theme switching functionality with system preference detection and localStorage persistence. Add theme context provider for Svelte components. Update all components to use CSS custom properties instead of hardcoded values.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add WCAG 2.1 AA Accessibility Compliance",
+            "description": "Implement comprehensive accessibility features including ARIA labels, keyboard navigation, and screen reader support",
+            "dependencies": [
+              "14.1",
+              "14.2"
+            ],
+            "details": "Add proper ARIA labels, roles, and properties to all components. Implement keyboard navigation with focus management and tab order. Ensure color contrast ratios meet WCAG 2.1 AA standards. Add screen reader announcements for dynamic content changes. Implement focus indicators and skip navigation patterns. Create accessibility testing utilities and documentation.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Integrate Icons and Test Responsive Design",
+            "description": "Add lucide-svelte icon integration and validate responsive behavior across device sizes",
+            "dependencies": [
+              "14.2",
+              "14.3"
+            ],
+            "details": "Install and configure lucide-svelte icon library. Create icon component wrapper with consistent sizing and theming. Add appropriate icons to all UI components following design system guidelines. Implement responsive design testing across mobile, tablet, and desktop viewports. Test component behavior with different content lengths and screen sizes. Create component playground for design system demonstration.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "title": "Build Participant Dashboard",
+        "description": "Create main participant interface for joining events, voting, and activity participation",
+        "details": "Create responsive participant dashboard showing current activity state with real-time updates. Implement event joining via code or QR scan with validation. Add activity-specific interfaces: voting cards, game participation, discussion room information, and team assignments. Include connection status indicator and reconnection prompts for offline scenarios.",
+        "testStrategy": "Test event joining flow, real-time activity updates, responsive design, connection handling, and all activity-specific interfaces",
+        "priority": "high",
+        "dependencies": [
+          "14",
+          "9",
+          "11"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create responsive dashboard layout with real-time updates",
+            "description": "Build the main participant dashboard UI with responsive design and real-time activity state display",
+            "dependencies": [],
+            "details": "Create SvelteKit component for participant dashboard with responsive grid layout. Implement real-time activity state display using WebSocket connection. Add loading states, activity switching animations, and mobile-first responsive design. Include header with event info and navigation elements.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement event joining via code/QR scan",
+            "description": "Build event joining flow with code input and QR code scanning functionality",
+            "dependencies": [
+              "15.1"
+            ],
+            "details": "Create event joining form with code input validation and QR code scanner integration. Implement camera access for QR scanning with fallback to manual code entry. Add event lookup API integration and user-friendly error messages for invalid codes.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build activity-specific interfaces",
+            "description": "Create UI components for voting, games, discussions, and team assignments",
+            "dependencies": [
+              "15.1"
+            ],
+            "details": "Implement voting cards with single/multiple selection, game participation interfaces, discussion room information display, and team assignment views. Create activity-specific components that dynamically render based on current activity state from WebSocket updates.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add connection status indicator and reconnection prompts",
+            "description": "Implement connection monitoring and user feedback for WebSocket status",
+            "dependencies": [
+              "15.1"
+            ],
+            "details": "Create connection status indicator showing online/offline/reconnecting states. Add reconnection prompts with retry buttons and connection health monitoring. Implement user-friendly messages for connection issues and automatic reconnection attempts.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create event validation and error handling",
+            "description": "Implement comprehensive validation and error handling for event joining and participation",
+            "dependencies": [
+              "15.2"
+            ],
+            "details": "Add event code validation, capacity checking, and permission verification. Implement error handling for invalid events, full events, and expired sessions. Create user-friendly error messages and recovery suggestions.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement offline detection and recovery",
+            "description": "Build offline detection system and recovery mechanisms for participant dashboard",
+            "dependencies": [
+              "15.4"
+            ],
+            "details": "Implement network connectivity monitoring and offline state detection. Add offline mode UI with queued actions and automatic sync when connection resumes. Create recovery mechanisms for missed activity updates and state synchronization.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Test real-time activity switching and integration",
+            "description": "Comprehensive testing of dashboard functionality and real-time features",
+            "dependencies": [
+              "15.3",
+              "15.5",
+              "15.6"
+            ],
+            "details": "Test event joining flow end-to-end, real-time activity updates across different activity types, responsive design on various devices, connection handling scenarios, and integration with WebSocket infrastructure. Verify sub-1-second activity switching and error recovery flows.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "title": "Build Organizer Control Panel",
+        "description": "Create comprehensive organizer dashboard for event management and activity orchestration",
+        "details": "Create organizer dashboard with event configuration panel, activity switching controls, and real-time participant monitoring. Implement timer management with customizable countdowns and auto-expire options. Add participant management features including role assignment and manual overrides. Include analytics widgets showing participation metrics and activity engagement.",
+        "testStrategy": "Test organizer permissions, activity switching interface, timer controls, participant management, real-time updates, and analytics accuracy",
+        "priority": "high",
+        "dependencies": [
+          "14",
+          "10",
+          "12",
+          "13"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create organizer dashboard with event configuration",
+            "description": "Build the main organizer dashboard interface with event configuration panel",
+            "dependencies": [],
+            "details": "Create organizer dashboard layout with event configuration forms, validation for event settings, and navigation structure. Include event metadata editing, capacity settings, and duration controls.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Build activity switching controls with real-time monitoring",
+            "description": "Implement activity switching interface with real-time participant monitoring",
+            "dependencies": [
+              "16.1"
+            ],
+            "details": "Create activity switching controls that integrate with ActivityState management. Add real-time participant status monitoring and activity preview functionality with live participant counts.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement timer management with customizable countdowns",
+            "description": "Build timer management system with customizable countdown functionality",
+            "dependencies": [
+              "16.2"
+            ],
+            "details": "Create timer configuration interface with customizable countdown durations, auto-expire options, and visual countdown displays. Integrate with WebSocket for real-time timer synchronization across all participants.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add participant management with role assignment",
+            "description": "Create participant management interface with role assignment capabilities",
+            "dependencies": [
+              "16.1"
+            ],
+            "details": "Build participant list management with role assignment features (moderator, participant, observer). Include participant search, filtering, and batch role assignment functionality.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create manual override capabilities",
+            "description": "Implement manual override controls for organizer intervention",
+            "dependencies": [
+              "16.4",
+              "16.3"
+            ],
+            "details": "Add manual override controls for activity switching, timer adjustments, participant actions, and emergency controls. Include confirmation dialogs and audit logging for all override actions.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Add analytics widgets with real-time metrics",
+            "description": "Create analytics dashboard with participation metrics and engagement tracking",
+            "dependencies": [
+              "16.2"
+            ],
+            "details": "Build analytics widgets showing participation rates, activity engagement metrics, and real-time participant statistics. Include visual charts and data export functionality.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Implement organizer permission validation",
+            "description": "Add comprehensive permission validation for organizer actions",
+            "dependencies": [
+              "16.4"
+            ],
+            "details": "Implement role-based permission system with organizer privilege validation, action authorization checks, and security middleware to prevent unauthorized access to organizer controls.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Test comprehensive organizer workflows",
+            "description": "Execute comprehensive testing of all organizer control panel workflows",
+            "dependencies": [
+              "16.5",
+              "16.6",
+              "16.7"
+            ],
+            "details": "Test complete organizer workflows including event setup, activity orchestration, participant management, timer controls, manual overrides, and analytics functionality. Verify permission enforcement and real-time synchronization.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "title": "Implement Admin Platform Management",
+        "description": "Build admin interface for cross-event monitoring and platform health management",
+        "details": "Create admin dashboard with cross-event overview showing concurrent users, activity states, and error rates. Implement organizer access management with role assignment and revocation capabilities. Add platform health monitoring with real-time metrics and alerting. Include event suspension controls and audit trail viewing capabilities.",
+        "testStrategy": "Test admin access controls, cross-event monitoring, organizer management, platform metrics accuracy, and emergency suspension features",
+        "priority": "medium",
+        "dependencies": [
+          "5",
+          "14"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Admin Dashboard with Cross-Event Overview",
+            "description": "Build main admin dashboard displaying concurrent users, activity states, and error rates across all events",
+            "dependencies": [],
+            "details": "Create admin dashboard component with real-time metrics display showing concurrent users per event, current activity states, error rates, and system status indicators. Implement WebSocket connections for live data updates and responsive grid layout for multi-event monitoring.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Organizer Access Management",
+            "description": "Build role assignment and revocation system for organizer permissions",
+            "dependencies": [
+              "17.1"
+            ],
+            "details": "Create organizer management interface with role assignment capabilities, permission revocation controls, and access level configuration. Implement user search, role history tracking, and bulk permission operations with proper audit logging.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add Platform Health Monitoring",
+            "description": "Implement real-time metrics collection and alerting system",
+            "dependencies": [
+              "17.1"
+            ],
+            "details": "Build platform health monitoring with real-time metrics collection for system performance, WebSocket connections, database health, and API response times. Implement alerting thresholds and notification system for critical issues.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create Event Suspension Controls",
+            "description": "Build emergency event suspension and management controls",
+            "dependencies": [
+              "17.2"
+            ],
+            "details": "Implement event suspension controls with immediate effect capabilities, suspension reason logging, and participant notification system. Add controls for partial suspensions and graceful event termination with data preservation.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add Audit Trail Viewing Capabilities",
+            "description": "Build comprehensive audit log viewer and search functionality",
+            "dependencies": [
+              "17.2"
+            ],
+            "details": "Create audit trail interface with searchable logs, filtering by user/action/date, and detailed event history. Implement log export functionality and compliance reporting features with proper data retention policies.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement Admin Permission Validation and Security",
+            "description": "Add security layer and permission validation for all admin functions",
+            "dependencies": [
+              "17.2",
+              "17.3",
+              "17.4",
+              "17.5"
+            ],
+            "details": "Implement comprehensive admin permission validation, secure session management, multi-factor authentication for admin access, and security audit logging. Add rate limiting and suspicious activity detection for admin operations.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "title": "Add Mobile-Responsive Design",
+        "description": "Optimize all interfaces for mobile devices with touch-friendly interactions",
+        "details": "Implement mobile-first responsive design using CSS Grid and Flexbox. Optimize touch interactions for voting interface with larger tap targets and gesture support. Add mobile-specific navigation patterns and optimize performance for mobile devices. Implement progressive web app features including service worker for basic offline detection and app-like experience.",
+        "testStrategy": "Test responsive design across device sizes, touch interactions, mobile navigation, PWA installation, and performance on mid-tier mobile devices",
+        "priority": "medium",
+        "dependencies": [
+          "15",
+          "16"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement mobile-first CSS Grid and Flexbox layouts",
+            "description": "Create responsive layouts using CSS Grid and Flexbox with mobile-first approach",
+            "dependencies": [],
+            "details": "Implement CSS Grid for main layout structure and Flexbox for component-level layouts. Start with mobile breakpoints (320px+) and progressively enhance for tablet (768px+) and desktop (1024px+). Create responsive grid systems for voting interface, topic lists, and navigation areas. Use CSS custom properties for breakpoint management.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Optimize touch interactions with larger tap targets",
+            "description": "Enhance voting interface and buttons for touch-friendly interactions",
+            "dependencies": [
+              "18.1"
+            ],
+            "details": "Increase button and interactive element sizes to minimum 44px touch targets as per accessibility guidelines. Implement touch-specific CSS with hover state alternatives for mobile. Add visual feedback for touch interactions including active states and touch ripple effects. Optimize spacing between interactive elements to prevent accidental taps.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add mobile-specific navigation patterns",
+            "description": "Implement mobile navigation with hamburger menu and gesture support",
+            "dependencies": [
+              "18.1"
+            ],
+            "details": "Create collapsible hamburger menu for mobile navigation. Implement swipe gestures for navigation between sections. Add bottom navigation bar for primary actions on mobile. Create mobile-optimized breadcrumbs and ensure proper focus management for mobile screen readers.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement progressive web app features and service worker",
+            "description": "Add PWA capabilities with service worker for offline detection and app-like experience",
+            "dependencies": [
+              "18.2",
+              "18.3"
+            ],
+            "details": "Create service worker for basic offline detection and caching strategies. Add web app manifest for PWA installation. Implement app-like experience with fullscreen mode and splash screen. Add offline indicator and graceful degradation for network issues.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Optimize performance for mobile devices",
+            "description": "Implement performance optimizations specifically for mobile devices",
+            "dependencies": [
+              "18.4"
+            ],
+            "details": "Optimize images with responsive image loading and WebP format support. Implement lazy loading for non-critical content. Minimize JavaScript bundle size and implement code splitting. Add performance monitoring for Core Web Vitals on mobile devices. Optimize CSS delivery and eliminate render-blocking resources.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Test across various device sizes and browsers",
+            "description": "Comprehensive testing of responsive design across multiple devices and browsers",
+            "dependencies": [
+              "18.5"
+            ],
+            "details": "Test responsive design on various screen sizes from 320px to 1920px width. Verify touch interactions on actual mobile devices. Test PWA installation and offline functionality. Validate performance metrics on mid-tier mobile devices. Cross-browser testing on Chrome, Safari, Firefox mobile browsers.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 19,
+        "title": "Implement Security and Rate Limiting",
+        "description": "Add comprehensive security measures including XSS protection, CSRF tokens, and rate limiting",
+        "details": "Implement CSRF protection with SvelteKit's built-in CSRF tokens. Add XSS protection with input sanitization using DOMPurify. Configure security headers (HSTS, CSP, X-Frame-Options) in app.html and hooks. Implement rate limiting for API endpoints with different limits per endpoint type. Add request validation and SQL injection protection for future database migration.",
+        "testStrategy": "Test CSRF token validation, XSS prevention, security headers, rate limiting enforcement, and input validation across all endpoints",
+        "priority": "high",
+        "dependencies": [
+          "5",
+          "6"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement CSRF Protection with SvelteKit Tokens",
+            "description": "Configure and implement CSRF protection using SvelteKit's built-in CSRF token system",
+            "dependencies": [],
+            "details": "Enable CSRF protection in SvelteKit configuration, implement token validation in form submissions and API endpoints, add CSRF token generation and verification middleware",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Add XSS Protection with DOMPurify Input Sanitization",
+            "description": "Implement client-side and server-side XSS protection using DOMPurify for input sanitization",
+            "dependencies": [],
+            "details": "Install DOMPurify library, create input sanitization utilities, implement XSS filtering for user-generated content, add content security policy configuration",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Configure Security Headers (HSTS, CSP, X-Frame-Options)",
+            "description": "Set up comprehensive security headers in app.html and hooks for enhanced protection",
+            "dependencies": [],
+            "details": "Configure HSTS headers for HTTPS enforcement, implement Content Security Policy with appropriate directives, add X-Frame-Options and other security headers in hooks.server.js",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Rate Limiting with Endpoint-Specific Limits",
+            "description": "Create rate limiting system with different limits per endpoint type and user role",
+            "dependencies": [],
+            "details": "Implement rate limiting middleware using in-memory store or Redis, configure different limits for API endpoints (auth, WebSocket, voting), add rate limit headers and error responses",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add Request Validation and SQL Injection Protection",
+            "description": "Implement comprehensive input validation and SQL injection prevention measures",
+            "dependencies": [],
+            "details": "Create request validation schemas using Zod or similar, implement parameterized queries for database operations, add input sanitization for all user inputs, validate data types and formats",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Create Security Monitoring and Logging",
+            "description": "Implement security event monitoring, logging, and alerting system",
+            "dependencies": [
+              "19.1",
+              "19.2",
+              "19.4"
+            ],
+            "details": "Add security event logging for failed authentication attempts, rate limit violations, and suspicious activities, implement monitoring dashboards for security metrics, configure alerts for security incidents",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Test Security Measures and Penetration Scenarios",
+            "description": "Comprehensive testing of all security implementations including penetration testing scenarios",
+            "dependencies": [
+              "19.1",
+              "19.2",
+              "19.3",
+              "19.4",
+              "19.5"
+            ],
+            "details": "Test CSRF token validation, XSS prevention effectiveness, security headers configuration, rate limiting enforcement, input validation, and conduct basic penetration testing scenarios",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "title": "Build Analytics and Reporting System",
+        "description": "Implement event analytics with exportable reports and organizer insights",
+        "details": "Create analytics collection system tracking participation metrics, activity dwell times, voting funnel, and engagement patterns. Implement exportable reports in CSV/JSON format for rounds, teams, and game sessions. Add organizer dashboard widgets showing real-time and historical analytics. Include activity switch history with latency metrics and organizer attribution.",
+        "testStrategy": "Test analytics data collection accuracy, report generation and export, dashboard widgets, and historical data retrieval",
+        "priority": "medium",
+        "dependencies": [
+          "12",
+          "13"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create analytics data collection system",
+            "description": "Implement event tracking for participation metrics, activity dwell times, voting funnel, and engagement patterns",
+            "dependencies": [],
+            "details": "Set up analytics data models and collection endpoints to track user participation, time spent in activities, voting behavior funnel analysis, and overall engagement metrics. Create database schema for storing analytics events with proper indexing for performance.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement exportable reports functionality",
+            "description": "Build CSV/JSON export system for rounds, teams, and game sessions data",
+            "dependencies": [
+              "20.1"
+            ],
+            "details": "Create report generation service that can export analytics data in CSV and JSON formats. Include filtering options for date ranges, specific rounds, teams, or game sessions. Implement background job processing for large exports.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build organizer dashboard widgets",
+            "description": "Create real-time analytics dashboard components for organizers",
+            "dependencies": [
+              "20.1"
+            ],
+            "details": "Develop dashboard widgets showing real-time participation metrics, activity engagement, and voting statistics. Include charts and graphs for visual representation of data trends and current event status.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement activity switch history tracking",
+            "description": "Create system to track activity transitions with latency metrics and organizer attribution",
+            "dependencies": [
+              "20.1"
+            ],
+            "details": "Build functionality to record when activities are switched, measure transition latency, and track which organizer initiated the change. Store historical activity flow data for analysis.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create historical data retrieval and storage",
+            "description": "Implement data archival system and historical analytics queries",
+            "dependencies": [
+              "20.1",
+              "20.2"
+            ],
+            "details": "Set up data archival processes for long-term analytics storage. Create efficient query mechanisms for retrieving historical data across different time periods. Implement data retention policies and cleanup procedures.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Add analytics data validation and testing",
+            "description": "Implement comprehensive testing suite for analytics accuracy and performance",
+            "dependencies": [
+              "20.1",
+              "20.2",
+              "20.3",
+              "20.4",
+              "20.5"
+            ],
+            "details": "Create test suites to verify analytics data collection accuracy, report generation correctness, dashboard widget functionality, and historical data retrieval performance. Include load testing for analytics system under concurrent usage.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 21,
+        "title": "Implement Achievement System",
+        "description": "Build gamification features with achievement tracking and progress monitoring",
+        "details": "Create achievement definitions for participation milestones, voting engagement, game performance, and social interactions. Implement achievement tracking with progress bars and notification system. Add leaderboard functionality with privacy controls. Include achievement categories and social proof generation for sharing accomplishments.",
+        "testStrategy": "Test achievement triggers, progress tracking, leaderboard accuracy, privacy controls, and notification delivery",
+        "priority": "low",
+        "dependencies": [
+          "11",
+          "15"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create achievement definitions and tracking logic",
+            "description": "Define achievement types for participation milestones, voting engagement, game performance, and social interactions with tracking logic",
+            "dependencies": [],
+            "details": "Create achievement schema with categories (participation, voting, gaming, social). Define milestone thresholds and trigger conditions. Implement achievement data models and database tables. Create achievement validation and progress calculation logic.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement progress tracking with notification system",
+            "description": "Build progress bars and real-time notifications for achievement progress updates",
+            "dependencies": [
+              "21.1"
+            ],
+            "details": "Create progress tracking components with visual progress bars. Implement real-time progress updates using WebSocket connections. Build notification system for achievement unlocks and milestone progress. Add achievement progress persistence and state management.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add leaderboard functionality with privacy controls",
+            "description": "Create leaderboards for different achievement categories with user privacy settings",
+            "dependencies": [
+              "21.1"
+            ],
+            "details": "Build leaderboard components with ranking algorithms. Implement privacy controls allowing users to opt-in/out of public rankings. Create filtered leaderboards by achievement category and time period. Add leaderboard caching and performance optimization.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create achievement categories and social proof features",
+            "description": "Organize achievements into categories and implement social sharing functionality",
+            "dependencies": [
+              "21.1",
+              "21.2"
+            ],
+            "details": "Create achievement category system with badges and visual representations. Implement social proof generation for sharing achievements on social media. Build achievement showcase profiles and portfolio views. Add achievement verification and authenticity markers.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Test achievement triggers and progress updates",
+            "description": "Comprehensive testing of achievement system functionality and edge cases",
+            "dependencies": [
+              "21.2",
+              "21.3",
+              "21.4"
+            ],
+            "details": "Test achievement trigger conditions across all user actions. Verify progress tracking accuracy and real-time updates. Test leaderboard calculations and privacy controls. Validate notification delivery and achievement unlock flows. Test edge cases and concurrent user scenarios.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "title": "Add Event Template and Cloning System",
+        "description": "Implement event template creation and replication functionality for organizers",
+        "details": "Create event template system allowing organizers to save successful event configurations. Implement event cloning functionality with selective copying of settings, topics, and room configurations. Add template sharing between organizers with permission controls. Include template categorization and search functionality for easy discovery.",
+        "testStrategy": "Test template creation from existing events, cloning functionality, template sharing permissions, and template search capabilities",
+        "priority": "medium",
+        "dependencies": [
+          "7"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Event Template Data Structure and Storage",
+            "description": "Design and implement the database schema and data models for event templates",
+            "dependencies": [],
+            "details": "Create database tables for event templates including template metadata, configuration settings, and relationships. Implement data models for template storage with fields for name, description, category, creator, permissions, and template data (event settings, topics, room configurations). Add database migrations and validation rules for template data integrity.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Template Creation from Existing Events",
+            "description": "Build functionality to create templates from existing event configurations",
+            "dependencies": [
+              "22.1"
+            ],
+            "details": "Develop template creation interface allowing organizers to save current event configurations as templates. Implement template data extraction from existing events including settings, topics, room configurations, and metadata. Add template naming, description, and categorization during creation. Include validation to ensure template completeness and usability.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add Event Cloning with Selective Copying",
+            "description": "Implement event cloning functionality with options for selective copying of template elements",
+            "dependencies": [
+              "22.1",
+              "22.2"
+            ],
+            "details": "Create event cloning interface with checkboxes or toggles for selective copying of template elements (settings, topics, rooms, etc.). Implement cloning logic that respects user selections and creates new event instances. Add conflict resolution for template elements that may not be compatible with current system state. Include preview functionality before final cloning.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create Template Sharing with Permission Controls",
+            "description": "Implement template sharing system with granular permission controls",
+            "dependencies": [
+              "22.1"
+            ],
+            "details": "Develop permission system for template sharing with roles (view, use, edit, share). Implement sharing interface allowing organizers to share templates with specific users or make them public. Add permission validation and access control throughout template operations. Include sharing history and revocation capabilities for template owners.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add Template Categorization and Search Functionality",
+            "description": "Implement template organization with categories and search capabilities",
+            "dependencies": [
+              "22.1",
+              "22.4"
+            ],
+            "details": "Create template categorization system with predefined and custom categories. Implement search functionality with filters for category, creator, keywords, and usage frequency. Add template discovery interface with sorting options (newest, most used, highest rated). Include template preview and metadata display for easy template selection.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 23,
+        "title": "Implement Internationalization (i18n)",
+        "description": "Add multi-language support starting with English and French",
+        "details": "Install and configure svelte-i18n for internationalization. Create translation files for English (en-US) and French (fr-FR) with proper fallback mechanisms. Implement locale-aware formatting for dates, times, and numbers using Intl API. Add language switcher component and locale persistence. Structure content for easy extension to additional languages.",
+        "testStrategy": "Test language switching, translation completeness, locale-aware formatting, fallback behavior, and text rendering in both languages",
+        "priority": "medium",
+        "dependencies": [
+          "14"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install and configure svelte-i18n",
+            "description": "Set up the svelte-i18n library and configure it for the project",
+            "dependencies": [],
+            "details": "Install svelte-i18n package, configure the initialization in app.html or main layout, set up the i18n store and configuration with default locale settings, and establish the basic project structure for internationalization",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Create translation files for English and French",
+            "description": "Build comprehensive translation files with proper fallback mechanisms",
+            "dependencies": [
+              "23.1"
+            ],
+            "details": "Create JSON translation files for en-US and fr-FR locales, implement proper namespace organization for different app sections, establish fallback hierarchy with English as default, and ensure translation key consistency across both languages",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement locale-aware formatting with Intl API",
+            "description": "Add proper formatting for dates, times, and numbers based on user locale",
+            "dependencies": [
+              "23.1"
+            ],
+            "details": "Implement date and time formatting utilities using Intl.DateTimeFormat, create number formatting functions with Intl.NumberFormat, add currency and percentage formatting support, and integrate these utilities throughout the application",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Add language switcher component",
+            "description": "Create a UI component for users to switch between available languages",
+            "dependencies": [
+              "23.2"
+            ],
+            "details": "Build a language selector dropdown or toggle component, implement smooth language switching with proper UI updates, add visual indicators for current language, and ensure the component integrates well with the existing design system",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create locale persistence mechanism",
+            "description": "Implement storage and retrieval of user language preferences",
+            "dependencies": [
+              "23.4"
+            ],
+            "details": "Add locale preference storage using localStorage or cookies, implement automatic locale detection from browser settings, ensure locale persistence across sessions and page reloads, and handle edge cases for unsupported locales",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Test translation completeness and fallback behavior",
+            "description": "Comprehensive testing of i18n implementation and edge cases",
+            "dependencies": [
+              "23.5"
+            ],
+            "details": "Test all UI elements render correctly in both languages, verify fallback behavior for missing translations, test locale switching functionality, validate date/number formatting across locales, and ensure no text overflow or layout issues occur with different language content lengths",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "title": "Add Data Export and GDPR Compliance",
+        "description": "Implement data portability, export capabilities, and privacy compliance features",
+        "details": "Create data export functionality allowing users to download their personal data in JSON/CSV format. Implement data deletion workflows for GDPR compliance with proper anonymization. Add consent logging and privacy notice management. Include data retention policies and automated cleanup for inactive accounts. Create audit trail for all privacy-related actions.",
+        "testStrategy": "Test data export accuracy, deletion workflows, consent management, privacy notices, and audit trail completeness",
+        "priority": "medium",
+        "dependencies": [
+          "20",
+          "5"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create data export functionality for personal data",
+            "description": "Implement user data export system that allows users to download their personal data in JSON and CSV formats",
+            "dependencies": [],
+            "details": "Build API endpoint to collect user's personal data from all relevant tables (profile, activities, votes, etc.). Create export service that formats data into structured JSON and CSV files. Add download functionality with secure token-based access. Include data validation to ensure completeness and accuracy of exported information.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement data deletion workflows with anonymization",
+            "description": "Create secure data deletion system that properly anonymizes user data while maintaining referential integrity",
+            "dependencies": [
+              "24.1"
+            ],
+            "details": "Design anonymization strategy for user data that preserves analytics while removing PII. Implement cascade deletion workflows for user accounts. Create data anonymization utilities that replace personal identifiers with anonymous tokens. Add validation to ensure complete data removal and proper anonymization.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add consent logging and privacy notice management",
+            "description": "Implement system to track user consent and manage privacy notices with version control",
+            "dependencies": [],
+            "details": "Create consent logging database schema to track user agreements and withdrawals. Build privacy notice management system with versioning capabilities. Implement consent collection UI components with clear opt-in/opt-out mechanisms. Add consent validation middleware for data processing operations.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create data retention policies and automated cleanup",
+            "description": "Implement automated data retention policies with scheduled cleanup for inactive accounts",
+            "dependencies": [
+              "24.2"
+            ],
+            "details": "Define data retention periods for different data types (personal data, analytics, logs). Create automated cleanup jobs that run on schedule to remove expired data. Implement account inactivity detection and notification system. Add configuration system for retention policy management and compliance reporting.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add audit trail for privacy actions",
+            "description": "Create comprehensive audit logging system for all privacy-related actions and data operations",
+            "dependencies": [
+              "24.2",
+              "24.3"
+            ],
+            "details": "Design audit log schema to capture all privacy-related events (exports, deletions, consent changes). Implement audit logging middleware for automatic event capture. Create audit trail viewing interface for compliance officers. Add tamper-proof logging with cryptographic signatures and retention guarantees.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement data portability features",
+            "description": "Build data portability system allowing users to transfer their data to external services",
+            "dependencies": [
+              "24.1"
+            ],
+            "details": "Create standardized data export formats compatible with common platforms. Implement secure data transfer mechanisms with API integrations. Add data validation and integrity checks for portability. Include user-friendly interface for initiating and monitoring data transfers with progress tracking.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Test compliance workflows and validation",
+            "description": "Comprehensive testing of all GDPR compliance features and workflows to ensure legal requirements are met",
+            "dependencies": [
+              "24.1",
+              "24.2",
+              "24.3",
+              "24.4",
+              "24.5",
+              "24.6"
+            ],
+            "details": "Create test suite for data export accuracy and completeness. Test data deletion and anonymization workflows. Validate consent logging and privacy notice functionality. Test automated cleanup and retention policies. Verify audit trail completeness and integrity. Conduct compliance validation against GDPR requirements.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 25,
+        "title": "Implement Error Handling and Monitoring",
+        "description": "Add comprehensive error handling, logging, and monitoring infrastructure",
+        "details": "Implement centralized error handling with user-friendly error messages and fallback behaviors. Add structured logging with error categorization and context tracking. Configure monitoring dashboards for WebSocket success rates, activity switch latency, and error budgets. Include automated alerting for critical failures and performance degradation.",
+        "testStrategy": "Test error handling across all user flows, logging accuracy, monitoring dashboards, alert triggers, and graceful degradation scenarios",
+        "priority": "high",
+        "dependencies": [
+          "6",
+          "19"
+        ],
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Centralized Error Handling System",
+            "description": "Create centralized error handling infrastructure with user-friendly error messages and standardized error response formats",
+            "dependencies": [],
+            "details": "Build error handling middleware and utilities that capture, categorize, and format errors consistently across the application. Implement user-friendly error messages that hide technical details while providing actionable guidance. Create error boundaries for UI components and API endpoints.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Add Structured Logging with Error Categorization",
+            "description": "Implement comprehensive logging system with error categorization and context tracking",
+            "dependencies": [
+              "25.1"
+            ],
+            "details": "Set up structured logging with appropriate log levels (error, warn, info, debug). Implement error categorization system to classify errors by type, severity, and source. Add context tracking to capture user actions, session data, and system state during errors.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create Monitoring Dashboards for WebSocket and Performance Metrics",
+            "description": "Build monitoring dashboards to track WebSocket success rates, activity switch latency, and error budgets",
+            "dependencies": [
+              "25.2"
+            ],
+            "details": "Implement monitoring infrastructure to track key performance indicators including WebSocket connection success rates, message delivery latency, activity switching performance, and error rate budgets. Create visual dashboards for real-time monitoring and historical analysis.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Automated Alerting for Critical Failures",
+            "description": "Set up automated alerting system for critical failures and performance degradation",
+            "dependencies": [
+              "25.3"
+            ],
+            "details": "Configure alerting rules for critical system failures, performance threshold breaches, and error rate spikes. Implement notification channels (email, SMS, webhook) with escalation policies. Set up alert suppression to prevent notification fatigue and ensure alerts are actionable.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add Graceful Degradation for Connection Failures",
+            "description": "Implement graceful degradation mechanisms for WebSocket and network connection failures",
+            "dependencies": [
+              "25.1"
+            ],
+            "details": "Build fallback mechanisms for WebSocket connection failures including automatic reconnection with exponential backoff. Implement offline mode capabilities and queue management for failed operations. Add user feedback for connection status and degraded functionality.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Create Error Recovery Mechanisms",
+            "description": "Develop automated error recovery and manual recovery options for system failures",
+            "dependencies": [
+              "25.5"
+            ],
+            "details": "Implement automatic recovery mechanisms for transient errors and connection issues. Create manual recovery options for users when automatic recovery fails. Add retry logic with circuit breaker patterns and implement data synchronization after recovery.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Test Error Scenarios and Monitoring Accuracy",
+            "description": "Comprehensive testing of error handling, monitoring systems, and recovery mechanisms",
+            "dependencies": [
+              "25.4",
+              "25.6"
+            ],
+            "details": "Create comprehensive test suite for error scenarios including network failures, server errors, and edge cases. Validate monitoring accuracy and alert triggering. Test recovery mechanisms and graceful degradation. Perform load testing to ensure error handling performs under stress.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 26,
+        "title": "Build Testing Infrastructure",
+        "description": "Implement comprehensive testing suite including unit, integration, and E2E tests",
+        "details": "Set up Vitest for unit testing and Playwright for E2E testing. Create test utilities for mocking WebSocket connections and authentication. Implement tests for core user journeys: join & vote, orchestrate activities, distribute teams, and monitor platform health. Add load testing simulation for 200 concurrent participants. Configure CI/CD integration with test automation.",
+        "testStrategy": "Verify test coverage meets requirements, load tests handle target concurrent users, E2E tests cover critical paths, and CI/CD pipeline runs all tests successfully",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up Vitest for unit testing",
+            "description": "Configure Vitest testing framework for unit tests with proper configuration and test environment setup",
+            "dependencies": [],
+            "details": "Install Vitest and configure vitest.config.js with proper TypeScript support, coverage settings, and test environment. Set up test utilities for common mocking patterns and assertion helpers. Configure test scripts in package.json and establish testing folder structure.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Configure Playwright for E2E testing",
+            "description": "Set up Playwright for end-to-end testing with browser configuration and test environment",
+            "dependencies": [],
+            "details": "Install Playwright and configure playwright.config.js with multiple browser support (Chromium, Firefox, WebKit). Set up test environment with proper base URLs, timeouts, and retry configurations. Create page object models for common UI interactions and establish E2E test folder structure.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create test utilities for WebSocket and auth mocking",
+            "description": "Build comprehensive mocking utilities for WebSocket connections and authentication flows",
+            "dependencies": [
+              "26.1"
+            ],
+            "details": "Create mock WebSocket server utilities for testing real-time features. Implement authentication mocking helpers for different user roles and session states. Build test fixtures for common data scenarios and create helper functions for setup/teardown of test environments.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement tests for core user journeys",
+            "description": "Create comprehensive tests covering join & vote, orchestrate activities, distribute teams, and monitor platform health",
+            "dependencies": [
+              "26.2",
+              "26.3"
+            ],
+            "details": "Write E2E tests for user onboarding flow, voting mechanisms, activity orchestration, and team distribution. Create integration tests for real-time synchronization and state management. Include tests for error scenarios and edge cases in each user journey.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add load testing for 200 concurrent users",
+            "description": "Implement load testing infrastructure to simulate 200 concurrent participants",
+            "dependencies": [
+              "26.3"
+            ],
+            "details": "Set up load testing framework (Artillery or k6) to simulate concurrent user sessions. Create realistic load testing scenarios for WebSocket connections, voting activities, and real-time interactions. Configure performance monitoring and establish baseline metrics for acceptable performance thresholds.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Create CI/CD integration with test automation",
+            "description": "Configure continuous integration pipeline with automated test execution and reporting",
+            "dependencies": [
+              "26.1",
+              "26.2",
+              "26.4"
+            ],
+            "details": "Set up GitHub Actions or similar CI/CD pipeline to run unit tests, E2E tests, and load tests on pull requests and deployments. Configure test result reporting, coverage reporting, and failure notifications. Include parallel test execution and caching for optimal pipeline performance.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Add accessibility testing with axe-core",
+            "description": "Implement automated accessibility testing to ensure WCAG compliance",
+            "dependencies": [
+              "26.2"
+            ],
+            "details": "Install and configure axe-core for automated accessibility testing. Integrate accessibility checks into E2E test suite and create specific accessibility test scenarios. Set up reporting for accessibility violations and establish accessibility standards for the platform.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Test coverage validation and reporting",
+            "description": "Set up comprehensive test coverage tracking and reporting with quality gates",
+            "dependencies": [
+              "26.1",
+              "26.6"
+            ],
+            "details": "Configure code coverage collection with Istanbul/c8 and set coverage thresholds (minimum 80% coverage). Create coverage reports in multiple formats (HTML, JSON, LCOV) and integrate with CI/CD pipeline. Set up coverage quality gates to prevent deployment of under-tested code.",
+            "status": "done",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 27,
+        "title": "Optimize Performance and Loading",
+        "description": "Implement performance optimizations to meet loading and interaction targets",
+        "details": "Optimize bundle size with code splitting and dynamic imports. Implement lazy loading for non-critical components and images. Add performance monitoring with Core Web Vitals tracking (LCP < 2.5s target). Optimize WebSocket connection management and implement connection pooling. Add caching strategies for static assets and API responses.",
+        "testStrategy": "Test loading performance on mid-tier mobile devices, measure Core Web Vitals, verify code splitting effectiveness, and validate caching behavior",
+        "priority": "medium",
+        "dependencies": [
+          "18",
+          "25"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement code splitting and dynamic imports",
+            "description": "Set up webpack/Vite code splitting with dynamic imports for route-based and component-based splitting",
+            "dependencies": [],
+            "details": "Configure SvelteKit for automatic code splitting, implement dynamic imports for heavy components and routes, set up chunk optimization for optimal bundle sizes",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Add lazy loading for components and images",
+            "description": "Implement lazy loading strategies for non-critical UI components and image assets",
+            "dependencies": [],
+            "details": "Create lazy loading wrapper components, implement intersection observer for image lazy loading, add skeleton loading states for better UX",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Configure Core Web Vitals monitoring",
+            "description": "Set up performance monitoring with LCP target under 2.5 seconds",
+            "dependencies": [],
+            "details": "Integrate web-vitals library, implement Core Web Vitals tracking (LCP, FID, CLS), set up performance dashboard and alerting for target thresholds",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Optimize WebSocket connection management",
+            "description": "Implement efficient WebSocket connection handling with pooling and reconnection strategies",
+            "dependencies": [],
+            "details": "Add connection pooling for WebSocket connections, implement automatic reconnection with exponential backoff, optimize message queuing and batching",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement caching strategies",
+            "description": "Add comprehensive caching for static assets and API responses",
+            "dependencies": [],
+            "details": "Configure HTTP caching headers, implement service worker caching for static assets, add API response caching with appropriate TTL and invalidation strategies",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Optimize bundle size",
+            "description": "Analyze and reduce overall bundle size through tree shaking and dependency optimization",
+            "dependencies": [
+              "27.1"
+            ],
+            "details": "Run bundle analysis, remove unused dependencies, implement tree shaking optimizations, analyze and optimize third-party library imports",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Test performance on mobile devices",
+            "description": "Validate performance optimizations on mid-tier mobile devices and various network conditions",
+            "dependencies": [
+              "27.1",
+              "27.2",
+              "27.3",
+              "27.4",
+              "27.5",
+              "27.6"
+            ],
+            "details": "Test loading performance on mid-tier mobile devices, validate Core Web Vitals metrics, test under throttled network conditions, ensure performance targets are met",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 28,
+        "title": "Create Documentation and Help System",
+        "description": "Build comprehensive user documentation with tutorials and troubleshooting guides",
+        "details": "Create in-app help system with contextual guidance and tooltips. Build comprehensive documentation covering setup, configuration, and user workflows. Add video walkthrough tutorials for key features. Implement FAQ system with search functionality. Create troubleshooting guides for common issues and connectivity problems.",
+        "testStrategy": "Test help system accessibility, documentation completeness, video tutorial clarity, FAQ search functionality, and troubleshooting guide effectiveness",
+        "priority": "medium",
+        "dependencies": [
+          "15",
+          "16"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create In-App Help System with Contextual Guidance",
+            "description": "Implement contextual help system with tooltips and guided interactions throughout the application",
+            "dependencies": [],
+            "details": "Build in-app help overlay system with contextual tooltips for key UI elements. Create guided tour functionality for first-time users. Implement help trigger buttons and contextual help panels that appear based on user location in the app. Add help content management system for easy updates.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Build Comprehensive Setup and User Workflow Documentation",
+            "description": "Create detailed documentation covering installation, configuration, and all user workflows",
+            "dependencies": [
+              "28.1"
+            ],
+            "details": "Write comprehensive documentation in markdown format covering system requirements, installation steps, initial configuration, and detailed user workflows for each feature. Create API documentation and developer guides. Organize documentation with clear navigation and search functionality.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add Video Tutorial Creation and Integration",
+            "description": "Create video walkthrough tutorials for key features and integrate them into the documentation system",
+            "dependencies": [
+              "28.2"
+            ],
+            "details": "Record video tutorials for core features including event creation, activity management, and user participation flows. Implement video player integration within documentation. Create video hosting solution and ensure videos are accessible and properly captioned for accessibility compliance.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement FAQ System with Search Functionality",
+            "description": "Build searchable FAQ system with categorized questions and answers",
+            "dependencies": [
+              "28.2"
+            ],
+            "details": "Create FAQ database structure with categories, tags, and search indexing. Implement search functionality with keyword matching and relevance scoring. Build FAQ management interface for adding and updating questions. Add FAQ integration points throughout the application for contextual help.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create Troubleshooting Guides for Common Issues",
+            "description": "Develop comprehensive troubleshooting documentation for connectivity and common user problems",
+            "dependencies": [
+              "28.3",
+              "28.4"
+            ],
+            "details": "Create troubleshooting guides for WebSocket connectivity issues, browser compatibility problems, and common user errors. Implement diagnostic tools for users to test their connection and system compatibility. Add error code reference guide and step-by-step resolution procedures.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 29,
+        "title": "Implement Backup and Recovery System",
+        "description": "Add automated backup, disaster recovery, and data integrity verification",
+        "details": "Implement automated backup system with 30-minute intervals and 7-day retention. Create disaster recovery procedures with 30-minute RTO target. Add data integrity verification with checksums and corruption detection. Implement backup restoration testing and validation procedures. Include backup monitoring and alerting for failures.",
+        "testStrategy": "Test backup creation and restoration, data integrity verification, disaster recovery procedures, and backup monitoring alerts",
+        "priority": "medium",
+        "dependencies": [
+          "4",
+          "25"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Automated Backup System with 30-minute Intervals",
+            "description": "Create automated backup functionality that runs every 30 minutes with 7-day retention policy",
+            "dependencies": [],
+            "details": "Set up scheduled backup jobs using cron or similar scheduling mechanism. Implement backup creation logic that captures application data, database state, and configuration files. Configure 30-minute interval timing and implement 7-day retention policy with automatic cleanup of old backups. Include backup metadata tracking and file organization.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Create Disaster Recovery Procedures with 30-minute RTO",
+            "description": "Develop disaster recovery procedures and automation to meet 30-minute Recovery Time Objective",
+            "dependencies": [
+              "29.1"
+            ],
+            "details": "Design and document disaster recovery procedures including failover processes, data restoration steps, and service recovery workflows. Implement automated recovery scripts and procedures to minimize downtime. Create recovery playbooks and ensure 30-minute RTO compliance through testing and optimization.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Add Data Integrity Verification with Checksums",
+            "description": "Implement data integrity verification using checksums and corruption detection",
+            "dependencies": [
+              "29.1"
+            ],
+            "details": "Create checksum generation for all backup files using SHA-256 or similar cryptographic hash functions. Implement corruption detection mechanisms that verify data integrity before and after backup operations. Add automated integrity checks that run during backup creation and restoration processes.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Backup Restoration and Validation",
+            "description": "Build backup restoration functionality with comprehensive validation procedures",
+            "dependencies": [
+              "29.2",
+              "29.3"
+            ],
+            "details": "Create backup restoration workflows that can restore from any valid backup point. Implement validation procedures to verify restored data integrity and completeness. Add restoration testing automation that validates backup quality and restoration success. Include rollback capabilities for failed restoration attempts.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create Backup Monitoring and Alerting",
+            "description": "Implement monitoring system with alerting for backup failures and issues",
+            "dependencies": [
+              "29.1"
+            ],
+            "details": "Set up monitoring for backup job success/failure rates, backup file integrity, and storage capacity. Implement alerting system that notifies administrators of backup failures, corruption detection, or storage issues. Create monitoring dashboards with backup health metrics and historical trend analysis.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Test Backup and Recovery Procedures",
+            "description": "Conduct comprehensive testing of backup creation, restoration, and disaster recovery procedures",
+            "dependencies": [
+              "29.4",
+              "29.5"
+            ],
+            "details": "Perform end-to-end testing of backup creation, data integrity verification, and restoration processes. Conduct disaster recovery drills to validate RTO compliance and procedure effectiveness. Test backup monitoring alerts and validate restoration under various failure scenarios. Document test results and refine procedures based on findings.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 30,
+        "title": "Conduct Security Audit and Penetration Testing",
+        "description": "Perform comprehensive security assessment and vulnerability testing",
+        "details": "Conduct security audit covering authentication, authorization, data protection, and API security. Perform penetration testing on WebSocket connections, real-time features, and admin interfaces. Test for common vulnerabilities (OWASP Top 10) and implement fixes. Add security scanning to CI/CD pipeline. Document security procedures and incident response plans.",
+        "testStrategy": "Verify no critical security vulnerabilities exist, all authentication flows are secure, data encryption works correctly, and security scanning passes in CI/CD",
+        "priority": "high",
+        "dependencies": [
+          "19",
+          "24"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Conduct Authentication and Authorization Security Audit",
+            "description": "Perform comprehensive security assessment of authentication flows, session management, and authorization controls",
+            "dependencies": [],
+            "details": "Audit all authentication mechanisms including login/logout flows, session token handling, password policies, and multi-factor authentication if implemented. Review authorization logic for role-based access control (guest, participant, organizer, admin). Test for privilege escalation vulnerabilities, session fixation, and authentication bypass scenarios. Validate secure storage of credentials and proper session timeout handling.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Perform WebSocket and Real-time Feature Penetration Testing",
+            "description": "Conduct specialized security testing of WebSocket connections and real-time communication features",
+            "dependencies": [
+              "30.1"
+            ],
+            "details": "Test WebSocket authentication and authorization mechanisms. Perform injection attacks through WebSocket messages. Test for message tampering, replay attacks, and unauthorized access to real-time channels. Validate rate limiting on WebSocket connections and message flooding prevention. Test reconnection security and session hijacking scenarios.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Test for OWASP Top 10 Vulnerabilities",
+            "description": "Systematically test application against OWASP Top 10 security risks",
+            "dependencies": [
+              "30.1"
+            ],
+            "details": "Test for injection vulnerabilities (SQL, NoSQL, XSS, command injection). Verify authentication and session management security. Test for sensitive data exposure and XML external entities. Validate access control implementations. Test for security misconfigurations, known vulnerable components, and insufficient logging. Verify proper error handling without information disclosure.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Audit Admin Interface and Elevated Privilege Scenarios",
+            "description": "Perform security testing of administrative functions and privilege escalation scenarios",
+            "dependencies": [
+              "30.1"
+            ],
+            "details": "Test admin-only functionality for proper access controls. Attempt privilege escalation from guest to participant to organizer to admin roles. Validate admin event management, user management, and system configuration security. Test for horizontal privilege escalation between events and organizations. Verify admin audit logging and sensitive operation validation.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Add Security Scanning to CI/CD Pipeline",
+            "description": "Integrate automated security scanning tools into the continuous integration pipeline",
+            "dependencies": [
+              "30.2",
+              "30.3"
+            ],
+            "details": "Configure SAST (Static Application Security Testing) tools like ESLint security plugins, Semgrep, or Sonar. Add dependency vulnerability scanning with npm audit or Snyk. Implement DAST (Dynamic Application Security Testing) for automated penetration testing. Configure security scanning to run on every pull request and deployment. Set up security gates to prevent deployment of vulnerable code.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Document Security Procedures and Incident Response",
+            "description": "Create comprehensive security documentation and incident response procedures",
+            "dependencies": [
+              "30.4"
+            ],
+            "details": "Document security architecture, threat model, and security controls. Create incident response playbook including detection, containment, eradication, and recovery procedures. Document security monitoring and alerting procedures. Create security training materials for development team. Establish security review process for code changes and new features.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Create Vulnerability Remediation Plan",
+            "description": "Develop prioritized plan for addressing discovered security vulnerabilities",
+            "dependencies": [
+              "30.3",
+              "30.4"
+            ],
+            "details": "Catalog all discovered vulnerabilities with CVSS scores and risk ratings. Create remediation timeline based on risk severity and business impact. Develop implementation plan for security fixes including code changes, configuration updates, and infrastructure modifications. Assign responsibility for each vulnerability remediation and track progress.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Validate All Security Fixes and Controls",
+            "description": "Verify implementation and effectiveness of all security measures and vulnerability fixes",
+            "dependencies": [
+              "30.5",
+              "30.6",
+              "30.7"
+            ],
+            "details": "Re-test all previously identified vulnerabilities to confirm remediation. Validate security controls are functioning as designed through penetration testing. Verify CI/CD security scanning is detecting vulnerabilities correctly. Test incident response procedures through tabletop exercises. Conduct final security assessment to ensure no new vulnerabilities were introduced during remediation.",
+            "status": "pending",
+            "testStrategy": "",
+            "parentId": "undefined"
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2025-09-29T09:37:04.888Z",
+      "taskCount": 30,
+      "completedCount": 7,
+      "tags": [
+        "master"
+      ],
+      "created": "2025-09-29T10:31:00.396Z",
+      "description": "Tasks for master context",
+      "updated": "2025-09-29T18:11:48.101Z"
+    }
+  }
+}
