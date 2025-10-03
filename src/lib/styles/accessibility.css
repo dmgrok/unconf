@@ -1,0 +1,371 @@
+/* Accessibility styles for WCAG 2.1 AA compliance */
+
+/* Screen reader only content */
+.sr-only {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	padding: 0 !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	white-space: nowrap !important;
+	border: 0 !important;
+}
+
+/* Screen reader only content that becomes visible on focus */
+.sr-only-focusable:not(:focus):not(:active) {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	padding: 0 !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	white-space: nowrap !important;
+	border: 0 !important;
+}
+
+/* Skip links for keyboard navigation */
+.skip-link {
+	position: absolute;
+	top: -40px;
+	left: var(--spacing-2);
+	background: var(--color-primary);
+	color: var(--color-primary-text);
+	padding: var(--spacing-2) var(--spacing-4);
+	text-decoration: none;
+	border-radius: var(--radius-md);
+	z-index: var(--z-tooltip);
+	font-weight: var(--font-weight-medium);
+	font-size: var(--font-size-sm);
+	transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+	top: var(--spacing-2);
+}
+
+/* Focus styles that respect user preferences */
+:focus {
+	outline: none;
+}
+
+:focus-visible {
+	outline: 2px solid var(--color-focus);
+	outline-offset: 2px;
+	border-radius: var(--radius-sm);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+	:focus-visible {
+		outline-width: 3px;
+		outline-offset: 3px;
+	}
+
+	button,
+	input,
+	select,
+	textarea {
+		border-width: 2px;
+	}
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* Font size adjustments for better readability */
+html {
+	font-size: 16px; /* Ensure 1rem = 16px for consistent sizing */
+}
+
+/* Ensure minimum target size for interactive elements (44x44px minimum) */
+button,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+a,
+[role="button"],
+[role="link"],
+select,
+.clickable {
+	min-height: 44px;
+	min-width: 44px;
+}
+
+/* Exception for inline elements that shouldn't have minimum size */
+a:not(.btn),
+button.btn-sm,
+.inline-control {
+	min-height: auto;
+	min-width: auto;
+}
+
+/* Ensure form controls have proper spacing */
+input,
+select,
+textarea {
+	margin: var(--spacing-1) 0;
+}
+
+/* Improve focus visibility for form controls */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+	outline: 2px solid var(--color-focus);
+	outline-offset: 2px;
+	box-shadow: 0 0 0 3px var(--color-focus-outline);
+}
+
+/* Error states for form validation */
+[aria-invalid="true"],
+.error {
+	border-color: var(--color-danger) !important;
+}
+
+[aria-invalid="true"]:focus-visible,
+.error:focus-visible {
+	outline-color: var(--color-danger);
+	box-shadow: 0 0 0 3px var(--color-danger-light);
+}
+
+/* Live regions for announcements */
+[aria-live="polite"],
+[aria-live="assertive"] {
+	position: absolute;
+	left: -10000px;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+/* Ensure sufficient spacing for readability */
+p, li, dd {
+	line-height: var(--line-height-normal);
+}
+
+/* Improve readability of text content */
+article,
+.content {
+	max-width: 70ch; /* Optimal line length for reading */
+}
+
+/* Table accessibility */
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+th, td {
+	padding: var(--spacing-2) var(--spacing-3);
+	text-align: left;
+	border-bottom: 1px solid var(--color-border);
+}
+
+th {
+	background-color: var(--color-surface-secondary);
+	font-weight: var(--font-weight-semibold);
+}
+
+/* Caption styling */
+caption {
+	padding: var(--spacing-3);
+	caption-side: top;
+	text-align: left;
+	font-weight: var(--font-weight-semibold);
+	color: var(--color-text-primary);
+}
+
+/* List accessibility */
+ul, ol {
+	padding-left: var(--spacing-6);
+}
+
+li {
+	margin-bottom: var(--spacing-1);
+}
+
+/* Definition lists */
+dt {
+	font-weight: var(--font-weight-semibold);
+	margin-top: var(--spacing-3);
+}
+
+dd {
+	margin-left: var(--spacing-4);
+	margin-bottom: var(--spacing-2);
+}
+
+/* Blockquote accessibility */
+blockquote {
+	margin: var(--spacing-4) 0;
+	padding: var(--spacing-3) var(--spacing-4);
+	border-left: 4px solid var(--color-primary);
+	background-color: var(--color-surface-secondary);
+	font-style: italic;
+}
+
+/* Code accessibility */
+code {
+	background-color: var(--color-surface-secondary);
+	padding: var(--spacing-1) var(--spacing-2);
+	border-radius: var(--radius-sm);
+	font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+	font-size: 0.9em;
+}
+
+pre {
+	background-color: var(--color-surface-secondary);
+	padding: var(--spacing-4);
+	border-radius: var(--radius-md);
+	overflow-x: auto;
+	line-height: var(--line-height-normal);
+}
+
+pre code {
+	background: none;
+	padding: 0;
+}
+
+/* Alert/notification accessibility */
+.alert,
+[role="alert"],
+[role="status"] {
+	padding: var(--spacing-3) var(--spacing-4);
+	border-radius: var(--radius-md);
+	margin: var(--spacing-3) 0;
+	border-left: 4px solid currentColor;
+}
+
+.alert-error {
+	background-color: var(--color-danger-light);
+	color: var(--color-danger);
+	border-color: var(--color-danger);
+}
+
+.alert-warning {
+	background-color: var(--color-warning-light);
+	color: var(--color-warning);
+	border-color: var(--color-warning);
+}
+
+.alert-success {
+	background-color: var(--color-success-light);
+	color: var(--color-success);
+	border-color: var(--color-success);
+}
+
+.alert-info {
+	background-color: var(--color-primary-light);
+	color: var(--color-primary);
+	border-color: var(--color-primary);
+}
+
+/* Tooltip accessibility */
+[role="tooltip"] {
+	background-color: var(--color-neutral-800);
+	color: var(--color-neutral-100);
+	padding: var(--spacing-2) var(--spacing-3);
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-sm);
+	max-width: 200px;
+	z-index: var(--z-tooltip);
+}
+
+/* Dark theme tooltip adjustment */
+[data-theme="dark"] [role="tooltip"] {
+	background-color: var(--color-neutral-100);
+	color: var(--color-neutral-800);
+}
+
+/* Progress indicator accessibility */
+[role="progressbar"] {
+	background-color: var(--color-surface-secondary);
+	border-radius: var(--radius-full);
+	overflow: hidden;
+	height: 8px;
+}
+
+[role="progressbar"]::before {
+	content: '';
+	display: block;
+	height: 100%;
+	background-color: var(--color-primary);
+	border-radius: inherit;
+	transition: width var(--transition-base);
+}
+
+/* Ensure text remains readable at 200% zoom */
+@media (min-resolution: 192dpi) {
+	body {
+		font-size: 1.1rem;
+	}
+}
+
+/* Print accessibility */
+@media print {
+	.skip-link,
+	.sr-only,
+	[aria-hidden="true"] {
+		display: none !important;
+	}
+
+	a::after {
+		content: " (" attr(href) ")";
+		font-size: 0.8em;
+		color: var(--color-text-secondary);
+	}
+
+	a[href^="#"]::after,
+	a[href^="javascript:"]::after {
+		content: "";
+	}
+}
+
+/* Windows High Contrast Mode support */
+@media (prefers-contrast: high) {
+	/* Ensure borders are visible in high contrast mode */
+	button,
+	input,
+	select,
+	textarea,
+	.card,
+	.modal {
+		border: 1px solid;
+	}
+
+	/* Ensure focus indicators are visible */
+	:focus-visible {
+		outline: 3px solid;
+		outline-offset: 2px;
+	}
+}
+
+/* Forced colors mode (Windows High Contrast) */
+@media (forced-colors: active) {
+	/* Let the system handle colors in forced colors mode */
+	.btn {
+		border: 1px solid;
+	}
+
+	.card {
+		border: 1px solid;
+	}
+
+	:focus-visible {
+		outline: 2px solid;
+		outline-offset: 2px;
+	}
+}

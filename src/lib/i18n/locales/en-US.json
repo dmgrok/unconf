@@ -1,0 +1,355 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "clear": "Clear",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "submit": "Submit",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "settings": "Settings",
+    "help": "Help",
+    "about": "About",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "terms": "Terms of Service"
+  },
+
+  "navigation": {
+    "brand": "UnConf",
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "events": "Events",
+    "templates": "Templates",
+    "profile": "Profile",
+    "admin": "Admin",
+    "language": "Language"
+  },
+
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "signInWithGoogle": "Sign In with Google",
+    "continueAsGuest": "Continue as Guest",
+    "welcome": "Welcome",
+    "hello": "Hello, {name}!",
+    "guestBadge": "Guest",
+    "notAuthenticated": "You need to sign in to access this feature",
+    "sessionExpired": "Your session has expired. Please sign in again."
+  },
+
+  "events": {
+    "title": "Events",
+    "create": "Create Event",
+    "edit": "Edit Event",
+    "delete": "Delete Event",
+    "clone": "Clone Event",
+    "share": "Share Event",
+    "join": "Join Event",
+    "leave": "Leave Event",
+    "start": "Start Event",
+    "pause": "Pause Event",
+    "resume": "Resume Event",
+    "end": "End Event",
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "paused": "Paused",
+      "completed": "Completed"
+    },
+    "details": {
+      "title": "Event Title",
+      "description": "Description",
+      "organizer": "Organizer",
+      "participants": "Participants",
+      "maxParticipants": "Maximum Participants",
+      "accessCode": "Access Code",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "duration": "Duration",
+      "location": "Location",
+      "category": "Category"
+    },
+    "settings": {
+      "title": "Event Settings",
+      "allowGuestAccess": "Allow Guest Access",
+      "requireRegistration": "Require Registration",
+      "enableVoting": "Enable Voting",
+      "enableGroupIntelligence": "Enable Group Intelligence",
+      "enableDiscussionGroups": "Enable Discussion Groups",
+      "enableTeamDistribution": "Enable Team Distribution",
+      "votingTimeLimit": "Voting Time Limit (seconds)",
+      "maxVotesPerTopic": "Maximum Votes per Topic",
+      "maxTopicsPerUser": "Maximum Topics per User",
+      "autoAdvanceActivities": "Auto-advance Activities"
+    },
+    "messages": {
+      "created": "Event created successfully",
+      "updated": "Event updated successfully",
+      "deleted": "Event deleted successfully",
+      "cloned": "Event cloned successfully",
+      "started": "Event started",
+      "paused": "Event paused",
+      "resumed": "Event resumed",
+      "ended": "Event ended",
+      "joined": "Joined event successfully",
+      "left": "Left event",
+      "notFound": "Event not found",
+      "accessDenied": "Access denied",
+      "invalidAccessCode": "Invalid access code"
+    }
+  },
+
+  "topics": {
+    "title": "Topics",
+    "create": "Create Topic",
+    "edit": "Edit Topic",
+    "delete": "Delete Topic",
+    "vote": "Vote",
+    "unvote": "Remove Vote",
+    "details": {
+      "title": "Topic Title",
+      "description": "Description",
+      "submittedBy": "Submitted by",
+      "tags": "Tags",
+      "votes": "Votes",
+      "score": "Score",
+      "rank": "Rank"
+    },
+    "voting": {
+      "firstChoice": "First Choice",
+      "secondChoice": "Second Choice",
+      "thirdChoice": "Third Choice",
+      "votesRemaining": "Votes remaining: {count}",
+      "votingClosed": "Voting is closed",
+      "alreadyVoted": "You have already voted for this topic"
+    },
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "frozen": "Frozen",
+      "archived": "Archived"
+    },
+    "messages": {
+      "created": "Topic created successfully",
+      "updated": "Topic updated successfully",
+      "deleted": "Topic deleted successfully",
+      "voted": "Vote recorded",
+      "voteRemoved": "Vote removed",
+      "votingNotEnabled": "Voting is not enabled for this event",
+      "noVotesRemaining": "No votes remaining"
+    }
+  },
+
+  "templates": {
+    "title": "Templates",
+    "create": "Create Template",
+    "edit": "Edit Template",
+    "delete": "Delete Template",
+    "clone": "Clone Template",
+    "share": "Share Template",
+    "use": "Use Template",
+    "preview": "Preview",
+    "discover": "Discover Templates",
+    "myTemplates": "My Templates",
+    "publicTemplates": "Public Templates",
+    "sharedTemplates": "Shared Templates",
+    "categories": {
+      "conference": "Conference",
+      "workshop": "Workshop",
+      "meeting": "Meeting",
+      "hackathon": "Hackathon",
+      "networking": "Networking",
+      "training": "Training",
+      "custom": "Custom"
+    },
+    "details": {
+      "name": "Template Name",
+      "description": "Description",
+      "category": "Category",
+      "creator": "Creator",
+      "visibility": "Visibility",
+      "usageCount": "Usage Count",
+      "lastUsed": "Last Used",
+      "created": "Created",
+      "modified": "Modified",
+      "tags": "Tags"
+    },
+    "sharing": {
+      "title": "Share Template",
+      "makePublic": "Make Public",
+      "makePrivate": "Make Private",
+      "shareWith": "Share with Users",
+      "permissions": "Permissions",
+      "currentPermissions": "Current Permissions",
+      "history": "Sharing History",
+      "revoke": "Revoke Access",
+      "permissionTypes": {
+        "view": "View Only",
+        "use": "Use Template",
+        "edit": "Edit Template",
+        "share": "Share Template",
+        "admin": "Admin Access"
+      }
+    },
+    "search": {
+      "placeholder": "Search templates by name, description, or tags...",
+      "filters": "Filters",
+      "sortBy": "Sort by",
+      "sortOptions": {
+        "relevance": "Most Relevant",
+        "usageCount": "Most Popular",
+        "createdAt": "Newest First",
+        "lastUsedAt": "Recently Used",
+        "name": "Name (A-Z)"
+      },
+      "viewModes": {
+        "grid": "Grid View",
+        "list": "List View"
+      },
+      "noResults": "No templates found",
+      "resultsCount": "Showing {count} of {total} templates"
+    },
+    "messages": {
+      "created": "Template created successfully",
+      "updated": "Template updated successfully",
+      "deleted": "Template deleted successfully",
+      "shared": "Template shared successfully",
+      "unshared": "Template access revoked",
+      "used": "Template applied successfully",
+      "notFound": "Template not found",
+      "accessDenied": "Access denied"
+    }
+  },
+
+  "rooms": {
+    "title": "Rooms",
+    "create": "Create Room",
+    "edit": "Edit Room",
+    "delete": "Delete Room",
+    "assign": "Assign Participants",
+    "details": {
+      "name": "Room Name",
+      "description": "Description",
+      "capacity": "Capacity",
+      "location": "Location",
+      "amenities": "Amenities",
+      "facilitator": "Facilitator",
+      "participants": "Participants",
+      "currentOccupancy": "Current Occupancy"
+    },
+    "status": {
+      "draft": "Draft",
+      "active": "Active",
+      "full": "Full",
+      "paused": "Paused",
+      "completed": "Completed",
+      "archived": "Archived"
+    }
+  },
+
+  "activities": {
+    "voting": "Voting",
+    "groupIntelligence": "Group Intelligence",
+    "discussionGroups": "Discussion Groups",
+    "teamDistribution": "Team Distribution",
+    "current": "Current Activity",
+    "next": "Next Activity",
+    "previous": "Previous Activity"
+  },
+
+  "forms": {
+    "validation": {
+      "required": "This field is required",
+      "email": "Please enter a valid email address",
+      "minLength": "Must be at least {min} characters",
+      "maxLength": "Must be no more than {max} characters",
+      "min": "Must be at least {min}",
+      "max": "Must be no more than {max}",
+      "pattern": "Invalid format",
+      "unique": "This value already exists"
+    },
+    "placeholders": {
+      "email": "Enter email address",
+      "password": "Enter password",
+      "search": "Search...",
+      "name": "Enter name",
+      "description": "Enter description",
+      "title": "Enter title"
+    }
+  },
+
+  "time": {
+    "now": "now",
+    "today": "today",
+    "yesterday": "yesterday",
+    "tomorrow": "tomorrow",
+    "thisWeek": "this week",
+    "lastWeek": "last week",
+    "nextWeek": "next week",
+    "thisMonth": "this month",
+    "lastMonth": "last month",
+    "nextMonth": "next month",
+    "ago": "{time} ago",
+    "in": "in {time}",
+    "duration": {
+      "seconds": "{count, plural, =1 {# second} other {# seconds}}",
+      "minutes": "{count, plural, =1 {# minute} other {# minutes}}",
+      "hours": "{count, plural, =1 {# hour} other {# hours}}",
+      "days": "{count, plural, =1 {# day} other {# days}}",
+      "weeks": "{count, plural, =1 {# week} other {# weeks}}",
+      "months": "{count, plural, =1 {# month} other {# months}}",
+      "years": "{count, plural, =1 {# year} other {# years}}"
+    }
+  },
+
+  "errors": {
+    "generic": "An error occurred. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "forbidden": "Access forbidden.",
+    "notFound": "The requested resource was not found.",
+    "validation": "Please check your input and try again.",
+    "server": "Server error. Please try again later.",
+    "timeout": "Request timed out. Please try again."
+  },
+
+  "notifications": {
+    "permissionDenied": "Permission denied",
+    "featureNotAvailable": "This feature is not available",
+    "sessionExpiring": "Your session is about to expire",
+    "connectionLost": "Connection lost. Attempting to reconnect...",
+    "connectionRestored": "Connection restored",
+    "dataChanged": "Data has been updated by another user",
+    "autosaved": "Changes saved automatically"
+  },
+
+  "accessibility": {
+    "skipToContent": "Skip to main content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "expandSection": "Expand section",
+    "collapseSection": "Collapse section",
+    "sortAscending": "Sort ascending",
+    "sortDescending": "Sort descending",
+    "loading": "Loading content",
+    "moreOptions": "More options",
+    "selectedItem": "Selected item"
+  }
+}

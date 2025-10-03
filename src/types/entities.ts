@@ -6,7 +6,8 @@ import type {
 	DiscussionRoomStatus,
 	AssignmentMethod,
 	AssignmentStatus,
-	AssignmentRoundStatus
+	AssignmentRoundStatus,
+	TemplatePermissionType
 } from './enums';
 
 // Base interface for all entities
@@ -225,3 +226,56 @@ export function isValidEventStatus(status: string): status is EventStatus {
 export function isValidTopicStatus(status: string): status is TopicStatus {
 	return Object.values(TopicStatus).includes(status as TopicStatus);
 }
+
+// Event Template interfaces
+export interface EventTemplate extends BaseEntity {
+	name: string;
+	description?: string;
+	category: string;
+	createdBy: string; // User ID
+	isPublic: boolean;
+	sharedWith: string[]; // User IDs with access
+	usageCount: number;
+	lastUsedAt?: Date;
+	templateData: EventTemplateData;
+	tags?: string[];
+	metadata?: Record<string, unknown>;
+}
+
+export interface EventTemplateData {
+	eventSettings: EventSettings;
+	topics?: TemplateTopicData[];
+	rooms?: TemplateRoomData[];
+	assignmentSettings?: AssignmentSettings;
+	generalSettings?: {
+		defaultCapacity?: number;
+		defaultDuration?: number;
+		defaultTitle?: string;
+		defaultDescription?: string;
+	};
+}
+
+export interface TemplateTopicData {
+	title: string;
+	description?: string;
+	tags?: string[];
+	priority?: 'high' | 'medium' | 'low';
+}
+
+export interface TemplateRoomData {
+	name: string;
+	description?: string;
+	capacity: number;
+	location?: string;
+	amenities?: string[];
+	isVirtual?: boolean;
+}
+
+export interface EventTemplatePermission extends BaseEntity {
+	templateId: string;
+	userId: string;
+	permission: TemplatePermissionType;
+	grantedBy: string; // User ID who granted permission
+	grantedAt: Date;
+}
+

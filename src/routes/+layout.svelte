@@ -6,8 +6,12 @@
 	import { sessionManager, sessionUtils } from '$lib/auth/session';
 	import SecurityMonitor from '$lib/components/SecurityMonitor.svelte';
 	import DeveloperBanner from '../components/DeveloperBanner.svelte';
+	import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 	import { dev } from '$app/environment';
 	import { onMount } from 'svelte';
+	import { waitLocale } from '$lib/i18n';
+	import { initializeLocale } from '$lib/utils/locale-persistence';
+	import '$lib/i18n'; // Initialize i18n
 
 	let { children, data } = $props();
 
@@ -21,8 +25,14 @@
 		}
 	});
 
-	// Auto-refresh session monitoring
-	onMount(() => {
+	// Auto-refresh session monitoring and i18n initialization
+	onMount(async () => {
+		// Initialize locale from saved preference or browser settings
+		initializeLocale();
+
+		// Wait for locale to be loaded
+		await waitLocale();
+
 		const intervalId = sessionUtils.startSessionMonitoring((session) => {
 			if (!session) {
 				// Session expired, clear auth state
@@ -52,6 +62,7 @@
 		<a href="/" class="nav-brand">UnConf</a>
 
 		<div class="nav-auth">
+			<LanguageSwitcher />
 			{#if $isAuthenticated && $user}
 				<span class="user-info">
 					Hello, {$user.name || $user.email || 'User'}!

@@ -16,7 +16,9 @@ import {
 	WebSocketEventType,
 	TeamStatus,
 	TeamMemberRole,
-	FormationStrategy
+	FormationStrategy,
+	TemplatePermissionType,
+	TemplateCategory
 } from './enums';
 
 // Base entity schema
@@ -316,6 +318,82 @@ export const PartialVoteSchema = VoteSchema.partial();
 export const PartialRoomSchema = RoomSchema.partial();
 export const PartialTeamSchema = TeamSchema.partial();
 
+// Event Template schemas
+export const TemplateTopicDataSchema = z.object({
+	title: z.string().min(1).max(200),
+	description: z.string().max(1000).optional(),
+	tags: z.array(z.string()).optional(),
+	priority: z.enum(['high', 'medium', 'low']).optional()
+});
+
+export const TemplateRoomDataSchema = z.object({
+	name: z.string().min(1).max(100),
+	description: z.string().max(500).optional(),
+	capacity: z.number().min(1).max(100),
+	location: z.string().optional(),
+	amenities: z.array(z.string()).optional(),
+	isVirtual: z.boolean().optional()
+});
+
+export const EventTemplateDataSchema = z.object({
+	eventSettings: EventSettingsSchema,
+	topics: z.array(TemplateTopicDataSchema).optional(),
+	rooms: z.array(TemplateRoomDataSchema).optional(),
+	assignmentSettings: z.object({
+		maxRoomCapacity: z.number().min(1),
+		minRoomSize: z.number().min(1),
+		allowOverflow: z.boolean(),
+		preferenceWeights: z.object({
+			first: z.number(),
+			second: z.number(),
+			third: z.number()
+		}),
+		fairnessEnabled: z.boolean(),
+		manualOverrideEnabled: z.boolean()
+	}).optional(),
+	generalSettings: z.object({
+		defaultCapacity: z.number().min(1).optional(),
+		defaultDuration: z.number().min(1).optional(),
+		defaultTitle: z.string().optional(),
+		defaultDescription: z.string().optional()
+	}).optional()
+});
+
+export const EventTemplateSchema = BaseEntitySchema.extend({
+	name: z.string().min(1).max(200),
+	description: z.string().max(1000).optional(),
+	category: z.nativeEnum(TemplateCategory),
+	createdBy: z.string().min(1),
+	isPublic: z.boolean(),
+	sharedWith: z.array(z.string()),
+	usageCount: z.number().min(0),
+	lastUsedAt: z.date().optional(),
+	templateData: EventTemplateDataSchema,
+	tags: z.array(z.string()).optional(),
+	metadata: z.record(z.string(), z.unknown()).optional()
+});
+
+export const EventTemplatePermissionSchema = BaseEntitySchema.extend({
+	templateId: z.string().min(1),
+	userId: z.string().min(1),
+	permission: z.nativeEnum(TemplatePermissionType),
+	grantedBy: z.string().min(1),
+	grantedAt: z.date()
+});
+
+// Template validation functions
+export function validateEventTemplate(data: unknown): z.ZodSafeParseResult<z.infer<typeof EventTemplateSchema>> {
+	return EventTemplateSchema.safeParse(data);
+}
+
+export function validateEventTemplatePermission(data: unknown): z.ZodSafeParseResult<z.infer<typeof EventTemplatePermissionSchema>> {
+	return EventTemplatePermissionSchema.safeParse(data);
+}
+
+// Partial validation for updates
+export const PartialEventTemplateSchema = EventTemplateSchema.partial();
+export const PartialEventTemplatePermissionSchema = EventTemplatePermissionSchema.partial();
+
 // Type inference from schemas
 export type EventData = z.infer<typeof EventSchema>;
 export type UserData = z.infer<typeof UserSchema>;
@@ -325,3 +403,5 @@ export type RoomData = z.infer<typeof RoomSchema>;
 export type TeamData = z.infer<typeof TeamSchema>;
 export type AuditLogData = z.infer<typeof AuditLogSchema>;
 export type WebSocketEventData = z.infer<typeof WebSocketEventSchema>;
+export type EventTemplateData = z.infer<typeof EventTemplateSchema>;
+export type EventTemplatePermissionData = z.infer<typeof EventTemplatePermissionSchema>;

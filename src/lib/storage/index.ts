@@ -12,6 +12,8 @@ import { EventRepository } from './EventRepository';
 import { UserRepository } from './UserRepository';
 import { TopicRepository } from './TopicRepository';
 import { VoteRepository } from './VoteRepository';
+import { EventTemplateRepository } from './EventTemplateRepository';
+import { EventTemplatePermissionRepository } from './EventTemplatePermissionRepository';
 
 // Core interfaces and base classes
 export { Repository, type RepositoryOperationResult, type QueryOptions, type ValidationResult, type RepositoryError } from './Repository';
@@ -22,6 +24,8 @@ export { EventRepository } from './EventRepository';
 export { UserRepository } from './UserRepository';
 export { TopicRepository, type TopicWithVoteInfo } from './TopicRepository';
 export { VoteRepository } from './VoteRepository';
+export { EventTemplateRepository } from './EventTemplateRepository';
+export { EventTemplatePermissionRepository } from './EventTemplatePermissionRepository';
 
 // Migration and data management utilities
 export { MigrationManager, type MigrationVersion, type MigrationScript, type ExportFormat, defaultMigrations } from './MigrationManager';
@@ -54,6 +58,8 @@ export class StorageManager {
   public readonly users: UserRepository;
   public readonly topics: TopicRepository;
   public readonly votes: VoteRepository;
+  public readonly eventTemplates: EventTemplateRepository;
+  public readonly eventTemplatePermissions: EventTemplatePermissionRepository;
 
   constructor(config: StorageConfig) {
     this.config = {
@@ -79,6 +85,8 @@ export class StorageManager {
     this.users = new UserRepository(repoConfig);
     this.topics = new TopicRepository(repoConfig);
     this.votes = new VoteRepository(repoConfig);
+    this.eventTemplates = new EventTemplateRepository(repoConfig);
+    this.eventTemplatePermissions = new EventTemplatePermissionRepository(repoConfig);
 
     // Default migrations will be registered during initialization
   }
@@ -124,7 +132,7 @@ export class StorageManager {
    * Check data integrity across all entity files
    */
   async checkIntegrity(): Promise<DataIntegrityReport> {
-    const files = ['events.json', 'users.json', 'topics.json', 'votes.json'];
+    const files = ['events.json', 'users.json', 'topics.json', 'votes.json', 'event-templates.json', 'event-template-permissions.json'];
     return this.errorHandler.checkDataIntegrity(files);
   }
 
@@ -146,7 +154,7 @@ export class StorageManager {
    * Backup all data files manually
    */
   async createBackup(): Promise<void> {
-    const repositories = [this.events, this.users, this.topics, this.votes];
+    const repositories = [this.events, this.users, this.topics, this.votes, this.eventTemplates, this.eventTemplatePermissions];
 
     for (const repo of repositories) {
       // Force a backup by triggering a write operation
@@ -192,7 +200,7 @@ export class StorageManager {
    */
   private async applyPendingMigrations(): Promise<void> {
     const pendingMigrations = await this.migrationManager.getPendingMigrations();
-    const entityTypes = ['events', 'users', 'topics', 'votes'];
+    const entityTypes = ['events', 'users', 'topics', 'votes', 'event-templates', 'event-template-permissions'];
 
     for (const migration of pendingMigrations) {
       for (const entityType of entityTypes) {

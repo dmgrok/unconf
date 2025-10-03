@@ -225,6 +225,35 @@ export enum AssignmentRoundStatus {
 	CANCELLED = 'cancelled'
 }
 
+// Event template permission types
+export enum TemplatePermissionType {
+	VIEW = 'view',
+	USE = 'use',
+	EDIT = 'edit',
+	SHARE = 'share',
+	ADMIN = 'admin'
+}
+
+// Event template categories
+export enum TemplateCategory {
+	CONFERENCE = 'conference',
+	WORKSHOP = 'workshop',
+	MEETING = 'meeting',
+	HACKATHON = 'hackathon',
+	NETWORKING = 'networking',
+	TRAINING = 'training',
+	CUSTOM = 'custom'
+}
+
+// Type guards for templates
+export function isValidTemplatePermission(permission: string): permission is TemplatePermissionType {
+	return Object.values(TemplatePermissionType).includes(permission as TemplatePermissionType);
+}
+
+export function isValidTemplateCategory(category: string): category is TemplateCategory {
+	return Object.values(TemplateCategory).includes(category as TemplateCategory);
+}
+
 // Utility function to check role permissions
 export function hasPermission(userRole: UserRole, requiredRole: UserRole): boolean {
 	return ROLE_HIERARCHY[userRole] >= ROLE_HIERARCHY[requiredRole];

@@ -1,0 +1,355 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "update": "Mettre à jour",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "sort": "Trier",
+    "clear": "Effacer",
+    "yes": "Oui",
+    "no": "Non",
+    "ok": "OK",
+    "submit": "Soumettre",
+    "retry": "Réessayer",
+    "refresh": "Actualiser",
+    "settings": "Paramètres",
+    "help": "Aide",
+    "about": "À propos",
+    "contact": "Contact",
+    "privacy": "Confidentialité",
+    "terms": "Conditions d'utilisation"
+  },
+
+  "navigation": {
+    "brand": "UnConf",
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "events": "Événements",
+    "templates": "Modèles",
+    "profile": "Profil",
+    "admin": "Admin",
+    "language": "Langue"
+  },
+
+  "auth": {
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "signInWithGoogle": "Se connecter avec Google",
+    "continueAsGuest": "Continuer en tant qu'invité",
+    "welcome": "Bienvenue",
+    "hello": "Bonjour, {name} !",
+    "guestBadge": "Invité",
+    "notAuthenticated": "Vous devez vous connecter pour accéder à cette fonctionnalité",
+    "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter."
+  },
+
+  "events": {
+    "title": "Événements",
+    "create": "Créer un événement",
+    "edit": "Modifier l'événement",
+    "delete": "Supprimer l'événement",
+    "clone": "Cloner l'événement",
+    "share": "Partager l'événement",
+    "join": "Rejoindre l'événement",
+    "leave": "Quitter l'événement",
+    "start": "Démarrer l'événement",
+    "pause": "Mettre en pause",
+    "resume": "Reprendre",
+    "end": "Terminer l'événement",
+    "status": {
+      "draft": "Brouillon",
+      "active": "Actif",
+      "paused": "En pause",
+      "completed": "Terminé"
+    },
+    "details": {
+      "title": "Titre de l'événement",
+      "description": "Description",
+      "organizer": "Organisateur",
+      "participants": "Participants",
+      "maxParticipants": "Nombre maximum de participants",
+      "accessCode": "Code d'accès",
+      "startTime": "Heure de début",
+      "endTime": "Heure de fin",
+      "duration": "Durée",
+      "location": "Lieu",
+      "category": "Catégorie"
+    },
+    "settings": {
+      "title": "Paramètres de l'événement",
+      "allowGuestAccess": "Autoriser l'accès aux invités",
+      "requireRegistration": "Exiger une inscription",
+      "enableVoting": "Activer le vote",
+      "enableGroupIntelligence": "Activer l'intelligence collective",
+      "enableDiscussionGroups": "Activer les groupes de discussion",
+      "enableTeamDistribution": "Activer la répartition en équipes",
+      "votingTimeLimit": "Limite de temps de vote (secondes)",
+      "maxVotesPerTopic": "Votes maximum par sujet",
+      "maxTopicsPerUser": "Sujets maximum par utilisateur",
+      "autoAdvanceActivities": "Avancement automatique des activités"
+    },
+    "messages": {
+      "created": "Événement créé avec succès",
+      "updated": "Événement mis à jour avec succès",
+      "deleted": "Événement supprimé avec succès",
+      "cloned": "Événement cloné avec succès",
+      "started": "Événement démarré",
+      "paused": "Événement mis en pause",
+      "resumed": "Événement repris",
+      "ended": "Événement terminé",
+      "joined": "Événement rejoint avec succès",
+      "left": "Événement quitté",
+      "notFound": "Événement introuvable",
+      "accessDenied": "Accès refusé",
+      "invalidAccessCode": "Code d'accès invalide"
+    }
+  },
+
+  "topics": {
+    "title": "Sujets",
+    "create": "Créer un sujet",
+    "edit": "Modifier le sujet",
+    "delete": "Supprimer le sujet",
+    "vote": "Voter",
+    "unvote": "Retirer le vote",
+    "details": {
+      "title": "Titre du sujet",
+      "description": "Description",
+      "submittedBy": "Soumis par",
+      "tags": "Étiquettes",
+      "votes": "Votes",
+      "score": "Score",
+      "rank": "Classement"
+    },
+    "voting": {
+      "firstChoice": "Premier choix",
+      "secondChoice": "Deuxième choix",
+      "thirdChoice": "Troisième choix",
+      "votesRemaining": "Votes restants : {count}",
+      "votingClosed": "Le vote est fermé",
+      "alreadyVoted": "Vous avez déjà voté pour ce sujet"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "active": "Actif",
+      "frozen": "Gelé",
+      "archived": "Archivé"
+    },
+    "messages": {
+      "created": "Sujet créé avec succès",
+      "updated": "Sujet mis à jour avec succès",
+      "deleted": "Sujet supprimé avec succès",
+      "voted": "Vote enregistré",
+      "voteRemoved": "Vote retiré",
+      "votingNotEnabled": "Le vote n'est pas activé pour cet événement",
+      "noVotesRemaining": "Aucun vote restant"
+    }
+  },
+
+  "templates": {
+    "title": "Modèles",
+    "create": "Créer un modèle",
+    "edit": "Modifier le modèle",
+    "delete": "Supprimer le modèle",
+    "clone": "Cloner le modèle",
+    "share": "Partager le modèle",
+    "use": "Utiliser le modèle",
+    "preview": "Aperçu",
+    "discover": "Découvrir les modèles",
+    "myTemplates": "Mes modèles",
+    "publicTemplates": "Modèles publics",
+    "sharedTemplates": "Modèles partagés",
+    "categories": {
+      "conference": "Conférence",
+      "workshop": "Atelier",
+      "meeting": "Réunion",
+      "hackathon": "Hackathon",
+      "networking": "Réseautage",
+      "training": "Formation",
+      "custom": "Personnalisé"
+    },
+    "details": {
+      "name": "Nom du modèle",
+      "description": "Description",
+      "category": "Catégorie",
+      "creator": "Créateur",
+      "visibility": "Visibilité",
+      "usageCount": "Nombre d'utilisations",
+      "lastUsed": "Dernière utilisation",
+      "created": "Créé",
+      "modified": "Modifié",
+      "tags": "Étiquettes"
+    },
+    "sharing": {
+      "title": "Partager le modèle",
+      "makePublic": "Rendre public",
+      "makePrivate": "Rendre privé",
+      "shareWith": "Partager avec les utilisateurs",
+      "permissions": "Permissions",
+      "currentPermissions": "Permissions actuelles",
+      "history": "Historique de partage",
+      "revoke": "Révoquer l'accès",
+      "permissionTypes": {
+        "view": "Lecture seule",
+        "use": "Utiliser le modèle",
+        "edit": "Modifier le modèle",
+        "share": "Partager le modèle",
+        "admin": "Accès administrateur"
+      }
+    },
+    "search": {
+      "placeholder": "Rechercher des modèles par nom, description ou étiquettes...",
+      "filters": "Filtres",
+      "sortBy": "Trier par",
+      "sortOptions": {
+        "relevance": "Plus pertinents",
+        "usageCount": "Plus populaires",
+        "createdAt": "Plus récents",
+        "lastUsedAt": "Récemment utilisés",
+        "name": "Nom (A-Z)"
+      },
+      "viewModes": {
+        "grid": "Vue grille",
+        "list": "Vue liste"
+      },
+      "noResults": "Aucun modèle trouvé",
+      "resultsCount": "Affichage de {count} sur {total} modèles"
+    },
+    "messages": {
+      "created": "Modèle créé avec succès",
+      "updated": "Modèle mis à jour avec succès",
+      "deleted": "Modèle supprimé avec succès",
+      "shared": "Modèle partagé avec succès",
+      "unshared": "Accès au modèle révoqué",
+      "used": "Modèle appliqué avec succès",
+      "notFound": "Modèle introuvable",
+      "accessDenied": "Accès refusé"
+    }
+  },
+
+  "rooms": {
+    "title": "Salles",
+    "create": "Créer une salle",
+    "edit": "Modifier la salle",
+    "delete": "Supprimer la salle",
+    "assign": "Assigner des participants",
+    "details": {
+      "name": "Nom de la salle",
+      "description": "Description",
+      "capacity": "Capacité",
+      "location": "Lieu",
+      "amenities": "Équipements",
+      "facilitator": "Animateur",
+      "participants": "Participants",
+      "currentOccupancy": "Occupation actuelle"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "active": "Active",
+      "full": "Pleine",
+      "paused": "En pause",
+      "completed": "Terminée",
+      "archived": "Archivée"
+    }
+  },
+
+  "activities": {
+    "voting": "Vote",
+    "groupIntelligence": "Intelligence collective",
+    "discussionGroups": "Groupes de discussion",
+    "teamDistribution": "Répartition en équipes",
+    "current": "Activité actuelle",
+    "next": "Activité suivante",
+    "previous": "Activité précédente"
+  },
+
+  "forms": {
+    "validation": {
+      "required": "Ce champ est obligatoire",
+      "email": "Veuillez saisir une adresse e-mail valide",
+      "minLength": "Doit contenir au moins {min} caractères",
+      "maxLength": "Doit contenir au maximum {max} caractères",
+      "min": "Doit être au moins {min}",
+      "max": "Doit être au maximum {max}",
+      "pattern": "Format invalide",
+      "unique": "Cette valeur existe déjà"
+    },
+    "placeholders": {
+      "email": "Saisir l'adresse e-mail",
+      "password": "Saisir le mot de passe",
+      "search": "Rechercher...",
+      "name": "Saisir le nom",
+      "description": "Saisir la description",
+      "title": "Saisir le titre"
+    }
+  },
+
+  "time": {
+    "now": "maintenant",
+    "today": "aujourd'hui",
+    "yesterday": "hier",
+    "tomorrow": "demain",
+    "thisWeek": "cette semaine",
+    "lastWeek": "la semaine dernière",
+    "nextWeek": "la semaine prochaine",
+    "thisMonth": "ce mois-ci",
+    "lastMonth": "le mois dernier",
+    "nextMonth": "le mois prochain",
+    "ago": "il y a {time}",
+    "in": "dans {time}",
+    "duration": {
+      "seconds": "{count, plural, =1 {# seconde} other {# secondes}}",
+      "minutes": "{count, plural, =1 {# minute} other {# minutes}}",
+      "hours": "{count, plural, =1 {# heure} other {# heures}}",
+      "days": "{count, plural, =1 {# jour} other {# jours}}",
+      "weeks": "{count, plural, =1 {# semaine} other {# semaines}}",
+      "months": "{count, plural, =1 {# mois} other {# mois}}",
+      "years": "{count, plural, =1 {# an} other {# ans}}"
+    }
+  },
+
+  "errors": {
+    "generic": "Une erreur s'est produite. Veuillez réessayer.",
+    "network": "Erreur réseau. Veuillez vérifier votre connexion.",
+    "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+    "forbidden": "Accès interdit.",
+    "notFound": "La ressource demandée est introuvable.",
+    "validation": "Veuillez vérifier votre saisie et réessayer.",
+    "server": "Erreur serveur. Veuillez réessayer plus tard.",
+    "timeout": "Délai d'attente dépassé. Veuillez réessayer."
+  },
+
+  "notifications": {
+    "permissionDenied": "Permission refusée",
+    "featureNotAvailable": "Cette fonctionnalité n'est pas disponible",
+    "sessionExpiring": "Votre session va bientôt expirer",
+    "connectionLost": "Connexion perdue. Tentative de reconnexion...",
+    "connectionRestored": "Connexion rétablie",
+    "dataChanged": "Les données ont été mises à jour par un autre utilisateur",
+    "autosaved": "Modifications enregistrées automatiquement"
+  },
+
+  "accessibility": {
+    "skipToContent": "Aller au contenu principal",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "expandSection": "Développer la section",
+    "collapseSection": "Réduire la section",
+    "sortAscending": "Tri croissant",
+    "sortDescending": "Tri décroissant",
+    "loading": "Chargement du contenu",
+    "moreOptions": "Plus d'options",
+    "selectedItem": "Élément sélectionné"
+  }
+}
