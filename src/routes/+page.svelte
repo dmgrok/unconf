@@ -6,9 +6,9 @@
   type DemoEvent = { id: string; title: string };
 
 	// Dynamic imports for heavy components
-	let TopicSubmissionForm: any;
-	let TopicListWithVoting: any;
-	let WebSocketTest: any;
+	let TopicSubmissionForm = $state<any>(null);
+	let TopicListWithVoting = $state<any>(null);
+	let WebSocketTest = $state<any>(null);
 
 	let isLoading = true;
 	let demoMode = false;
@@ -152,7 +152,7 @@
   {#if WebSocketTest}
   <section class="websocket-section">
     <h2>🔄 WebSocket Infrastructure Test</h2>
-    <svelte:component this={WebSocketTest} />
+    <WebSocketTest />
   </section>
   {/if}
 
@@ -174,7 +174,7 @@
         <div class="demo-submission">
           <h3>Submit New Topic</h3>
           <p class="section-desc">Add topics to test the voting system</p>
-          <svelte:component this={TopicSubmissionForm} 
+          <TopicSubmissionForm 
             eventId={testEvent.id} 
             {userId} 
             {userName}
@@ -188,7 +188,7 @@
           <p class="section-desc">
             Cast your weighted votes: 🥇 1st choice (3pts), 🥈 2nd choice (2pts), 🥉 3rd choice (1pt)
           </p>
-          <svelte:component this={TopicListWithVoting} 
+          <TopicListWithVoting 
             eventId={testEvent.id} 
             {userId} 
             userRole={demoUserRole}

@@ -13,10 +13,10 @@
 	import '$lib/styles/touch.css'; // Touch-optimized interactions
 
 	// Dynamic imports for non-critical components
-	let SecurityMonitor: any;
-	let DeveloperBanner: any;
-	let LanguageSwitcher: any;
-	let WebVitalsMonitor: any;
+	let SecurityMonitor = $state<any>(null);
+	let DeveloperBanner = $state<any>(null);
+	let LanguageSwitcher = $state<any>(null);
+	let WebVitalsMonitor = $state<any>(null);
 
 	let { children, data } = $props();
 
@@ -74,7 +74,7 @@
 
 <!-- Developer Banner (only shown in development) -->
 {#if dev && data.demoEvent && DeveloperBanner}
-	<svelte:component this={DeveloperBanner} demoEvent={data.demoEvent} />
+	<DeveloperBanner demoEvent={data.demoEvent} />
 {/if}
 
 <nav class="navbar" class:with-dev-banner={dev && data.demoEvent}>
@@ -83,7 +83,7 @@
 
 		<div class="nav-auth">
 			{#if LanguageSwitcher}
-				<svelte:component this={LanguageSwitcher} />
+				<LanguageSwitcher />
 			{/if}
 			{#if $isAuthenticated && $user}
 				<span class="user-info">
@@ -113,12 +113,12 @@
 
 <!-- Security monitoring component (lazy loaded) -->
 {#if SecurityMonitor}
-	<svelte:component this={SecurityMonitor} showWarnings={true} autoLogout={false} warningThreshold={5} />
+	<SecurityMonitor showWarnings={true} autoLogout={false} warningThreshold={5} />
 {/if}
 
 <!-- Web Vitals monitoring (lazy loaded) -->
 {#if WebVitalsMonitor}
-	<svelte:component this={WebVitalsMonitor} showInProduction={false} sendToAnalytics={true} />
+	<WebVitalsMonitor showInProduction={false} sendToAnalytics={true} />
 {/if}
 
 <style>
