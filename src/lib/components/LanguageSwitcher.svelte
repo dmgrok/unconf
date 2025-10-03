@@ -9,15 +9,13 @@
 		{ code: 'fr-FR', name: 'Français', flag: '🇫🇷' }
 	];
 
-	// Get current locale
-	let currentLocale = $locale || 'en-US';
-
-	// Update when locale changes
-	$: currentLocale = $locale || 'en-US';
+	// Get current locale (using $derived for runes mode)
+	let currentLocale = $derived($locale || 'en-US');
 
 	// Get display info for current locale
-	$: currentLocaleInfo =
-		availableLocales.find((l) => l.code === currentLocale) || availableLocales[0];
+	let currentLocaleInfo = $derived(
+		availableLocales.find((l) => l.code === currentLocale) || availableLocales[0]
+	);
 
 	// Handle locale change
 	function changeLocale(newLocale: string) {
