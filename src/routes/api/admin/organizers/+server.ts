@@ -10,7 +10,7 @@ import { adminService } from '$lib/services/admin.js';
 import { UserRepository } from '$lib/storage/UserRepository.js';
 import { EventRepository } from '$lib/storage/EventRepository.js';
 import { AuditLogRepository } from '$lib/storage/AuditLogRepository.js';
-import { UserRole, AuditAction, EntityType } from '$lib/types';
+import { UserRole, AuditAction, EntityType } from '../../../../types/enums.js';
 
 // Initialize repositories
 const userRepo = new UserRepository({ dataDir: './data' });
@@ -239,6 +239,7 @@ export const POST: RequestHandler = apiRoute(async (event) => {
 				action: AuditAction.ROLE_CHANGED,
 				entityType: EntityType.USER,
 				entityId: userId,
+				success: true,
 				ipAddress: event.request.headers.get('x-forwarded-for') || 'unknown',
 				userAgent: event.request.headers.get('user-agent') || 'unknown',
 				metadata: {
@@ -322,6 +323,7 @@ export const POST: RequestHandler = apiRoute(async (event) => {
 				action: AuditAction.ROLE_CHANGED,
 				entityType: EntityType.USER,
 				entityId: userId,
+				success: true,
 				ipAddress: event.request.headers.get('x-forwarded-for') || 'unknown',
 				userAgent: event.request.headers.get('user-agent') || 'unknown',
 				metadata: {

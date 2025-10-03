@@ -10,9 +10,9 @@
 	let TopicListWithVoting = $state<any>(null);
 	let WebSocketTest = $state<any>(null);
 
-	let isLoading = true;
-	let demoMode = false;
-	let showDemoEvent = false;
+	let isLoading = $state(true);
+	let demoMode = $state(false);
+	let showDemoEvent = $state(false);
 
 	// Demo event configuration  
 	const demoEventId = 'demo-event-voting-system';
@@ -23,7 +23,7 @@
 	// Legacy variables for compatibility
 	let userId = demoUserId;
 	let userName = demoUserName;
-  let testEvent: DemoEvent | null = null;
+  let testEvent = $state<DemoEvent | null>(null);
 
 	onMount(async () => {
 		// Check authentication status
@@ -212,24 +212,26 @@
       <div class="topic-management">
         <div class="topic-submission">
           <h3>Submit New Topic</h3>
-          <svelte:component
-            this={TopicSubmissionForm}
-            eventId={testEvent.id}
-            {userId}
-            {userName}
-          />
+          {#if TopicSubmissionForm}
+            <TopicSubmissionForm
+              eventId={testEvent.id}
+              {userId}
+              {userName}
+            />
+          {/if}
         </div>
 
         <div class="topic-list">
           <h3>Current Topics (No Voting)</h3>
-          <svelte:component
-            this={TopicListWithVoting}
-            eventId={testEvent.id}
-            {userId}
-            userRole="participant"
-            enableVoting={false}
-            showActions={true}
-          />
+          {#if TopicListWithVoting}
+            <TopicListWithVoting
+              eventId={testEvent.id}
+              {userId}
+              userRole="participant"
+              enableVoting={false}
+              showActions={true}
+            />
+          {/if}
         </div>
       </div>
     </section>
