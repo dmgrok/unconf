@@ -12,6 +12,8 @@
 	import { waitLocale } from '$lib/i18n';
 	import { initializeLocale } from '$lib/utils/locale-persistence';
 	import '$lib/i18n'; // Initialize i18n
+	import '$lib/styles/responsive.css'; // Mobile-responsive styles
+	import '$lib/styles/touch.css'; // Touch-optimized interactions
 
 	let { children, data } = $props();
 
@@ -97,6 +99,9 @@
 		background: #f8f9fa;
 		border-bottom: 1px solid #dee2e6;
 		padding: 0.5rem 0;
+		position: sticky;
+		top: 0;
+		z-index: 50;
 	}
 
 	.navbar.with-dev-banner {
@@ -110,6 +115,7 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 0 1rem;
+		gap: 1rem;
 	}
 
 	.nav-brand {
@@ -117,12 +123,28 @@
 		font-weight: bold;
 		text-decoration: none;
 		color: #333;
+		white-space: nowrap;
+	}
+
+	/* Mobile: Smaller brand */
+	@media (max-width: 767px) {
+		.nav-brand {
+			font-size: 1.25rem;
+		}
 	}
 
 	.nav-auth {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+
+	/* Mobile: Stack auth buttons vertically when needed */
+	@media (max-width: 640px) {
+		.nav-auth {
+			gap: 0.25rem;
+		}
 	}
 
 	.user-info {
@@ -130,6 +152,18 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		font-size: 0.9rem;
+	}
+
+	/* Mobile: Hide user info text, keep badge */
+	@media (max-width: 640px) {
+		.user-info {
+			font-size: 0;
+		}
+
+		.guest-badge {
+			font-size: 0.7rem;
+		}
 	}
 
 	.guest-badge {
@@ -151,10 +185,29 @@
 		cursor: pointer;
 		text-decoration: none;
 		font-size: 0.9rem;
+		white-space: nowrap;
+		min-height: 44px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		transition: background 0.2s ease, transform 0.1s ease;
+		-webkit-tap-highlight-color: transparent;
 	}
 
 	.auth-button:hover {
 		background: #0056b3;
+	}
+
+	.auth-button:active {
+		transform: scale(0.97);
+	}
+
+	/* Mobile: Smaller buttons */
+	@media (max-width: 640px) {
+		.auth-button {
+			padding: 0.5rem 0.75rem;
+			font-size: 0.85rem;
+		}
 	}
 
 	.auth-button.guest {
@@ -169,5 +222,20 @@
 		max-width: 1200px;
 		margin: 0 auto;
 		padding: 2rem 1rem;
+		min-height: calc(100vh - 200px);
+	}
+
+	/* Mobile: Reduced padding */
+	@media (max-width: 767px) {
+		main {
+			padding: 1rem 0.75rem;
+		}
+	}
+
+	/* Ensure content is visible above bottom nav on mobile */
+	@media (max-width: 767px) {
+		main {
+			padding-bottom: calc(80px + env(safe-area-inset-bottom));
+		}
 	}
 </style>

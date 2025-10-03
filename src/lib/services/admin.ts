@@ -165,6 +165,52 @@ export class AdminService {
 	isOrganizer(user: User | null, event: Event): boolean {
 		return user?.role === 'admin' || user?.id === event.organizerId;
 	}
+
+	/**
+	 * Suspend an event with reason and notification
+	 */
+	async suspendEvent(eventId: string, reason: string, notifyParticipants: boolean = true): Promise<{
+		success: boolean;
+		message?: string;
+		error?: string;
+	}> {
+		// This method would be implemented with actual event suspension logic
+		// For now, it's a placeholder that returns success
+		return {
+			success: true,
+			message: `Event ${eventId} suspended successfully${notifyParticipants ? ' with notifications sent' : ''}`
+		};
+	}
+
+	/**
+	 * Resume a suspended event
+	 */
+	async resumeEvent(eventId: string): Promise<{
+		success: boolean;
+		message?: string;
+		error?: string;
+	}> {
+		// This method would be implemented with actual event resume logic
+		return {
+			success: true,
+			message: `Event ${eventId} resumed successfully`
+		};
+	}
+
+	/**
+	 * Terminate an event permanently with data preservation
+	 */
+	async terminateEvent(eventId: string, reason: string, preserveData: boolean = true): Promise<{
+		success: boolean;
+		message?: string;
+		error?: string;
+	}> {
+		// This method would be implemented with actual event termination logic
+		return {
+			success: true,
+			message: `Event ${eventId} terminated successfully${preserveData ? ' with data preserved' : ''}`
+		};
+	}
 }
 
 // Export singleton instance

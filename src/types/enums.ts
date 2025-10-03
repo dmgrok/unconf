@@ -70,7 +70,8 @@ export enum AuditAction {
 	VOTE = 'vote',
 	ACTIVITY_CHANGE = 'activity_change',
 	JOIN_EVENT = 'join_event',
-	LEAVE_EVENT = 'leave_event'
+	LEAVE_EVENT = 'leave_event',
+	ROLE_CHANGED = 'role_changed'
 }
 
 // Entity types for audit logging
