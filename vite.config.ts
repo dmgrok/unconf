@@ -1,8 +1,17 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [
+		sveltekit(),
+		visualizer({
+			filename: './stats.html',
+			open: false,
+			gzipSize: true,
+			brotliSize: true
+		})
+	],
 	server: {
 		port: 5173,
 		strictPort: false,
@@ -16,6 +25,13 @@ export default defineConfig({
 	build: {
 		target: 'es2022',
 		sourcemap: true,
+		minify: 'terser',
+		terserOptions: {
+			compress: {
+				drop_console: true, // Remove console.logs in production
+				drop_debugger: true
+			}
+		},
 		rollupOptions: {
 			output: {
 				// Manual chunk splitting for better caching
