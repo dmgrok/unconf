@@ -16,6 +16,7 @@
 	let SecurityMonitor: any;
 	let DeveloperBanner: any;
 	let LanguageSwitcher: any;
+	let WebVitalsMonitor: any;
 
 	let { children, data } = $props();
 
@@ -38,14 +39,16 @@
 		await waitLocale();
 
 		// Dynamically import non-critical components
-		const [securityMonitorModule, languageSwitcherModule, developerBannerModule] = await Promise.all([
+		const [securityMonitorModule, languageSwitcherModule, developerBannerModule, webVitalsModule] = await Promise.all([
 			import('$lib/components/SecurityMonitor.svelte'),
 			import('$lib/components/LanguageSwitcher.svelte'),
-			dev ? import('../components/DeveloperBanner.svelte') : Promise.resolve({ default: null })
+			dev ? import('../components/DeveloperBanner.svelte') : Promise.resolve({ default: null }),
+			import('$lib/components/WebVitalsMonitor.svelte')
 		]);
 
 		SecurityMonitor = securityMonitorModule.default;
 		LanguageSwitcher = languageSwitcherModule.default;
+		WebVitalsMonitor = webVitalsModule.default;
 		if (dev) {
 			DeveloperBanner = developerBannerModule.default;
 		}
@@ -111,6 +114,11 @@
 <!-- Security monitoring component (lazy loaded) -->
 {#if SecurityMonitor}
 	<svelte:component this={SecurityMonitor} showWarnings={true} autoLogout={false} warningThreshold={5} />
+{/if}
+
+<!-- Web Vitals monitoring (lazy loaded) -->
+{#if WebVitalsMonitor}
+	<svelte:component this={WebVitalsMonitor} showInProduction={false} sendToAnalytics={true} />
 {/if}
 
 <style>

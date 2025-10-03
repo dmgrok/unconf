@@ -157,7 +157,7 @@
   {/if}
 
   <!-- Weighted Voting Demo -->
-  {#if testEvent}
+  {#if testEvent && TopicSubmissionForm && TopicListWithVoting}
     <section class="voting-demo-section">
       <h2>�️ Weighted Voting System Demo</h2>
       <p>Test the new <strong>weighted voting system</strong> with 1st choice (3 points), 2nd choice (2 points), and 3rd choice (1 point) voting.</p>
@@ -174,7 +174,7 @@
         <div class="demo-submission">
           <h3>Submit New Topic</h3>
           <p class="section-desc">Add topics to test the voting system</p>
-          <TopicSubmissionForm 
+          <svelte:component this={TopicSubmissionForm} 
             eventId={testEvent.id} 
             {userId} 
             {userName}
@@ -188,7 +188,7 @@
           <p class="section-desc">
             Cast your weighted votes: 🥇 1st choice (3pts), 🥈 2nd choice (2pts), 🥉 3rd choice (1pt)
           </p>
-          <TopicListWithVoting 
+          <svelte:component this={TopicListWithVoting} 
             eventId={testEvent.id} 
             {userId} 
             userRole={demoUserRole}

@@ -1974,7 +1974,7 @@
           "11",
           "15"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -1982,9 +1982,10 @@
             "description": "Define achievement types for participation milestones, voting engagement, game performance, and social interactions with tracking logic",
             "dependencies": [],
             "details": "Create achievement schema with categories (participation, voting, gaming, social). Define milestone thresholds and trigger conditions. Implement achievement data models and database tables. Create achievement validation and progress calculation logic.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T22:08:50.039Z"
           },
           {
             "id": 2,
@@ -1994,9 +1995,10 @@
               "21.1"
             ],
             "details": "Create progress tracking components with visual progress bars. Implement real-time progress updates using WebSocket connections. Build notification system for achievement unlocks and milestone progress. Add achievement progress persistence and state management.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T22:08:51.050Z"
           },
           {
             "id": 3,
@@ -2006,9 +2008,10 @@
               "21.1"
             ],
             "details": "Build leaderboard components with ranking algorithms. Implement privacy controls allowing users to opt-in/out of public rankings. Create filtered leaderboards by achievement category and time period. Add leaderboard caching and performance optimization.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T22:08:52.005Z"
           },
           {
             "id": 4,
@@ -2019,9 +2022,10 @@
               "21.2"
             ],
             "details": "Create achievement category system with badges and visual representations. Implement social proof generation for sharing achievements on social media. Build achievement showcase profiles and portfolio views. Add achievement verification and authenticity markers.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T22:08:53.026Z"
           },
           {
             "id": 5,
@@ -2033,11 +2037,13 @@
               "21.4"
             ],
             "details": "Test achievement trigger conditions across all user actions. Verify progress tracking accuracy and real-time updates. Test leaderboard calculations and privacy controls. Validate notification delivery and achievement unlock flows. Test edge cases and concurrent user scenarios.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T22:08:54.041Z"
           }
-        ]
+        ],
+        "updatedAt": "2025-10-03T22:08:54.041Z"
       },
       {
         "id": "22",
@@ -2525,10 +2531,10 @@
             "description": "Set up webpack/Vite code splitting with dynamic imports for route-based and component-based splitting",
             "dependencies": [],
             "details": "Configure SvelteKit for automatic code splitting, implement dynamic imports for heavy components and routes, set up chunk optimization for optimal bundle sizes",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "",
             "parentId": "undefined",
-            "updatedAt": "2025-10-03T22:04:14.178Z"
+            "updatedAt": "2025-10-03T22:07:07.014Z"
           },
           {
             "id": 2,
@@ -2536,9 +2542,10 @@
             "description": "Implement lazy loading strategies for non-critical UI components and image assets",
             "dependencies": [],
             "details": "Create lazy loading wrapper components, implement intersection observer for image lazy loading, add skeleton loading states for better UX",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T22:07:56.365Z"
           },
           {
             "id": 3,
@@ -2546,9 +2553,10 @@
             "description": "Set up performance monitoring with LCP target under 2.5 seconds",
             "dependencies": [],
             "details": "Integrate web-vitals library, implement Core Web Vitals tracking (LCP, FID, CLS), set up performance dashboard and alerting for target thresholds",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T22:09:16.866Z"
           },
           {
             "id": 4,
@@ -2556,9 +2564,10 @@
             "description": "Implement efficient WebSocket connection handling with pooling and reconnection strategies",
             "dependencies": [],
             "details": "Add connection pooling for WebSocket connections, implement automatic reconnection with exponential backoff, optimize message queuing and batching",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T22:10:06.339Z"
           },
           {
             "id": 5,
@@ -2566,9 +2575,10 @@
             "description": "Add comprehensive caching for static assets and API responses",
             "dependencies": [],
             "details": "Configure HTTP caching headers, implement service worker caching for static assets, add API response caching with appropriate TTL and invalidation strategies",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T22:10:07.400Z"
           },
           {
             "id": 6,
@@ -2600,7 +2610,7 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2025-10-03T22:04:14.178Z"
+        "updatedAt": "2025-10-03T22:10:07.400Z"
       },
       {
         "id": "28",
@@ -2885,7 +2895,7 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2025-10-03T22:06:05.413Z",
+      "lastModified": "2025-10-03T22:10:07.402Z",
       "taskCount": 30,
       "completedCount": 25,
       "tags": [
