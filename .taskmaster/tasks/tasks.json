@@ -2,7 +2,7 @@
   "master": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Initialize SvelteKit Project",
         "description": "Set up the foundational SvelteKit application with TypeScript, ESLint, Prettier, and core dependencies",
         "details": "Run `npm create svelte@latest .` with TypeScript, ESLint, and Prettier options. Configure vite.config.js for development and production builds. Install core dependencies: @sveltejs/adapter-vercel for deployment, socket.io-client for WebSocket functionality, and lucide-svelte for icons. Set up basic folder structure: src/lib, src/routes, src/components, src/stores, src/types.",
@@ -61,7 +61,7 @@
         ]
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Configure Environment and Deployment",
         "description": "Set up environment variables, Vercel configuration, and deployment pipeline",
         "details": "Create .env.local file with required API keys structure matching .env.example. Configure vercel.json for SvelteKit adapter and environment variables. Set up GitHub Actions workflow for CI/CD with lint, build, and test steps. Configure adapter-vercel in svelte.config.js for optimal Vercel deployment.",
@@ -132,7 +132,7 @@
         ]
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Implement Data Models and Types",
         "description": "Define TypeScript interfaces and types for all core entities based on domain model",
         "details": "Create src/types/index.ts with interfaces for Event, User, Topic, Vote, Round, Room, ActivityState, Team, AuditLog. Include proper typing for role-based access (guest, participant, organizer, admin), event status enum, activity types enum (voting, intelligence, discussion, teams), and vote weights (first, second, third). Add validation schemas using zod for runtime type checking.",
@@ -219,7 +219,7 @@
         ]
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "Set Up JSON File Storage System",
         "description": "Implement MVP data persistence layer using JSON files with repository pattern",
         "details": "Create src/lib/storage/ directory with abstract Repository interface and JSONRepository implementation. Implement EventRepository, UserRepository, TopicRepository with CRUD operations. Add file locking mechanism for concurrent access safety. Include data versioning and backup functionality with atomic writes. Create migration utilities for future database transition.",
@@ -328,7 +328,7 @@
         ]
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "Implement Authentication System",
         "description": "Build multi-provider OAuth authentication with guest access support",
         "details": "Install and configure @auth/sveltekit with Google OAuth provider and credentials provider for email/password. Implement guest token generation with secure session management. Create authentication stores using Svelte stores for user state management. Add role-based access control middleware with proper session validation. Implement password reset and account recovery flows.",
@@ -426,7 +426,7 @@
         ]
       },
       {
-        "id": "6",
+        "id": 6,
         "title": "Create WebSocket Real-time Infrastructure",
         "description": "Implement WebSocket server and client for real-time activity orchestration",
         "details": "Install socket.io and @types/socket.io. Create WebSocket server in src/lib/websocket/ with event-driven architecture for activity updates, voting updates, game state, and team assignments. Implement client-side socket store with reconnection logic, heartbeat monitoring, and offline detection. Add acknowledgment-based broadcasting with retry mechanisms to meet 1-second propagation target.",
@@ -547,7 +547,7 @@
         ]
       },
       {
-        "id": "7",
+        "id": 7,
         "title": "Build Event Management System",
         "description": "Create event creation, configuration, and lifecycle management functionality",
         "details": "Create src/routes/events/ with event CRUD operations. Implement event configuration forms with validation for duration (max 7 days), capacity (min 5 users), and settings. Add QR code generation using qrcode library and unique event code generation. Implement event status state machine (Draft → Active → Completed → Archived) with proper transitions and business rule validation.",
@@ -646,7 +646,7 @@
         ]
       },
       {
-        "id": "8",
+        "id": 8,
         "title": "Implement Topic Management System",
         "description": "Build topic submission, editing, and management functionality for discussions",
         "details": "Create topic submission forms with real-time validation and character limits. Implement topic editing with proper authorization (only proposer or organizer). Add topic status management (draft/active/frozen) with real-time updates via WebSocket. Include topic tagging system and search functionality. Add organizer controls for topic curation and approval workflows.",
@@ -739,7 +739,7 @@
         "updatedAt": "2025-09-29T09:37:04.885Z"
       },
       {
-        "id": "9",
+        "id": 9,
         "title": "Build Weighted Voting System",
         "description": "Implement 1st/2nd/3rd choice voting with real-time updates and transparency",
         "details": "Create voting interface with drag-and-drop or button-based selection for 1st, 2nd, 3rd choices. Implement vote validation ensuring one vote per weight per user. Add real-time vote counting with WebSocket updates throttled to 2 updates/second. Include vote transparency features showing participant voting status without revealing specific choices. Add voting rule configuration (max votes per topic, voting windows).",
@@ -848,7 +848,7 @@
         ]
       },
       {
-        "id": "10",
+        "id": 10,
         "title": "Create Activity State Management",
         "description": "Implement activity orchestration system for organizers to switch between voting, games, discussions, and teams",
         "details": "Create ActivityState management with four core activities: voting, group intelligence, discussion groups, and team distribution. Implement organizer dashboard with activity preview and 'Go Live' actions. Add timer configuration and countdown functionality with real-time synchronization. Include activity transition logging in AuditLog with latency metrics and acknowledgment tracking.",
@@ -972,7 +972,7 @@
         ]
       },
       {
-        "id": "11",
+        "id": 11,
         "title": "Implement Collaborative Word-Chain Game",
         "description": "Build the multiplayer word-chain game for group intelligence activity",
         "details": "Create word-chain game logic where each word starts with the last letter of the previous word. Implement word validation using local dictionary and optional API integration. Add real-time word submission and chain display with WebSocket broadcasting. Include turn-based rotation or simultaneous submission modes with conflict resolution (first valid wins). Add profanity filtering and rate limiting for abuse prevention.",
@@ -1074,7 +1074,7 @@
         "updatedAt": "2025-10-03T11:29:14.035Z"
       },
       {
-        "id": "12",
+        "id": 12,
         "title": "Build Discussion Group Assignment System",
         "description": "Implement automatic participant assignment to discussion rooms based on voting preferences",
         "details": "Create algorithm to assign participants to discussion topics based on 1st, 2nd, 3rd choice votes. Implement room capacity management and overflow handling. Add manual assignment override capabilities for organizers. Include room information display with capacity and amenities. Create round management with history tracking and participant notification system.",
@@ -1185,7 +1185,7 @@
         ]
       },
       {
-        "id": "13",
+        "id": 13,
         "title": "Implement Team Distribution Service",
         "description": "Build participant allocation into teams with multiple distribution strategies",
         "details": "Create CSV/Excel import functionality for participant rosters with column mapping wizard. Implement three distribution strategies: random (with constraints), mix for collaboration (category balancing), and manual override. Add team preview with validation warnings and conflict detection. Include late joiner handling and incremental assignment suggestions.",
@@ -1291,7 +1291,7 @@
         "updatedAt": "2025-10-03T20:58:04.792Z"
       },
       {
-        "id": "14",
+        "id": 14,
         "title": "Create User Interface Components",
         "description": "Build reusable UI components with consistent design system and accessibility",
         "details": "Create component library in src/lib/components/ including Button, Input, Modal, Card, Timer, VotingCard, TopicCard, and GameCard components. Implement consistent styling with CSS custom properties for theme support (light/dark mode). Add WCAG 2.1 AA compliance with proper ARIA labels, keyboard navigation, and screen reader support. Use lucide-svelte for consistent iconography.",
@@ -1365,7 +1365,7 @@
         ]
       },
       {
-        "id": "15",
+        "id": 15,
         "title": "Build Participant Dashboard",
         "description": "Create main participant interface for joining events, voting, and activity participation",
         "details": "Create responsive participant dashboard showing current activity state with real-time updates. Implement event joining via code or QR scan with validation. Add activity-specific interfaces: voting cards, game participation, discussion room information, and team assignments. Include connection status indicator and reconnection prompts for offline scenarios.",
@@ -1473,7 +1473,7 @@
         "updatedAt": "2025-10-03T13:08:28.657Z"
       },
       {
-        "id": "16",
+        "id": 16,
         "title": "Build Organizer Control Panel",
         "description": "Create comprehensive organizer dashboard for event management and activity orchestration",
         "details": "Create organizer dashboard with event configuration panel, activity switching controls, and real-time participant monitoring. Implement timer management with customizable countdowns and auto-expire options. Add participant management features including role assignment and manual overrides. Include analytics widgets showing participation metrics and activity engagement.",
@@ -1596,7 +1596,7 @@
         "updatedAt": "2025-10-03T21:05:19.841Z"
       },
       {
-        "id": "17",
+        "id": 17,
         "title": "Implement Admin Platform Management",
         "description": "Build admin interface for cross-event monitoring and platform health management",
         "details": "Create admin dashboard with cross-event overview showing concurrent users, activity states, and error rates. Implement organizer access management with role assignment and revocation capabilities. Add platform health monitoring with real-time metrics and alerting. Include event suspension controls and audit trail viewing capabilities.",
@@ -1606,7 +1606,7 @@
           "5",
           "14"
         ],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -1683,10 +1683,10 @@
             "parentId": "undefined"
           }
         ],
-        "updatedAt": "2025-10-03T21:07:47.016Z"
+        "updatedAt": "2025-10-03T21:57:46.595Z"
       },
       {
-        "id": "18",
+        "id": 18,
         "title": "Add Mobile-Responsive Design",
         "description": "Optimize all interfaces for mobile devices with touch-friendly interactions",
         "details": "Implement mobile-first responsive design using CSS Grid and Flexbox. Optimize touch interactions for voting interface with larger tap targets and gesture support. Add mobile-specific navigation patterns and optimize performance for mobile devices. Implement progressive web app features including service worker for basic offline detection and app-like experience.",
@@ -1779,7 +1779,7 @@
         "updatedAt": "2025-10-03T21:53:04.624Z"
       },
       {
-        "id": "19",
+        "id": 19,
         "title": "Implement Security and Rate Limiting",
         "description": "Add comprehensive security measures including XSS protection, CSRF tokens, and rate limiting",
         "details": "Implement CSRF protection with SvelteKit's built-in CSRF tokens. Add XSS protection with input sanitization using DOMPurify. Configure security headers (HSTS, CSP, X-Frame-Options) in app.html and hooks. Implement rate limiting for API endpoints with different limits per endpoint type. Add request validation and SQL injection protection for future database migration.",
@@ -1874,7 +1874,7 @@
         ]
       },
       {
-        "id": "20",
+        "id": 20,
         "title": "Build Analytics and Reporting System",
         "description": "Implement event analytics with exportable reports and organizer insights",
         "details": "Create analytics collection system tracking participation metrics, activity dwell times, voting funnel, and engagement patterns. Implement exportable reports in CSV/JSON format for rounds, teams, and game sessions. Add organizer dashboard widgets showing real-time and historical analytics. Include activity switch history with latency metrics and organizer attribution.",
@@ -1892,7 +1892,7 @@
             "description": "Implement event tracking for participation metrics, activity dwell times, voting funnel, and engagement patterns",
             "dependencies": [],
             "details": "Set up analytics data models and collection endpoints to track user participation, time spent in activities, voting behavior funnel analysis, and overall engagement metrics. Create database schema for storing analytics events with proper indexing for performance.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "",
             "parentId": "undefined"
           },
@@ -1904,7 +1904,7 @@
               "20.1"
             ],
             "details": "Create report generation service that can export analytics data in CSV and JSON formats. Include filtering options for date ranges, specific rounds, teams, or game sessions. Implement background job processing for large exports.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "",
             "parentId": "undefined"
           },
@@ -1916,7 +1916,7 @@
               "20.1"
             ],
             "details": "Develop dashboard widgets showing real-time participation metrics, activity engagement, and voting statistics. Include charts and graphs for visual representation of data trends and current event status.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "",
             "parentId": "undefined"
           },
@@ -1928,7 +1928,7 @@
               "20.1"
             ],
             "details": "Build functionality to record when activities are switched, measure transition latency, and track which organizer initiated the change. Store historical activity flow data for analysis.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "",
             "parentId": "undefined"
           },
@@ -1941,7 +1941,7 @@
               "20.2"
             ],
             "details": "Set up data archival processes for long-term analytics storage. Create efficient query mechanisms for retrieving historical data across different time periods. Implement data retention policies and cleanup procedures.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "",
             "parentId": "undefined"
           },
@@ -1957,14 +1957,14 @@
               "20.5"
             ],
             "details": "Create test suites to verify analytics data collection accuracy, report generation correctness, dashboard widget functionality, and historical data retrieval performance. Include load testing for analytics system under concurrent usage.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
             "parentId": "undefined"
           }
         ]
       },
       {
-        "id": "21",
+        "id": 21,
         "title": "Implement Achievement System",
         "description": "Build gamification features with achievement tracking and progress monitoring",
         "details": "Create achievement definitions for participation milestones, voting engagement, game performance, and social interactions. Implement achievement tracking with progress bars and notification system. Add leaderboard functionality with privacy controls. Include achievement categories and social proof generation for sharing accomplishments.",
@@ -2040,7 +2040,7 @@
         ]
       },
       {
-        "id": "22",
+        "id": 22,
         "title": "Add Event Template and Cloning System",
         "description": "Implement event template creation and replication functionality for organizers",
         "details": "Create event template system allowing organizers to save successful event configurations. Implement event cloning functionality with selective copying of settings, topics, and room configurations. Add template sharing between organizers with permission controls. Include template categorization and search functionality for easy discovery.",
@@ -2114,7 +2114,7 @@
         ]
       },
       {
-        "id": "23",
+        "id": 23,
         "title": "Implement Internationalization (i18n)",
         "description": "Add multi-language support starting with English and French",
         "details": "Install and configure svelte-i18n for internationalization. Create translation files for English (en-US) and French (fr-FR) with proper fallback mechanisms. Implement locale-aware formatting for dates, times, and numbers using Intl API. Add language switcher component and locale persistence. Structure content for easy extension to additional languages.",
@@ -2198,7 +2198,7 @@
         ]
       },
       {
-        "id": "24",
+        "id": 24,
         "title": "Add Data Export and GDPR Compliance",
         "description": "Implement data portability, export capabilities, and privacy compliance features",
         "details": "Create data export functionality allowing users to download their personal data in JSON/CSV format. Implement data deletion workflows for GDPR compliance with proper anonymization. Add consent logging and privacy notice management. Include data retention policies and automated cleanup for inactive accounts. Create audit trail for all privacy-related actions.",
@@ -2299,7 +2299,7 @@
         ]
       },
       {
-        "id": "25",
+        "id": 25,
         "title": "Implement Error Handling and Monitoring",
         "description": "Add comprehensive error handling, logging, and monitoring infrastructure",
         "details": "Implement centralized error handling with user-friendly error messages and fallback behaviors. Add structured logging with error categorization and context tracking. Configure monitoring dashboards for WebSocket success rates, activity switch latency, and error budgets. Include automated alerting for critical failures and performance degradation.",
@@ -2397,7 +2397,7 @@
         ]
       },
       {
-        "id": "26",
+        "id": 26,
         "title": "Build Testing Infrastructure",
         "description": "Implement comprehensive testing suite including unit, integration, and E2E tests",
         "details": "Set up Vitest for unit testing and Playwright for E2E testing. Create test utilities for mocking WebSocket connections and authentication. Implement tests for core user journeys: join & vote, orchestrate activities, distribute teams, and monitor platform health. Add load testing simulation for 200 concurrent participants. Configure CI/CD integration with test automation.",
@@ -2507,7 +2507,7 @@
         ]
       },
       {
-        "id": "27",
+        "id": 27,
         "title": "Optimize Performance and Loading",
         "description": "Implement performance optimizations to meet loading and interaction targets",
         "details": "Optimize bundle size with code splitting and dynamic imports. Implement lazy loading for non-critical components and images. Add performance monitoring with Core Web Vitals tracking (LCP < 2.5s target). Optimize WebSocket connection management and implement connection pooling. Add caching strategies for static assets and API responses.",
@@ -2601,7 +2601,7 @@
         ]
       },
       {
-        "id": "28",
+        "id": 28,
         "title": "Create Documentation and Help System",
         "description": "Build comprehensive user documentation with tutorials and troubleshooting guides",
         "details": "Create in-app help system with contextual guidance and tooltips. Build comprehensive documentation covering setup, configuration, and user workflows. Add video walkthrough tutorials for key features. Implement FAQ system with search functionality. Create troubleshooting guides for common issues and connectivity problems.",
@@ -2611,7 +2611,7 @@
           "15",
           "16"
         ],
-        "status": "pending",
+        "status": "in-progress",
         "subtasks": [
           {
             "id": 1,
@@ -2619,9 +2619,10 @@
             "description": "Implement contextual help system with tooltips and guided interactions throughout the application",
             "dependencies": [],
             "details": "Build in-app help overlay system with contextual tooltips for key UI elements. Create guided tour functionality for first-time users. Implement help trigger buttons and contextual help panels that appear based on user location in the app. Add help content management system for easy updates.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T21:59:14.636Z"
           },
           {
             "id": 2,
@@ -2631,9 +2632,10 @@
               "28.1"
             ],
             "details": "Write comprehensive documentation in markdown format covering system requirements, installation steps, initial configuration, and detailed user workflows for each feature. Create API documentation and developer guides. Organize documentation with clear navigation and search functionality.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T21:59:15.685Z"
           },
           {
             "id": 3,
@@ -2643,9 +2645,10 @@
               "28.2"
             ],
             "details": "Record video tutorials for core features including event creation, activity management, and user participation flows. Implement video player integration within documentation. Create video hosting solution and ensure videos are accessible and properly captioned for accessibility compliance.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T21:59:16.648Z"
           },
           {
             "id": 4,
@@ -2655,9 +2658,10 @@
               "28.2"
             ],
             "details": "Create FAQ database structure with categories, tags, and search indexing. Implement search functionality with keyword matching and relevance scoring. Build FAQ management interface for adding and updating questions. Add FAQ integration points throughout the application for contextual help.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T21:59:17.585Z"
           },
           {
             "id": 5,
@@ -2668,14 +2672,16 @@
               "28.4"
             ],
             "details": "Create troubleshooting guides for WebSocket connectivity issues, browser compatibility problems, and common user errors. Implement diagnostic tools for users to test their connection and system compatibility. Add error code reference guide and step-by-step resolution procedures.",
-            "status": "pending",
+            "status": "in-progress",
             "testStrategy": "",
-            "parentId": "undefined"
+            "parentId": "undefined",
+            "updatedAt": "2025-10-03T21:59:18.604Z"
           }
-        ]
+        ],
+        "updatedAt": "2025-10-03T21:59:18.604Z"
       },
       {
-        "id": "29",
+        "id": 29,
         "title": "Implement Backup and Recovery System",
         "description": "Add automated backup, disaster recovery, and data integrity verification",
         "details": "Implement automated backup system with 30-minute intervals and 7-day retention. Create disaster recovery procedures with 30-minute RTO target. Add data integrity verification with checksums and corruption detection. Implement backup restoration testing and validation procedures. Include backup monitoring and alerting for failures.",
@@ -2762,7 +2768,7 @@
         ]
       },
       {
-        "id": "30",
+        "id": 30,
         "title": "Conduct Security Audit and Penetration Testing",
         "description": "Perform comprehensive security assessment and vulnerability testing",
         "details": "Conduct security audit covering authentication, authorization, data protection, and API security. Perform penetration testing on WebSocket connections, real-time features, and admin interfaces. Test for common vulnerabilities (OWASP Top 10) and implement fixes. Add security scanning to CI/CD pipeline. Document security procedures and incident response plans.",
@@ -2877,12 +2883,15 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2025-10-03T21:53:04.626Z",
+      "lastModified": "2025-10-03T21:59:18.605Z",
       "taskCount": 30,
-      "completedCount": 22,
+      "completedCount": 23,
       "tags": [
         "master"
-      ]
+      ],
+      "created": "2025-10-03T22:00:21.884Z",
+      "description": "Tasks for master context",
+      "updated": "2025-10-03T22:00:21.928Z"
     }
   }
 }
