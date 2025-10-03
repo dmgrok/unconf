@@ -4,9 +4,6 @@
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { auth, user, isAuthenticated, isGuest } from '$lib/stores/auth';
 	import { sessionManager, sessionUtils } from '$lib/auth/session';
-	import SecurityMonitor from '$lib/components/SecurityMonitor.svelte';
-	import DeveloperBanner from '../components/DeveloperBanner.svelte';
-	import LanguageSwitcher from '$lib/components/LanguageSwitcher.svelte';
 	import { dev } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { waitLocale } from '$lib/i18n';
@@ -14,6 +11,11 @@
 	import '$lib/i18n'; // Initialize i18n
 	import '$lib/styles/responsive.css'; // Mobile-responsive styles
 	import '$lib/styles/touch.css'; // Touch-optimized interactions
+
+	// Dynamic imports for non-critical components
+	let SecurityMonitor: any;
+	let DeveloperBanner: any;
+	let LanguageSwitcher: any;
 
 	let { children, data } = $props();
 
@@ -35,6 +37,19 @@
 		// Wait for locale to be loaded
 		await waitLocale();
 
+		// Dynamically import non-critical components
+		const [securityMonitorModule, languageSwitcherModule, developerBannerModule] = await Promise.all([
+			import('$lib/components/SecurityMonitor.svelte'),
+			import('$lib/components/LanguageSwitcher.svelte'),
+			dev ? import('../components/DeveloperBanner.svelte') : Promise.resolve({ default: null })
+		]);
+
+		SecurityMonitor = securityMonitorModule.default;
+		LanguageSwitcher = languageSwitcherModule.default;
+		if (dev) {
+			DeveloperBanner = developerBannerModule.default;
+		}
+
 		const intervalId = sessionUtils.startSessionMonitoring((session) => {
 			if (!session) {
 				// Session expired, clear auth state
@@ -55,8 +70,8 @@
 </svelte:head>
 
 <!-- Developer Banner (only shown in development) -->
-{#if dev && data.demoEvent}
-	<DeveloperBanner demoEvent={data.demoEvent} />
+{#if dev && data.demoEvent && DeveloperBanner}
+	<svelte:component this={DeveloperBanner} demoEvent={data.demoEvent} />
 {/if}
 
 <nav class="navbar" class:with-dev-banner={dev && data.demoEvent}>
@@ -64,7 +79,9 @@
 		<a href="/" class="nav-brand">UnConf</a>
 
 		<div class="nav-auth">
-			<LanguageSwitcher />
+			{#if LanguageSwitcher}
+				<svelte:component this={LanguageSwitcher} />
+			{/if}
 			{#if $isAuthenticated && $user}
 				<span class="user-info">
 					Hello, {$user.name || $user.email || 'User'}!
@@ -91,8 +108,10 @@
 	{@render children?.()}
 </main>
 
-<!-- Security monitoring component -->
-<SecurityMonitor showWarnings={true} autoLogout={false} warningThreshold={5} />
+<!-- Security monitoring component (lazy loaded) -->
+{#if SecurityMonitor}
+	<svelte:component this={SecurityMonitor} showWarnings={true} autoLogout={false} warningThreshold={5} />
+{/if}
 
 <style>
 	.navbar {

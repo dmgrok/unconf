@@ -2,10 +2,13 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
   import { authStore } from '$lib/stores/auth';
-  import { TopicSubmissionForm, TopicListWithVoting } from '../components';
-	import WebSocketTest from '$lib/components/WebSocketTest.svelte';
 
   type DemoEvent = { id: string; title: string };
+
+	// Dynamic imports for heavy components
+	let TopicSubmissionForm: any;
+	let TopicListWithVoting: any;
+	let WebSocketTest: any;
 
 	let isLoading = true;
 	let demoMode = false;
@@ -25,10 +28,21 @@
 	onMount(async () => {
 		// Check authentication status
 		await authStore.initialize();
-		
+
+		// Load components dynamically
+		const [topicSubmissionModule, topicListModule, webSocketModule] = await Promise.all([
+			import('../components').then(m => ({ default: m.TopicSubmissionForm })),
+			import('../components').then(m => ({ default: m.TopicListWithVoting })),
+			import('$lib/components/WebSocketTest.svelte')
+		]);
+
+		TopicSubmissionForm = topicSubmissionModule.default;
+		TopicListWithVoting = topicListModule.default;
+		WebSocketTest = webSocketModule.default;
+
 		// Initialize demo event data
 		await initializeDemoEvent();
-		
+
 		isLoading = false;
 	});
 
@@ -132,12 +146,15 @@
 <h1>UnConf - Unconference Management Platform</h1>
 <p>Real-time collaboration platform for unconferences, voting, and group activities.</p>
 
+{#if !isLoading}
 <div class="demo-sections">
   <!-- WebSocket Testing -->
+  {#if WebSocketTest}
   <section class="websocket-section">
     <h2>🔄 WebSocket Infrastructure Test</h2>
-    <WebSocketTest />
+    <svelte:component this={WebSocketTest} />
   </section>
+  {/if}
 
   <!-- Weighted Voting Demo -->
   {#if testEvent}
@@ -187,26 +204,28 @@
   {/if}
 
   <!-- Legacy Topic Management (fallback) -->
-  {#if testEvent && !showDemoEvent}
+  {#if testEvent && !showDemoEvent && TopicSubmissionForm && TopicListWithVoting}
     <section class="topic-section">
       <h2>💡 Legacy Topic Management System</h2>
       <p>Basic topic management without weighted voting</p>
-      
+
       <div class="topic-management">
         <div class="topic-submission">
           <h3>Submit New Topic</h3>
-          <TopicSubmissionForm 
-            eventId={testEvent.id} 
-            {userId} 
-            {userName} 
+          <svelte:component
+            this={TopicSubmissionForm}
+            eventId={testEvent.id}
+            {userId}
+            {userName}
           />
         </div>
-        
+
         <div class="topic-list">
           <h3>Current Topics (No Voting)</h3>
-          <TopicListWithVoting 
-            eventId={testEvent.id} 
-            {userId} 
+          <svelte:component
+            this={TopicListWithVoting}
+            eventId={testEvent.id}
+            {userId}
             userRole="participant"
             enableVoting={false}
             showActions={true}
@@ -216,6 +235,9 @@
     </section>
   {/if}
 </div>
+{:else}
+<div class="loading">Loading...</div>
+{/if}
 
 <style>
   .demo-sections {

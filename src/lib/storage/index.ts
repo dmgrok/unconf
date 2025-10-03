@@ -14,6 +14,9 @@ import { TopicRepository } from './TopicRepository';
 import { VoteRepository } from './VoteRepository';
 import { EventTemplateRepository } from './EventTemplateRepository';
 import { EventTemplatePermissionRepository } from './EventTemplatePermissionRepository';
+import { AnalyticsRepository, LiveAnalyticsRepository } from './AnalyticsRepository';
+import { ActivitySwitchHistoryRepository } from './ActivitySwitchHistoryRepository';
+import { AuditLogRepository } from './AuditLogRepository';
 
 // Core interfaces and base classes
 export { Repository, type RepositoryOperationResult, type QueryOptions, type ValidationResult, type RepositoryError } from './Repository';
@@ -26,6 +29,11 @@ export { TopicRepository, type TopicWithVoteInfo } from './TopicRepository';
 export { VoteRepository } from './VoteRepository';
 export { EventTemplateRepository } from './EventTemplateRepository';
 export { EventTemplatePermissionRepository } from './EventTemplatePermissionRepository';
+
+// Analytics and audit repositories
+export { AnalyticsRepository, LiveAnalyticsRepository } from './AnalyticsRepository';
+export { ActivitySwitchHistoryRepository, type ActivitySwitchHistory } from './ActivitySwitchHistoryRepository';
+export { AuditLogRepository } from './AuditLogRepository';
 
 // Migration and data management utilities
 export { MigrationManager, type MigrationVersion, type MigrationScript, type ExportFormat, defaultMigrations } from './MigrationManager';
