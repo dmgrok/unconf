@@ -33,9 +33,9 @@ export class ArchivalService {
 	};
 
 	constructor(storagePath: string) {
-		this.analyticsRepo = new AnalyticsRepository({ storagePath });
-		this.activitySwitchRepo = new ActivitySwitchHistoryRepository({ storagePath });
-		this.auditLogRepo = new AuditLogRepository({ storagePath });
+		this.analyticsRepo = new AnalyticsRepository({ dataDir: storagePath });
+		this.activitySwitchRepo = new ActivitySwitchHistoryRepository({ dataDir: storagePath });
+		this.auditLogRepo = new AuditLogRepository({ dataDir: storagePath });
 	}
 
 	/**

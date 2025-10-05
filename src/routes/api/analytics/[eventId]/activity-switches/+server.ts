@@ -5,7 +5,7 @@ import {
 	type ActivitySwitchHistory
 } from '$lib/storage/ActivitySwitchHistoryRepository';
 
-const repository = new ActivitySwitchHistoryRepository({ storagePath: './data' });
+const repository = new ActivitySwitchHistoryRepository({ dataDir: './data' });
 
 /**
  * GET /api/analytics/:eventId/activity-switches

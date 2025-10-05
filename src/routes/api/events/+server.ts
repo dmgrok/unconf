@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { EventRepository } from '$lib/storage';
 import { normalizeEventSettings, validateEventBusinessRules, EVENT_RULE_LIMITS, DAY_IN_MS } from '$lib/validation/eventRules';
+import { generateUniqueSlug } from '$lib/utils/slug';
 import type { Event } from '../../../types/entities';
 import { EventStatus } from '../../../types/enums';
 import { z } from 'zod';
@@ -85,13 +86,15 @@ export async function POST({ request }) {
       );
     }
 
-    // Generate unique access code
+    // Generate unique access code and slug
     const accessCode = await eventRepository.generateUniqueAccessCode();
-    
+    const slug = generateUniqueSlug(validatedData.title);
+
     // Create new event
     const newEvent: Omit<Event, 'id' | 'createdAt' | 'updatedAt'> = {
       title: validatedData.title,
       description: validatedData.description ?? '',
+      slug,
       status: EventStatus.DRAFT,
       accessCode,
       organizerId: validatedData.organizerId,
@@ -157,9 +160,10 @@ export async function POST({ request }) {
 export async function GET({ url }) {
   try {
     const eventId = url.searchParams.get('id');
+    const slug = url.searchParams.get('slug');
     const organizerId = url.searchParams.get('organizerId');
     const accessCode = url.searchParams.get('accessCode');
-    
+
     if (eventId) {
       // Get specific event by ID
       const result = await eventRepository.findById(eventId);
@@ -169,13 +173,29 @@ export async function GET({ url }) {
           error: 'Event not found'
         }, { status: 404 });
       }
-      
+
       return json({
         success: true,
         event: result.data
       });
     }
-    
+
+    if (slug) {
+      // Get event by slug
+      const result = await eventRepository.findBySlug(slug);
+      if (!result.success) {
+        return json({
+          success: false,
+          error: 'Event not found'
+        }, { status: 404 });
+      }
+
+      return json({
+        success: true,
+        event: result.data
+      });
+    }
+
     if (accessCode) {
       // Get event by access code
       const result = await eventRepository.findByAccessCode(accessCode);
@@ -185,7 +205,7 @@ export async function GET({ url }) {
           error: 'Event not found'
         }, { status: 404 });
       }
-      
+
       return json({
         success: true,
         event: result.data

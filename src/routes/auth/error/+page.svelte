@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { AlertTriangle } from 'lucide-svelte';
 	import { page } from '$app/stores';
 
 	let error = $derived($page.url.searchParams.get('error'));
@@ -23,7 +24,9 @@
 
 <div class="error-container">
 	<div class="error-card">
-		<div class="error-icon">⚠️</div>
+		<div class="error-icon">
+			<AlertTriangle size={48} />
+		</div>
 		<h1>Authentication Error</h1>
 		<p class="error-message">{errorMessage()}</p>
 

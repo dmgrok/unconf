@@ -1,0 +1,55 @@
+# Task ID: 7
+# Title: Build Event Management System
+# Status: done
+# Dependencies: 5, 4
+# Priority: high
+# Description: Create event creation, configuration, and lifecycle management functionality
+# Details:
+Create src/routes/events/ with event CRUD operations. Implement event configuration forms with validation for duration (max 7 days), capacity (min 5 users), and settings. Add QR code generation using qrcode library and unique event code generation. Implement event status state machine (Draft → Active → Completed → Archived) with proper transitions and business rule validation.
+
+# Test Strategy:
+Test event creation with various configurations, QR code generation and scanning, event code validation, status transitions, and business rule enforcement
+
+# Subtasks:
+## 1. Create Event CRUD API Endpoints [done]
+### Dependencies: None
+### Description: Implement REST API endpoints for creating, reading, updating, and deleting events with proper request/response handling
+### Details:
+Create src/routes/events/ directory with endpoints for POST /events (create), GET /events (list), GET /events/:id (detail), PUT /events/:id (update), DELETE /events/:id (delete). Include proper error handling, request validation, and response formatting.
+
+## 2. Build Event Configuration Forms with Validation [done]
+### Dependencies: 7.1
+### Description: Create frontend forms for event configuration with comprehensive validation rules
+### Details:
+Implement event creation and editing forms with validation for duration (max 7 days), capacity (min 5 users), event name, description, and other settings. Include real-time validation feedback and error handling.
+
+## 3. Implement QR Code Generation [done]
+### Dependencies: 7.1
+### Description: Add QR code generation functionality using qrcode library for event access
+### Details:
+Install qrcode library and implement QR code generation for events. Create endpoint to generate QR codes containing event access information and display them in event management interface.
+
+## 4. Add Unique Event Code Generation and Validation [done]
+### Dependencies: 7.1
+### Description: Implement system for generating and validating unique event access codes
+### Details:
+Create unique event code generation algorithm (alphanumeric, 6-8 characters). Implement code validation, collision detection, and expiration logic. Add database fields and API endpoints for code management.
+
+## 5. Create Event Status State Machine [done]
+### Dependencies: 7.1
+### Description: Implement state machine for event lifecycle with proper state transitions
+### Details:
+Design and implement state machine with states: Draft → Active → Completed → Archived. Define valid transitions, implement transition logic, and add state change validation with proper error handling.
+
+## 6. Add Business Rule Validation [done]
+### Dependencies: 7.2, 7.5
+### Description: Implement comprehensive business rule validation for event constraints
+### Details:
+Add validation for duration limits (max 7 days), capacity constraints (min 5 users), state transition rules, and other business logic. Include server-side validation and appropriate error messages.
+
+## 7. Implement Event Lifecycle Management [done]
+### Dependencies: 7.5, 7.6
+### Description: Create comprehensive event lifecycle management system with automated transitions and monitoring
+### Details:
+Implement automated event lifecycle management including scheduled state transitions, event expiration handling, cleanup processes, and monitoring dashboards for event health and status tracking.
+

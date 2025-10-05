@@ -11,19 +11,19 @@ import type { AssignmentSettings } from '../../../types/entities';
 
 // Initialize repositories
 const roomRepo = new DiscussionRoomRepository({
-	storageDir: './data/storage'
+	dataDir: './data/storage'
 });
 const assignmentRepo = new RoomAssignmentRepository({
-	storageDir: './data/storage'
+	dataDir: './data/storage'
 });
 const voteRepo = new VoteRepository({
-	storageDir: './data/storage'
+	dataDir: './data/storage'
 });
 const userRepo = new UserRepository({
-	storageDir: './data/storage'
+	dataDir: './data/storage'
 });
 const topicRepo = new TopicRepository({
-	storageDir: './data/storage'
+	dataDir: './data/storage'
 });
 
 export const GET: RequestHandler = async ({ url }) => {

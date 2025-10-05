@@ -1,0 +1,55 @@
+# Task ID: 13
+# Title: Implement Team Distribution Service
+# Status: done
+# Dependencies: 10, 4
+# Priority: medium
+# Description: Build participant allocation into teams with multiple distribution strategies
+# Details:
+Create CSV/Excel import functionality for participant rosters with column mapping wizard. Implement three distribution strategies: random (with constraints), mix for collaboration (category balancing), and manual override. Add team preview with validation warnings and conflict detection. Include late joiner handling and incremental assignment suggestions.
+
+# Test Strategy:
+Test CSV import and column mapping, all distribution strategies, team preview and validation, manual adjustments, and late joiner scenarios
+
+# Subtasks:
+## 1. Create CSV/Excel import with column mapping wizard [done]
+### Dependencies: None
+### Description: Build file upload interface with drag-and-drop support and column mapping wizard for participant roster import
+### Details:
+Implement file upload component supporting CSV and Excel formats. Create column mapping wizard that automatically detects common fields (name, email, category) and allows manual mapping. Add data preview and validation with error highlighting for missing required fields or invalid formats.
+
+## 2. Implement random distribution strategy with constraints [done]
+### Dependencies: 13.1
+### Description: Build random team assignment algorithm with configurable constraints and balancing rules
+### Details:
+Create random distribution engine that respects team size limits, category distribution constraints, and exclusion rules. Implement constraint validation and rebalancing logic. Add configuration options for team size variance and category mixing preferences.
+
+## 3. Add mix for collaboration strategy with category balancing [done]
+### Dependencies: 13.1
+### Description: Implement intelligent team formation that optimizes for diverse collaboration and skill mixing
+### Details:
+Build collaboration-focused distribution algorithm that balances participant categories, skills, and backgrounds across teams. Implement scoring system for team diversity and collaboration potential. Add optimization logic to maximize cross-category interactions.
+
+## 4. Create manual override functionality [done]
+### Dependencies: 13.2, 13.3
+### Description: Build drag-and-drop interface for manual team adjustments and participant reassignment
+### Details:
+Implement visual team editor with drag-and-drop participant movement between teams. Add conflict detection for manual changes that violate constraints. Include undo/redo functionality and change tracking with validation warnings.
+
+## 5. Add team preview with validation warnings [done]
+### Dependencies: 13.4
+### Description: Create comprehensive team preview interface with validation checks and conflict detection
+### Details:
+Build team preview dashboard showing all teams with participant details, team balance metrics, and constraint compliance. Implement validation system that highlights conflicts, imbalances, and constraint violations. Add export functionality for final team assignments.
+
+## 6. Implement late joiner handling and suggestions [done]
+### Dependencies: 13.5
+### Description: Build system for handling participants who join after initial team formation
+### Details:
+Create late joiner workflow that analyzes existing teams and suggests optimal placement based on current team composition. Implement incremental assignment suggestions that maintain team balance. Add notification system for team changes and affected participants.
+
+## 7. Create team assignment broadcast and confirmation tracking [done]
+### Dependencies: 13.6
+### Description: Build notification system for team assignments with participant confirmation and tracking
+### Details:
+Implement multi-channel notification system (email, in-app) for team assignment announcements. Create confirmation tracking system where participants acknowledge their team assignment. Add reminder system for unconfirmed assignments and escalation procedures.
+

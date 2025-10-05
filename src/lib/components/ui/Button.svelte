@@ -1,11 +1,17 @@
 <script lang="ts">
-	import type { HTMLButtonAttributes } from 'svelte/elements';
+	import { onMount } from 'svelte';
+	import type { Snippet } from 'svelte';
 
-	interface ButtonProps extends HTMLButtonAttributes {
+	interface ButtonProps {
 		variant?: 'primary' | 'secondary' | 'outline' | 'danger';
 		size?: 'sm' | 'md' | 'lg';
 		loading?: boolean;
 		icon?: boolean;
+		disabled?: boolean;
+		children?: Snippet;
+		class?: string;
+		onclick?: (event: MouseEvent) => void;
+		type?: 'button' | 'submit' | 'reset';
 	}
 
 	let {
@@ -16,18 +22,39 @@
 		disabled = false,
 		children,
 		class: className = '',
-		...restProps
+		onclick,
+		type = 'button'
 	}: ButtonProps = $props();
 
-	$: isDisabled = disabled || loading;
+	let isDisabled = $derived(disabled || loading);
+	let buttonElement: HTMLButtonElement;
+
+	onMount(() => {
+		console.log('[Button] onMount - onclick:', !!onclick, 'buttonElement:', !!buttonElement);
+		if (onclick && buttonElement) {
+			console.log('[Button] Adding click listener');
+			buttonElement.addEventListener('click', (e) => {
+				console.log('[Button] Click event fired!');
+				if (!isDisabled) {
+					console.log('[Button] Calling onclick handler');
+					onclick(e);
+				} else {
+					console.log('[Button] Button is disabled, not calling onclick');
+				}
+			});
+		} else {
+			console.log('[Button] Not adding listener - onclick:', !!onclick, 'buttonElement:', !!buttonElement);
+		}
+	});
 </script>
 
 <button
+	bind:this={buttonElement}
+	type={type}
 	class="btn btn-{variant} btn-{size} {className}"
 	class:btn-loading={loading}
 	class:btn-icon={icon}
 	disabled={isDisabled}
-	{...restProps}
 >
 	{#if loading}
 		<span class="btn-spinner" aria-hidden="true"></span>

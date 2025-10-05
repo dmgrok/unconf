@@ -281,8 +281,7 @@
     font-weight: 600;
   }
 
-  .control-group input,
-  .control-group select {
+  .control-group input {
     width: 100%;
     padding: 0.5rem;
     border: 1px solid #ced4da;

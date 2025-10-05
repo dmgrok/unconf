@@ -83,7 +83,7 @@
 
 						{#if showQRCode && qrCodeUrl}
 							<div class="qr-section">
-								<label>Quick Join QR Code:</label>
+								<p class="qr-label">Quick Join QR Code:</p>
 								<img
 									src={qrCodeUrl}
 									alt="QR code to join event"

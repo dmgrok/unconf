@@ -5,10 +5,10 @@ import { DiscussionRoomRepository } from '../../../../lib/storage/DiscussionRoom
 import { AssignmentMethod, AssignmentStatus } from '../../../../types/enums';
 
 const assignmentRepo = new RoomAssignmentRepository({
-	storageDir: './data/storage'
+	dataDir: './data/storage'
 });
 const roomRepo = new DiscussionRoomRepository({
-	storageDir: './data/storage'
+	dataDir: './data/storage'
 });
 
 export const GET: RequestHandler = async ({ url }) => {

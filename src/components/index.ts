@@ -7,4 +7,4 @@ export { default as TopicSubmissionForm } from '$lib/components/TopicSubmissionF
 export { default as TopicList } from '$lib/components/TopicList.svelte';
 export { default as TopicListWithVoting } from '$lib/components/TopicListWithVoting.svelte';
 export { default as WeightedVoting } from '$lib/components/WeightedVoting.svelte';
-export { default as EventConfigurationForm } from '$lib/components/EventConfigurationForm.svelte';
+export { default as EventConfigurationForm } from '$lib/components/EventConfigurationFormNew.svelte';

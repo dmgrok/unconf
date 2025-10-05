@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { ActivitySwitchHistoryRepository } from '$lib/storage/ActivitySwitchHistoryRepository';
 
-const repository = new ActivitySwitchHistoryRepository({ storagePath: './data' });
+const repository = new ActivitySwitchHistoryRepository({ dataDir: './data' });
 
 /**
  * GET /api/analytics/:eventId/activity-switches/stats

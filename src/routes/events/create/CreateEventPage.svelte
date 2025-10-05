@@ -1,14 +1,19 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { authStore, type AuthUser } from '$lib/stores/auth';
-  import EventConfigurationForm from '$lib/components/EventConfigurationForm.svelte';
+  import { AlertTriangle, Lock, Sparkles } from 'lucide-svelte';
+  import EventConfigurationFormNew from '$lib/components/EventConfigurationFormNew.svelte';
+  import Button from '$lib/components/ui/Button.svelte';
   import { onMount } from 'svelte';
 
   type EventSavedDetail = { event: { id: string; title: string; accessCode?: string } };
   type ErrorDetail = { message: string; details?: Array<{ message: string }> };
 
-  let isLoading = true;
-  let user: AuthUser | null = null;
+  let isLoading = $state(true);
+  let user = $state<AuthUser | null>(null);
+  let showSuccess = $state(false);
+  let successEvent = $state<{ id: string; title: string; accessCode?: string } | null>(null);
+  let errorMessage = $state('');
 
   onMount(async () => {
     await authStore.initialize();
@@ -18,9 +23,15 @@
 
   function handleEventCreated(event: CustomEvent<EventSavedDetail>) {
     const { event: newEvent } = event.detail;
+    successEvent = newEvent;
+    showSuccess = true;
 
-    alert(`Event "${newEvent.title}" created successfully!${newEvent.accessCode ? ` Access code: ${newEvent.accessCode}` : ''}`);
-    goto(`/events/${newEvent.id}`);
+    // Auto-redirect after 3 seconds or wait for user action
+    setTimeout(() => {
+      if (showSuccess) {
+        goto(`/events/${newEvent.id}`);
+      }
+    }, 3000);
   }
 
   function handleError(event: CustomEvent<ErrorDetail>) {
@@ -31,11 +42,27 @@
       errorMsg += '\n\nValidation errors:\n' + details.map(d => `• ${d.message}`).join('\n');
     }
 
-    alert(errorMsg);
+    errorMessage = errorMsg;
+
+    // Clear error after 5 seconds
+    setTimeout(() => {
+      errorMessage = '';
+    }, 5000);
   }
 
   function handleCancel() {
     goto('/');
+  }
+
+  function goToEvent() {
+    if (successEvent) {
+      goto(`/events/${successEvent.id}`);
+    }
+  }
+
+  function createAnother() {
+    showSuccess = false;
+    successEvent = null;
   }
 </script>
 
@@ -45,10 +72,18 @@
 </svelte:head>
 
 <main class="create-event-page">
-  <div class="page-header">
-    <h1>Create New Event</h1>
-    <p>Set up your unconference with custom settings, voting rules, and participant constraints</p>
-  </div>
+  <!-- Error Toast -->
+  {#if errorMessage}
+    <div class="error-toast">
+      <div class="toast-content">
+        <span class="toast-icon">
+          <AlertTriangle size={20} />
+        </span>
+        <p class="toast-message">{errorMessage}</p>
+        <button class="toast-close" onclick={() => (errorMessage = '')}>×</button>
+      </div>
+    </div>
+  {/if}
 
   {#if isLoading}
     <div class="loading-state">
@@ -57,67 +92,152 @@
     </div>
   {:else if !user}
     <div class="auth-required">
-      <h2>Authentication Required</h2>
-      <p>You need to be signed in to create an event.</p>
-      <a href="/auth/signin" class="btn btn-primary">Sign In</a>
+      <div class="auth-card">
+        <div class="auth-icon">
+          <Lock size={48} />
+        </div>
+        <h2>Authentication Required</h2>
+        <p>You need to be signed in to create an event.</p>
+        <Button variant="primary" size="lg" onclick={() => goto('/auth/signin')}>
+          Sign In
+        </Button>
+      </div>
+    </div>
+  {:else if showSuccess && successEvent}
+    <div class="success-state">
+      <div class="success-card">
+        <div class="success-icon">
+          <Sparkles size={64} />
+        </div>
+        <h2>Event Created Successfully!</h2>
+        <p class="success-title">{successEvent.title}</p>
+        {#if successEvent.accessCode}
+          <div class="access-code-section">
+            <p class="access-code-label">Access Code:</p>
+            <div class="access-code">{successEvent.accessCode}</div>
+            <p class="access-code-hint">Share this code with participants</p>
+          </div>
+        {/if}
+        <div class="success-actions">
+          <Button variant="primary" size="lg" onclick={goToEvent}>
+            Go to Event Dashboard
+          </Button>
+          <Button variant="outline" size="lg" onclick={createAnother}>
+            Create Another Event
+          </Button>
+        </div>
+        <p class="auto-redirect">Redirecting in 3 seconds...</p>
+      </div>
     </div>
   {:else}
-    <div class="form-container">
-      <EventConfigurationForm
-        mode="create"
-        organizerId={user.id}
-  organizerName={user.name ?? user.email ?? 'Anonymous'}
-        on:eventSaved={handleEventCreated}
-        on:error={handleError}
-        on:cancel={handleCancel}
-      />
-    </div>
+    <EventConfigurationFormNew
+      mode="create"
+      organizerId={user.id}
+      organizerName={user.name ?? user.email ?? 'Anonymous'}
+      on:eventSaved={handleEventCreated}
+      on:error={handleError}
+      on:cancel={handleCancel}
+    />
   {/if}
 </main>
 
 <style>
   .create-event-page {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    padding: 2rem 1rem;
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-50) 0%,
+      var(--color-secondary-50) 100%
+    );
+    padding: var(--spacing-8) var(--spacing-4);
   }
 
-  .page-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+  /* Error Toast */
+  .error-toast {
+    position: fixed;
+    top: var(--spacing-6);
+    right: var(--spacing-6);
+    z-index: var(--z-tooltip);
+    animation: slideIn 0.3s ease;
   }
 
-  .page-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0 0 1rem 0;
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
   }
 
-  .page-header p {
-    font-size: 1.125rem;
-    color: #6b7280;
+  .toast-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    background: var(--color-danger);
+    color: white;
+    padding: var(--spacing-4);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    max-width: 400px;
+    min-width: 300px;
+  }
+
+  .toast-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .toast-message {
+    flex: 1;
     margin: 0;
-    line-height: 1.6;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
   }
 
+  .toast-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background var(--transition-fast);
+  }
+
+  .toast-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Loading State */
   .loading-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 200px;
-    gap: 1rem;
+    min-height: 400px;
+    gap: var(--spacing-4);
+  }
+
+  .loading-state p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-lg);
+    margin: 0;
   }
 
   .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f4f6;
-    border-top: 4px solid #3b82f6;
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--color-border);
+    border-top: 4px solid var(--color-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -127,70 +247,188 @@
     100% { transform: rotate(360deg); }
   }
 
+  /* Auth Required */
   .auth-required {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+  }
+
+  .auth-card {
     text-align: center;
-    padding: 3rem 2rem;
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    max-width: 400px;
-    margin: 0 auto;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    padding: var(--spacing-10);
+    background: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--color-border);
+    max-width: 440px;
+    box-shadow: var(--shadow-xl);
   }
 
-  .auth-required h2 {
-    color: #1f2937;
-    margin: 0 0 1rem 0;
+  .auth-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-4);
   }
 
-  .auth-required p {
-    color: #6b7280;
-    margin: 0 0 2rem 0;
+  .auth-card h2 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-3) 0;
   }
 
-  .btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s;
+  .auth-card p {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--spacing-6) 0;
+    line-height: var(--line-height-relaxed);
   }
 
-  .btn-primary {
-    background: #3b82f6;
-    color: white;
+  /* Success State */
+  .success-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
   }
 
-  .btn-primary:hover {
-    background: #2563eb;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  .success-card {
+    text-align: center;
+    padding: var(--spacing-10);
+    background: var(--color-surface);
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--color-success);
+    max-width: 560px;
+    width: 100%;
+    box-shadow: var(--shadow-xl);
+    animation: scaleIn 0.3s ease;
   }
 
-  .form-container {
-    max-width: 900px;
-    margin: 0 auto;
+  @keyframes scaleIn {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .success-icon {
+    font-size: 5rem;
+    margin-bottom: var(--spacing-4);
+    animation: bounce 0.6s ease;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  .success-card h2 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-success);
+    margin: 0 0 var(--spacing-3) 0;
+  }
+
+  .success-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-6) 0;
+  }
+
+  .access-code-section {
+    margin: var(--spacing-6) 0;
+    padding: var(--spacing-6);
+    background: var(--color-primary-light);
+    border-radius: var(--radius-lg);
+  }
+
+  .access-code-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    margin: 0 0 var(--spacing-2) 0;
+  }
+
+  .access-code {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    font-family: 'Monaco', 'Courier New', monospace;
+    color: var(--color-primary);
+    letter-spacing: 0.1em;
+    margin: 0 0 var(--spacing-2) 0;
+  }
+
+  .access-code-hint {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    margin: 0;
+  }
+
+  .success-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    margin: var(--spacing-6) 0;
+  }
+
+  .auto-redirect {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-tertiary);
+    margin: var(--spacing-4) 0 0 0;
   }
 
   @media (max-width: 768px) {
     .create-event-page {
-      padding: 1rem 0.5rem;
+      padding: var(--spacing-6) var(--spacing-4);
     }
 
-    .page-header h1 {
-      font-size: 2rem;
+    .error-toast {
+      top: var(--spacing-4);
+      right: var(--spacing-4);
+      left: var(--spacing-4);
     }
 
-    .page-header p {
-      font-size: 1rem;
+    .toast-content {
+      min-width: auto;
+      width: 100%;
     }
 
-    .page-header {
-      margin-bottom: 2rem;
+    .auth-card,
+    .success-card {
+      padding: var(--spacing-8);
+    }
+
+    .success-icon {
+      font-size: 4rem;
+    }
+
+    .success-card h2 {
+      font-size: var(--font-size-2xl);
+    }
+
+    .access-code {
+      font-size: var(--font-size-2xl);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .create-event-page {
+      padding: var(--spacing-4) var(--spacing-2);
+    }
+
+    .auth-card,
+    .success-card {
+      padding: var(--spacing-6);
+    }
+
+    .auth-icon,
+    .success-icon {
+      font-size: 3rem;
     }
   }
 </style>

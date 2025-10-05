@@ -1,0 +1,43 @@
+# Task ID: 22
+# Title: Add Event Template and Cloning System
+# Status: done
+# Dependencies: 7
+# Priority: medium
+# Description: Implement event template creation and replication functionality for organizers
+# Details:
+Create event template system allowing organizers to save successful event configurations. Implement event cloning functionality with selective copying of settings, topics, and room configurations. Add template sharing between organizers with permission controls. Include template categorization and search functionality for easy discovery.
+
+# Test Strategy:
+Test template creation from existing events, cloning functionality, template sharing permissions, and template search capabilities
+
+# Subtasks:
+## 1. Create Event Template Data Structure and Storage [done]
+### Dependencies: None
+### Description: Design and implement the database schema and data models for event templates
+### Details:
+Create database tables for event templates including template metadata, configuration settings, and relationships. Implement data models for template storage with fields for name, description, category, creator, permissions, and template data (event settings, topics, room configurations). Add database migrations and validation rules for template data integrity.
+
+## 2. Implement Template Creation from Existing Events [done]
+### Dependencies: 22.1
+### Description: Build functionality to create templates from existing event configurations
+### Details:
+Develop template creation interface allowing organizers to save current event configurations as templates. Implement template data extraction from existing events including settings, topics, room configurations, and metadata. Add template naming, description, and categorization during creation. Include validation to ensure template completeness and usability.
+
+## 3. Add Event Cloning with Selective Copying [done]
+### Dependencies: 22.1, 22.2
+### Description: Implement event cloning functionality with options for selective copying of template elements
+### Details:
+Create event cloning interface with checkboxes or toggles for selective copying of template elements (settings, topics, rooms, etc.). Implement cloning logic that respects user selections and creates new event instances. Add conflict resolution for template elements that may not be compatible with current system state. Include preview functionality before final cloning.
+
+## 4. Create Template Sharing with Permission Controls [done]
+### Dependencies: 22.1
+### Description: Implement template sharing system with granular permission controls
+### Details:
+Develop permission system for template sharing with roles (view, use, edit, share). Implement sharing interface allowing organizers to share templates with specific users or make them public. Add permission validation and access control throughout template operations. Include sharing history and revocation capabilities for template owners.
+
+## 5. Add Template Categorization and Search Functionality [done]
+### Dependencies: 22.1, 22.4
+### Description: Implement template organization with categories and search capabilities
+### Details:
+Create template categorization system with predefined and custom categories. Implement search functionality with filters for category, creator, keywords, and usage frequency. Add template discovery interface with sorting options (newest, most used, highest rated). Include template preview and metadata display for easy template selection.
+

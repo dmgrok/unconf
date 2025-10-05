@@ -5,7 +5,7 @@
 
 import { json } from '@sveltejs/kit';
 import { activityStateManager, ACTIVITY_CONFIGS } from '$lib/activity/ActivityStateManager';
-import { ActivityType } from '../../../types/enums';
+import { ActivityType } from '../../../types/enums.js';
 import { z } from 'zod';
 
 // Activity switch request schema

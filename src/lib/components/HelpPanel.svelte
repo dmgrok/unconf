@@ -1,12 +1,26 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
+	import { Rocket, Vote, Target, Settings, Wrench, Lock, Keyboard } from 'lucide-svelte';
+	import type { ComponentType } from 'svelte';
 
 	interface HelpSection {
 		id: string;
-		title: string;
+				{:else}
+				{#each filteredSections as section (section.id)}
+					<div class="help-section">
+						<button class="section-header" onclick={() => openSection(section.id)}>
+							{#if section.icon}
+								<span class="section-icon">
+									<svelte:component this={section.icon} size={24} />
+								</span>
+							{/if}
+							<span class="section-title">{section.title}</span>
+							<svg
+								class="section-arrow"
+				class:expanded={activeSection === section.id}tring;
 		content: string;
-		icon?: string;
+		icon?: ComponentType;
 	}
 
 	let { isOpen = $bindable(false) } = $props();
@@ -18,7 +32,7 @@
 		{
 			id: 'getting-started',
 			title: 'Getting Started',
-			icon: '🚀',
+			icon: Rocket,
 			content: `
 # Getting Started with UnConf
 
@@ -35,7 +49,7 @@ Welcome to UnConf! Here's how to get started:
 		{
 			id: 'voting',
 			title: 'How Voting Works',
-			icon: '🗳️',
+			icon: Vote,
 			content: `
 # Weighted Voting System
 
@@ -54,7 +68,7 @@ UnConf uses a weighted voting system to prioritize topics:
 		{
 			id: 'activities',
 			title: 'Event Activities',
-			icon: '🎯',
+			icon: Target,
 			content: `
 # Understanding Event Activities
 
@@ -78,7 +92,7 @@ Organize into teams for collaborative work
 		{
 			id: 'organizer-guide',
 			title: 'Organizer Guide',
-			icon: '⚙️',
+			icon: Settings,
 			content: `
 # Organizer Dashboard Guide
 
@@ -108,7 +122,7 @@ As an organizer, you can:
 		{
 			id: 'troubleshooting',
 			title: 'Troubleshooting',
-			icon: '🔧',
+			icon: Wrench,
 			content: `
 # Common Issues and Solutions
 
@@ -138,7 +152,7 @@ As an organizer, you can:
 		{
 			id: 'privacy',
 			title: 'Privacy & Security',
-			icon: '🔒',
+			icon: Lock,
 			content: `
 # Privacy and Security
 
@@ -166,7 +180,7 @@ As an organizer, you can:
 		{
 			id: 'keyboard-shortcuts',
 			title: 'Keyboard Shortcuts',
-			icon: '⌨️',
+			icon: Keyboard,
 			content: `
 # Keyboard Shortcuts
 

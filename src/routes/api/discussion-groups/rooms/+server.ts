@@ -5,7 +5,7 @@ import { DiscussionRoomStatus } from '../../../../types/enums';
 import type { DiscussionRoom } from '../../../../types/entities';
 
 const roomRepo = new DiscussionRoomRepository({
-	storageDir: './data/storage'
+	dataDir: './data/storage'
 });
 
 export const GET: RequestHandler = async ({ url }) => {

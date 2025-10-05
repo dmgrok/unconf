@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { HTMLInputAttributes } from 'svelte/elements';
 
-	interface InputProps extends HTMLInputAttributes {
+	interface InputProps extends Omit<HTMLInputAttributes, 'size'> {
 		label?: string;
 		error?: string;
 		hint?: string;
@@ -27,7 +27,7 @@
 	const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
 	// Determine variant based on error state
-	$: computedVariant = error ? 'error' : variant;
+	const computedVariant = $derived(error ? 'error' : variant);
 </script>
 
 <div class="input-group {className}">

@@ -1,16 +1,44 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { FileText, Gamepad2, MessageSquare, Users } from 'lucide-svelte';
+	import DocsLayout from '$lib/components/docs/DocsLayout.svelte';
+	import CodeBlock from '$lib/components/docs/CodeBlock.svelte';
+	import Callout from '$lib/components/docs/Callout.svelte';
 
 	const sections = [
-		{ id: 'getting-started', title: 'Getting Started', href: '/docs#getting-started' },
-		{ id: 'participants', title: 'For Participants', href: '/docs#participants' },
-		{ id: 'organizers', title: 'For Organizers', href: '/docs#organizers' },
-		{ id: 'features', title: 'Features', href: '/docs#features' },
-		{ id: 'troubleshooting', title: 'Troubleshooting', href: '/docs#troubleshooting' },
-		{ id: 'faq', title: 'FAQ', href: '/docs#faq' }
+		{
+			title: 'Getting Started',
+			items: [
+				{ title: 'Introduction', href: '/docs' },
+				{ title: 'Quick Start', href: '/docs#quick-start' },
+				{ title: 'Installation', href: '/docs#installation' }
+			]
+		},
+		{
+			title: 'For Participants',
+			items: [
+				{ title: 'Joining Events', href: '/docs#joining-events' },
+				{ title: 'Submitting Topics', href: '/docs#submitting-topics' },
+				{ title: 'Voting', href: '/docs#voting' },
+				{ title: 'Activities', href: '/docs#activities' }
+			]
+		},
+		{
+			title: 'For Organizers',
+			items: [
+				{ title: 'Creating Events', href: '/docs#creating-events' },
+				{ title: 'Managing Activities', href: '/docs#managing-activities' },
+				{ title: 'Participant Management', href: '/docs#participant-management' }
+			]
+		},
+		{
+			title: 'Resources',
+			items: [
+				{ title: 'FAQ', href: '/docs/faq' },
+				{ title: 'Troubleshooting', href: '/docs/troubleshooting' },
+				{ title: 'API Reference', href: '/docs/api' }
+			]
+		}
 	];
-
-	let activeSection = $derived($page.url.hash.slice(1) || 'getting-started');
 </script>
 
 <svelte:head>
@@ -21,630 +49,663 @@
 	/>
 </svelte:head>
 
-<div class="docs-container">
-	<aside class="docs-sidebar">
-		<nav>
-			<h3>Documentation</h3>
+<DocsLayout
+	title="UnConf Documentation"
+	description="Everything you need to know about running successful unconferences with UnConf"
+	{sections}
+>
+	<!-- Introduction -->
+	<section id="introduction">
+		<h2>What is UnConf?</h2>
+		<p>
+			UnConf is a modern, real-time platform designed specifically for managing unconference
+			events. It provides an engaging, collaborative experience for participants while giving
+			organizers powerful tools to facilitate dynamic, participant-driven events.
+		</p>
+
+		<h3>Key Features</h3>
+		<ul>
+			<li>Real-time collaboration and synchronization across all participants</li>
+			<li>Weighted voting system for prioritizing discussion topics</li>
+			<li>Interactive group intelligence games for icebreaking</li>
+			<li>Automated discussion group assignments</li>
+			<li>Team distribution and management tools</li>
+			<li>Mobile-responsive design for seamless participation</li>
+			<li>Multi-language support</li>
+		</ul>
+
+		<Callout type="tip" title="Perfect for">
+			<p>
+				Tech conferences, community meetups, corporate retreats, academic workshops, and any
+				event where participants drive the agenda.
+			</p>
+		</Callout>
+	</section>
+
+	<!-- Quick Start -->
+	<section id="quick-start">
+		<h2>Quick Start</h2>
+		<p>Get up and running with UnConf in just a few minutes.</p>
+
+		<h3>For Participants</h3>
+		<div class="steps-grid">
+			<div class="step-card">
+				<div class="step-number">1</div>
+				<h4>Join Event</h4>
+				<p>Use your access code or scan the QR code provided by the organizer</p>
+			</div>
+
+			<div class="step-card">
+				<div class="step-number">2</div>
+				<h4>Create Profile</h4>
+				<p>Sign in with Google or continue as a guest</p>
+			</div>
+
+			<div class="step-card">
+				<div class="step-number">3</div>
+				<h4>Participate</h4>
+				<p>Submit topics, vote, and join discussions</p>
+			</div>
+		</div>
+
+		<h3>For Organizers</h3>
+		<div class="steps-grid">
+			<div class="step-card">
+				<div class="step-number">1</div>
+				<h4>Create Event</h4>
+				<p>Sign in and create your unconference event</p>
+			</div>
+
+			<div class="step-card">
+				<div class="step-number">2</div>
+				<h4>Configure</h4>
+				<p>Set up activities, timers, and participant limits</p>
+			</div>
+
+			<div class="step-card">
+				<div class="step-number">3</div>
+				<h4>Share</h4>
+				<p>Distribute access code or QR code to participants</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- Installation -->
+	<section id="installation">
+		<h2>Installation</h2>
+		<p>UnConf is a web-based platform - no installation required for participants!</p>
+
+		<Callout type="info">
+			<p>
+				Simply visit the event URL or scan the QR code to participate. The platform works on
+				all modern browsers including Chrome, Firefox, Safari, and Edge.
+			</p>
+		</Callout>
+
+		<h3>Self-Hosting (Advanced)</h3>
+		<p>
+			Want to run your own instance of UnConf? Clone the repository and follow the setup
+			instructions:
+		</p>
+
+		<CodeBlock
+			language="bash"
+			code={`# Clone the repository
+git clone https://github.com/yourusername/unconf.git
+cd unconf
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+
+# Run development server
+npm run dev`}
+		/>
+
+		<Callout type="warning" title="Prerequisites">
+			<p>Self-hosting requires Node.js 18+ and a PostgreSQL database.</p>
+		</Callout>
+	</section>
+
+	<!-- Joining Events -->
+	<section id="joining-events">
+		<h2>Joining Events</h2>
+		<p>There are two ways to join an UnConf event:</p>
+
+		<h3>Using an Access Code</h3>
+		<ol>
+			<li>Navigate to the UnConf homepage</li>
+			<li>Click the "Join Event" button</li>
+			<li>Enter the 6-digit access code provided by your organizer</li>
+			<li>Click "Join" to enter the event</li>
+		</ol>
+
+		<h3>Using a QR Code</h3>
+		<ol>
+			<li>Open your phone's camera or QR code scanner</li>
+			<li>Scan the QR code displayed by the organizer</li>
+			<li>Tap the notification/link to open UnConf</li>
+			<li>You'll be automatically joined to the event</li>
+		</ol>
+
+		<Callout type="tip" title="Pro Tip">
+			<p>
+				QR codes are faster for in-person events, while access codes are better for remote
+				participants or sharing via email/chat.
+			</p>
+		</Callout>
+	</section>
+
+	<!-- Submitting Topics -->
+	<section id="submitting-topics">
+		<h2>Submitting Topics</h2>
+		<p>
+			During the topic submission phase, participants can propose discussion topics for the
+			unconference.
+		</p>
+
+		<h3>How to Submit a Topic</h3>
+		<ol>
+			<li>Click the "Propose Topic" button</li>
+			<li>Enter a clear, descriptive title (max 100 characters)</li>
+			<li>Add details about what you'd like to discuss</li>
+			<li>Optionally add tags for categorization</li>
+			<li>Click "Submit"</li>
+		</ol>
+
+		<h3>Writing Great Topics</h3>
+		<p>Good topics are:</p>
+		<ul>
+			<li><strong>Specific</strong> - Focus on a clear subject rather than broad themes</li>
+			<li><strong>Actionable</strong> - Frame as questions or discussion points</li>
+			<li><strong>Interesting</strong> - Relevant to your audience</li>
+			<li><strong>Concise</strong> - Get to the point quickly</li>
+		</ul>
+
+		<div class="example-box">
+			<div class="example-good">
+				<h4>Good Examples</h4>
+				<ul>
+					<li>"How can we implement authentication in SvelteKit apps?"</li>
+					<li>"What are the best practices for API rate limiting?"</li>
+					<li>"Strategies for mentoring junior developers remotely"</li>
+				</ul>
+			</div>
+			<div class="example-bad">
+				<h4>Could Be Better</h4>
+				<ul>
+					<li>"Web development" (too broad)</li>
+					<li>"My new project" (not clear)</li>
+					<li>"Anyone interested in AI?" (not specific enough)</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+
+	<!-- Voting -->
+	<section id="voting">
+		<h2>Voting on Topics</h2>
+		<p>
+			UnConf uses a weighted voting system that allows you to express the strength of your
+			preferences.
+		</p>
+
+		<h3>How Weighted Voting Works</h3>
+		<p>You have three weighted votes to allocate:</p>
+
+		<div class="vote-explanation">
+			<div class="vote-tier">
+				<div class="vote-badge first">3 Points</div>
+				<h4>First Choice</h4>
+				<p>Your absolute top priority - the topic you most want to discuss</p>
+			</div>
+
+			<div class="vote-tier">
+				<div class="vote-badge second">2 Points</div>
+				<h4>Second Choice</h4>
+				<p>Very interested - would definitely attend this discussion</p>
+			</div>
+
+			<div class="vote-tier">
+				<div class="vote-badge third">1 Point</div>
+				<h4>Third Choice</h4>
+				<p>Moderately interested - would join if available</p>
+			</div>
+		</div>
+
+		<h3>Voting Tips</h3>
+		<Callout type="tip">
 			<ul>
-				{#each sections as section}
-					<li>
-						<a
-							href={section.href}
-							class:active={activeSection === section.id}
-							class="nav-link"
-						>
-							{section.title}
-						</a>
-					</li>
-				{/each}
+				<li>You can change your votes anytime before voting closes</li>
+				<li>Think strategically - your votes help determine which topics get discussed</li>
+				<li>Consider topics where you can contribute, not just ones you want to learn about</li>
 			</ul>
-		</nav>
-	</aside>
+		</Callout>
 
-	<main class="docs-content">
-		<article>
-			<section id="getting-started" class="doc-section">
-				<h1>Getting Started with UnConf</h1>
-				<p class="lead">
-					Welcome to UnConf! This guide will help you understand how to use the platform for your
-					unconference events.
-				</p>
+		<h3>How Topics Are Ranked</h3>
+		<p>
+			Topics are ranked by total points received. For example, a topic with 5 first-choice
+			votes (15 points) ranks higher than one with 10 third-choice votes (10 points).
+		</p>
+	</section>
 
-				<h2>What is UnConf?</h2>
-				<p>
-					UnConf is a modern platform for managing unconference events. It provides real-time
-					collaboration tools, weighted voting for topic prioritization, and interactive
-					activities to enhance participant engagement.
-				</p>
+	<!-- Activities -->
+	<section id="activities">
+		<h2>Participating in Activities</h2>
+		<p>UnConf events include various activity types that the organizer can switch between:</p>
 
-				<h2>Quick Start</h2>
-				<div class="steps">
-					<div class="step">
-						<div class="step-number">1</div>
-						<div class="step-content">
-							<h3>Join an Event</h3>
-							<p>Use the access code provided by your organizer or scan the QR code</p>
-						</div>
-					</div>
-
-					<div class="step">
-						<div class="step-number">2</div>
-						<div class="step-content">
-							<h3>Create Your Profile</h3>
-							<p>Sign in with Google or continue as a guest</p>
-						</div>
-					</div>
-
-					<div class="step">
-						<div class="step-number">3</div>
-						<div class="step-content">
-							<h3>Participate</h3>
-							<p>Submit topics, vote, and join discussions</p>
-						</div>
-					</div>
+		<div class="activity-grid">
+			<div class="activity-card">
+				<div class="activity-icon">
+					<FileText size={32} />
 				</div>
-			</section>
+				<h4>Topic Voting</h4>
+				<p>Submit and vote on discussion topics using the weighted voting system</p>
+			</div>
 
-			<section id="participants" class="doc-section">
-				<h1>For Participants</h1>
-
-				<h2>Joining an Event</h2>
-				<h3>Using an Access Code</h3>
-				<ol>
-					<li>Navigate to the homepage</li>
-					<li>Click "Join Event"</li>
-					<li>Enter the access code provided by your organizer</li>
-					<li>Click "Join"</li>
-				</ol>
-
-				<h3>Using a QR Code</h3>
-				<ol>
-					<li>Open your camera app or QR code scanner</li>
-					<li>Scan the QR code displayed by the organizer</li>
-					<li>Follow the link to join the event</li>
-				</ol>
-
-				<h2>Submitting Topics</h2>
-				<p>During the topic submission phase:</p>
-				<ol>
-					<li>Click "Propose Topic"</li>
-					<li>Enter a clear, descriptive title</li>
-					<li>Add details about what you'd like to discuss</li>
-					<li>Add relevant tags (optional)</li>
-					<li>Submit your topic</li>
-				</ol>
-
-				<div class="info-box">
-					<strong>💡 Tip:</strong> Good topics are specific, actionable, and interesting to others.
-					Example: "How to implement authentication in SvelteKit" rather than "Web development".
+			<div class="activity-card">
+				<div class="activity-icon">
+					<Gamepad2 size={32} />
 				</div>
+				<h4>Group Intelligence Games</h4>
+				<p>Collaborative activities like Word Chain to build connections and break the ice</p>
+			</div>
 
-				<h2>Voting on Topics</h2>
-				<p>UnConf uses a weighted voting system:</p>
-				<ul>
-					<li><strong>First Choice (3 points):</strong> Your top priority</li>
-					<li><strong>Second Choice (2 points):</strong> Very interested</li>
-					<li><strong>Third Choice (1 point):</strong> Moderately interested</li>
-				</ul>
-
-				<h3>How to Vote</h3>
-				<ol>
-					<li>Browse the submitted topics</li>
-					<li>Click on a topic to select it as first, second, or third choice</li>
-					<li>You can change your votes anytime before voting closes</li>
-					<li>Topics are ranked by total points received</li>
-				</ol>
-
-				<h2>Participating in Activities</h2>
-				<p>Events include different activity types:</p>
-				<ul>
-					<li><strong>Voting:</strong> Submit and vote on discussion topics</li>
-					<li><strong>Group Intelligence Games:</strong> Collaborative activities to build connections</li>
-					<li><strong>Discussion Groups:</strong> Breakout discussions on selected topics</li>
-					<li><strong>Team Distribution:</strong> Form teams for collaborative work</li>
-				</ul>
-			</section>
-
-			<section id="organizers" class="doc-section">
-				<h1>For Organizers</h1>
-
-				<h2>Creating an Event</h2>
-				<ol>
-					<li>Sign in to your account</li>
-					<li>Click "Create Event"</li>
-					<li>Fill in event details (name, description, dates)</li>
-					<li>Configure settings (capacity, features enabled)</li>
-					<li>Click "Create" to generate your event</li>
-				</ol>
-
-				<h2>Event Configuration</h2>
-				<h3>Basic Settings</h3>
-				<ul>
-					<li><strong>Event Name:</strong> Display name for your event</li>
-					<li><strong>Description:</strong> Brief overview of the event</li>
-					<li><strong>Access Code:</strong> Unique code for participants to join</li>
-					<li><strong>Max Participants:</strong> Capacity limit (optional)</li>
-				</ul>
-
-				<h3>Feature Configuration</h3>
-				<p>Enable or disable features based on your needs:</p>
-				<ul>
-					<li>Topic Voting</li>
-					<li>Group Intelligence Games</li>
-					<li>Discussion Groups</li>
-					<li>Team Distribution</li>
-				</ul>
-
-				<h2>Managing Activities</h2>
-				<h3>Switching Activities</h3>
-				<ol>
-					<li>Open the Organizer Dashboard</li>
-					<li>Select the activity you want to activate</li>
-					<li>Click "Switch Activity"</li>
-					<li>All participants will see the new activity in real-time</li>
-				</ol>
-
-				<h3>Setting Timers</h3>
-				<p>Control activity duration with timers:</p>
-				<ol>
-					<li>In the Organizer Dashboard, find the Timer section</li>
-					<li>Set duration (minutes)</li>
-					<li>Click "Start Timer"</li>
-					<li>Timer is visible to all participants</li>
-				</ol>
-
-				<h2>Managing Participants</h2>
-				<h3>Viewing Participants</h3>
-				<p>Access the participant list to see:</p>
-				<ul>
-					<li>All registered participants</li>
-					<li>Guest vs authenticated users</li>
-					<li>Connection status</li>
-					<li>Last active time</li>
-				</ul>
-
-				<h3>Managing Roles</h3>
-				<p>You can upgrade guests to participants or assign co-organizer roles.</p>
-
-				<h2>Monitoring Event Health</h2>
-				<p>Track key metrics:</p>
-				<ul>
-					<li>Active participants</li>
-					<li>Topics submitted</li>
-					<li>Votes cast</li>
-					<li>Engagement rates</li>
-				</ul>
-			</section>
-
-			<section id="features" class="doc-section">
-				<h1>Features</h1>
-
-				<h2>Real-Time Collaboration</h2>
-				<p>
-					All changes sync instantly across all participants. When someone submits a topic, votes,
-					or the organizer switches activities, everyone sees updates immediately.
-				</p>
-
-				<h2>Weighted Voting System</h2>
-				<p>
-					Our unique voting system gives participants three weighted votes (3, 2, 1 points) to
-					express their preferences more nuancedly than simple up/down voting.
-				</p>
-
-				<h2>Group Intelligence Games</h2>
-				<p>Interactive activities designed to:</p>
-				<ul>
-					<li>Break the ice between participants</li>
-					<li>Build connections and trust</li>
-					<li>Stimulate creative thinking</li>
-					<li>Prepare for deeper discussions</li>
-				</ul>
-
-				<h2>Discussion Groups</h2>
-				<p>Features include:</p>
-				<ul>
-					<li>Automatic room assignments based on votes</li>
-					<li>Capacity management</li>
-					<li>Manual overrides for organizers</li>
-					<li>Real-time occupancy tracking</li>
-				</ul>
-
-				<h2>Team Distribution</h2>
-				<p>Organize participants into balanced teams:</p>
-				<ul>
-					<li>Automatic distribution algorithms</li>
-					<li>Custom team sizes</li>
-					<li>Skill-based balancing (optional)</li>
-					<li>Export team lists</li>
-				</ul>
-
-				<h2>Mobile Responsive</h2>
-				<p>
-					Fully optimized for mobile devices with touch-friendly interfaces, responsive layouts,
-					and offline detection.
-				</p>
-
-				<h2>Internationalization</h2>
-				<p>Support for multiple languages (currently English and French).</p>
-			</section>
-
-			<section id="troubleshooting" class="doc-section">
-				<h1>Troubleshooting</h1>
-
-				<h2>Connection Issues</h2>
-				<h3>Not seeing real-time updates</h3>
-				<ul>
-					<li>Check your internet connection</li>
-					<li>Refresh the page</li>
-					<li>Look for the connection indicator (should be green)</li>
-					<li>Try a different browser</li>
-				</ul>
-
-				<h3>Slow performance</h3>
-				<ul>
-					<li>Close unnecessary browser tabs</li>
-					<li>Clear your browser cache</li>
-					<li>Check your internet speed</li>
-					<li>Try incognito/private mode</li>
-				</ul>
-
-				<h2>Voting Issues</h2>
-				<h3>Can't submit vote</h3>
-				<ul>
-					<li>Verify voting is still open (check with organizer)</li>
-					<li>Ensure you haven't exceeded vote limit</li>
-					<li>Try refreshing the page</li>
-					<li>Check your connection</li>
-				</ul>
-
-				<h3>Votes not appearing</h3>
-				<ul>
-					<li>Results may be hidden until voting closes</li>
-					<li>Organizer controls result visibility</li>
-					<li>Check if you're looking at the right event</li>
-				</ul>
-
-				<h2>Mobile Issues</h2>
-				<h3>Text too small</h3>
-				<ul>
-					<li>Try landscape orientation</li>
-					<li>Zoom in using browser controls</li>
-					<li>Adjust device text size settings</li>
-				</ul>
-
-				<h3>Buttons not responding</h3>
-				<ul>
-					<li>Ensure you're tapping directly on buttons</li>
-					<li>Try removing any screen protector</li>
-					<li>Restart your browser</li>
-				</ul>
-
-				<h2>Getting Help</h2>
-				<p>If you continue to experience issues:</p>
-				<ol>
-					<li>Press <kbd>?</kbd> to open the help panel</li>
-					<li>Contact your event organizer</li>
-					<li>Report a bug through the feedback form</li>
-					<li>Check the FAQ section below</li>
-				</ol>
-			</section>
-
-			<section id="faq" class="doc-section">
-				<h1>Frequently Asked Questions</h1>
-
-				<div class="faq-item">
-					<h3>Do I need to create an account?</h3>
-					<p>
-						No, you can participate as a guest. However, signing in with Google provides a better
-						experience and preserves your data across sessions.
-					</p>
+			<div class="activity-card">
+				<div class="activity-icon">
+					<MessageSquare size={32} />
 				</div>
+				<h4>Discussion Groups</h4>
+				<p>Join breakout discussions on selected topics with automatic room assignments</p>
+			</div>
 
-				<div class="faq-item">
-					<h3>Can I change my vote after submitting?</h3>
-					<p>
-						Yes! You can change your votes anytime before the voting phase ends. Simply click on a
-						different topic to change your selection.
-					</p>
+			<div class="activity-card">
+				<div class="activity-icon">
+					<Users size={32} />
 				</div>
+				<h4>Team Distribution</h4>
+				<p>Form balanced teams for collaborative work or group projects</p>
+			</div>
+		</div>
 
-				<div class="faq-item">
-					<h3>How are discussion groups assigned?</h3>
-					<p>
-						Groups are typically assigned based on your voting preferences. The system tries to
-						match you with topics you voted for while balancing room capacity.
-					</p>
-				</div>
+		<Callout type="info" title="Real-time Updates">
+			<p>
+				When the organizer switches activities, you'll see the change immediately - no need
+				to refresh!
+			</p>
+		</Callout>
+	</section>
 
-				<div class="faq-item">
-					<h3>Can I join multiple events?</h3>
-					<p>
-						Yes, you can participate in multiple events. However, you can only be active in one
-						event at a time.
-					</p>
-				</div>
+	<!-- Creating Events -->
+	<section id="creating-events">
+		<h2>Creating Events (Organizers)</h2>
+		<p>As an organizer, you have full control over your unconference event.</p>
 
-				<div class="faq-item">
-					<h3>Is my data private?</h3>
-					<p>
-						Your voting preferences are private until the organizer chooses to reveal results. Your
-						name and email are only visible to event organizers.
-					</p>
-				</div>
+		<h3>Event Creation Steps</h3>
+		<ol>
+			<li>Sign in to your account (Google authentication required)</li>
+			<li>Click "Create Event" from the dashboard</li>
+			<li>Fill in basic information:
+				<ul>
+					<li>Event name</li>
+					<li>Description</li>
+					<li>Date and time</li>
+					<li>Maximum participants (optional)</li>
+				</ul>
+			</li>
+			<li>Configure features and activities</li>
+			<li>Click "Create Event"</li>
+		</ol>
 
-				<div class="faq-item">
-					<h3>Can I use this on mobile?</h3>
-					<p>
-						Yes! UnConf is fully optimized for mobile devices with touch-friendly interfaces and
-						responsive design.
-					</p>
-				</div>
+		<h3>Event Configuration Options</h3>
 
-				<div class="faq-item">
-					<h3>What browsers are supported?</h3>
-					<p>
-						UnConf works best on modern browsers: Chrome 80+, Firefox 80+, Safari 12+, and Edge
-						80+. Mobile browsers are also supported.
-					</p>
-				</div>
+		<table class="config-table">
+			<thead>
+				<tr>
+					<th>Setting</th>
+					<th>Description</th>
+					<th>Default</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Max Participants</td>
+					<td>Limit total number of participants</td>
+					<td>Unlimited</td>
+				</tr>
+				<tr>
+					<td>Guest Access</td>
+					<td>Allow non-authenticated users to join</td>
+					<td>Enabled</td>
+				</tr>
+				<tr>
+					<td>Topic Voting</td>
+					<td>Enable/disable topic submission and voting</td>
+					<td>Enabled</td>
+				</tr>
+				<tr>
+					<td>Group Games</td>
+					<td>Enable/disable group intelligence games</td>
+					<td>Enabled</td>
+				</tr>
+				<tr>
+					<td>Discussion Groups</td>
+					<td>Enable/disable discussion group assignments</td>
+					<td>Enabled</td>
+				</tr>
+			</tbody>
+		</table>
 
-				<div class="faq-item">
-					<h3>How long is event data stored?</h3>
-					<p>
-						Event data is stored for 90 days after the event ends. You can request data deletion at
-						any time.
-					</p>
-				</div>
+		<Callout type="success" title="After Creation">
+			<p>
+				You'll receive a unique access code and QR code to share with participants. These can
+				be displayed on screen or sent via email/chat.
+			</p>
+		</Callout>
+	</section>
 
-				<div class="faq-item">
-					<h3>Can I export event data?</h3>
-					<p>
-						Yes, organizers can export participant lists, voting results, and analytics data in
-						various formats (CSV, JSON).
-					</p>
-				</div>
+	<!-- Managing Activities -->
+	<section id="managing-activities">
+		<h2>Managing Activities (Organizers)</h2>
+		<p>Control the flow of your event by switching between activities and managing timers.</p>
 
-				<div class="faq-item">
-					<h3>Is there a participant limit?</h3>
-					<p>
-						Organizers can set custom capacity limits. The platform can handle hundreds of
-						concurrent participants per event.
-					</p>
-				</div>
-			</section>
-		</article>
-	</main>
-</div>
+		<h3>Switching Activities</h3>
+		<ol>
+			<li>Open the Organizer Dashboard</li>
+			<li>In the Activity Control panel, select the desired activity</li>
+			<li>Click "Switch to [Activity]"</li>
+			<li>All participants see the new activity instantly</li>
+		</ol>
+
+		<h3>Using Timers</h3>
+		<p>Keep activities on track with visible countdown timers:</p>
+
+		<CodeBlock
+			language="text"
+			code={`1. Select an activity
+2. Click "Set Timer"
+3. Enter duration (e.g., "15" for 15 minutes)
+4. Click "Start Timer"
+5. Timer is visible to all participants`}
+		/>
+
+		<Callout type="tip" title="Best Practices">
+			<ul>
+				<li>Start with a group intelligence game to break the ice (5-10 min)</li>
+				<li>Allow 10-15 minutes for topic submission</li>
+				<li>Give 5-10 minutes for voting</li>
+				<li>Discussion groups typically run 20-45 minutes</li>
+			</ul>
+		</Callout>
+	</section>
+
+	<!-- Participant Management -->
+	<section id="participant-management">
+		<h2>Participant Management (Organizers)</h2>
+		<p>Monitor and manage your event participants from the organizer dashboard.</p>
+
+		<h3>Viewing Participants</h3>
+		<p>The participant list shows:</p>
+		<ul>
+			<li>Name and email (for authenticated users)</li>
+			<li>Guest vs. authenticated status</li>
+			<li>Connection status (online/offline)</li>
+			<li>Last active timestamp</li>
+			<li>Current activity participation</li>
+		</ul>
+
+		<h3>Participant Actions</h3>
+		<ul>
+			<li><strong>Promote to Co-organizer:</strong> Grant organizer privileges to helpers</li>
+			<li><strong>Remove from Event:</strong> Remove disruptive participants</li>
+			<li><strong>Reset Votes:</strong> Clear a participant's votes if needed</li>
+			<li><strong>Reassign Group:</strong> Manually change discussion group assignments</li>
+		</ul>
+
+		<Callout type="warning" title="Privacy Note">
+			<p>
+				Participant voting preferences are private by default. You can choose to reveal
+				results publicly after voting closes.
+			</p>
+		</Callout>
+	</section>
+</DocsLayout>
 
 <style>
-	.docs-container {
-		display: flex;
-		min-height: calc(100vh - 200px);
-		max-width: 1400px;
-		margin: 0 auto;
-	}
-
-	.docs-sidebar {
-		width: 250px;
-		padding: 2rem 1rem;
-		border-right: 1px solid #e5e7eb;
-		position: sticky;
-		top: 80px;
-		height: fit-content;
-	}
-
-	.docs-sidebar h3 {
-		margin: 0 0 1rem 0;
-		font-size: 1.25rem;
-		font-weight: 700;
-		color: #111827;
-	}
-
-	.docs-sidebar ul {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.docs-sidebar li {
-		margin-bottom: 0.5rem;
-	}
-
-	.nav-link {
-		display: block;
-		padding: 0.5rem 0.75rem;
-		color: #6b7280;
-		text-decoration: none;
-		border-radius: 6px;
-		font-size: 0.9375rem;
-		transition: all 0.2s ease;
-	}
-
-	.nav-link:hover {
-		background: #f3f4f6;
-		color: #111827;
-	}
-
-	.nav-link.active {
-		background: #eff6ff;
-		color: #2563eb;
-		font-weight: 500;
-	}
-
-	.docs-content {
-		flex: 1;
-		padding: 2rem;
-		max-width: 900px;
-	}
-
-	.doc-section {
-		margin-bottom: 4rem;
-		padding-top: 2rem;
-		border-top: 1px solid #f3f4f6;
-	}
-
-	.doc-section:first-child {
-		border-top: none;
-		padding-top: 0;
-	}
-
-	.doc-section h1 {
-		font-size: 2.5rem;
-		font-weight: 700;
-		margin: 0 0 1rem 0;
-		color: #111827;
-	}
-
-	.doc-section h2 {
-		font-size: 1.75rem;
-		font-weight: 600;
-		margin: 2rem 0 1rem 0;
-		color: #111827;
-	}
-
-	.doc-section h3 {
-		font-size: 1.25rem;
-		font-weight: 600;
-		margin: 1.5rem 0 0.75rem 0;
-		color: #374151;
-	}
-
-	.lead {
-		font-size: 1.125rem;
-		color: #6b7280;
-		line-height: 1.75;
-		margin-bottom: 2rem;
-	}
-
-	p {
-		line-height: 1.7;
-		color: #4b5563;
-		margin: 0 0 1rem 0;
-	}
-
-	ul,
-	ol {
-		line-height: 1.7;
-		color: #4b5563;
-		margin: 0 0 1rem 0;
-		padding-left: 1.75rem;
-	}
-
-	li {
-		margin: 0.5rem 0;
-	}
-
-	.steps {
+	/* Steps Grid */
+	.steps-grid {
 		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 		gap: 1.5rem;
 		margin: 2rem 0;
 	}
 
-	.step {
-		display: flex;
-		gap: 1rem;
+	.step-card {
 		padding: 1.5rem;
-		background: #f9fafb;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 		border-radius: 12px;
-		border: 1px solid #e5e7eb;
+		color: white;
+		text-align: center;
 	}
 
 	.step-number {
-		width: 40px;
-		height: 40px;
+		width: 48px;
+		height: 48px;
+		margin: 0 auto 1rem;
+		background: rgba(255, 255, 255, 0.2);
 		border-radius: 50%;
-		background: #3b82f6;
-		color: white;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		font-size: 1.5rem;
 		font-weight: 700;
-		font-size: 1.25rem;
-		flex-shrink: 0;
 	}
 
-	.step-content h3 {
+	.step-card h4 {
 		margin: 0 0 0.5rem 0;
 		font-size: 1.125rem;
-		color: #111827;
+		color: white;
 	}
 
-	.step-content p {
+	.step-card p {
 		margin: 0;
-		color: #6b7280;
-	}
-
-	.info-box {
-		padding: 1rem 1.25rem;
-		background: #eff6ff;
-		border-left: 4px solid #3b82f6;
-		border-radius: 6px;
-		margin: 1.5rem 0;
+		color: rgba(255, 255, 255, 0.9);
 		font-size: 0.9375rem;
 	}
 
-	.info-box strong {
-		color: #1e40af;
+	/* Example Boxes */
+	.example-box {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem;
+		margin: 1.5rem 0;
 	}
 
-	.faq-item {
-		margin-bottom: 2rem;
-		padding-bottom: 2rem;
-		border-bottom: 1px solid #f3f4f6;
+	.example-good,
+	.example-bad {
+		padding: 1.25rem;
+		border-radius: 12px;
 	}
 
-	.faq-item:last-child {
-		border-bottom: none;
+	.example-good {
+		background: #f0fdf4;
+		border: 2px solid #10b981;
 	}
 
-	.faq-item h3 {
-		margin: 0 0 0.75rem 0;
+	.example-good h4 {
+		color: #047857;
+		margin: 0 0 1rem 0;
+	}
+
+	.example-bad {
+		background: #fef2f2;
+		border: 2px solid #ef4444;
+	}
+
+	.example-bad h4 {
+		color: #b91c1c;
+		margin: 0 0 1rem 0;
+	}
+
+	.example-box ul {
+		margin: 0;
+		padding-left: 1.5rem;
+	}
+
+	.example-box li {
+		margin: 0.5rem 0;
+	}
+
+	/* Vote Explanation */
+	.vote-explanation {
+		display: grid;
+		gap: 1rem;
+		margin: 2rem 0;
+	}
+
+	.vote-tier {
+		padding: 1.25rem;
+		background: #f9fafb;
+		border-radius: 12px;
+		border-left: 4px solid;
+	}
+
+	.vote-tier:nth-child(1) {
+		border-color: #3b82f6;
+	}
+
+	.vote-tier:nth-child(2) {
+		border-color: #8b5cf6;
+	}
+
+	.vote-tier:nth-child(3) {
+		border-color: #ec4899;
+	}
+
+	.vote-badge {
+		display: inline-block;
+		padding: 0.25rem 0.75rem;
+		border-radius: 6px;
+		font-size: 0.875rem;
+		font-weight: 700;
+		color: white;
+		margin-bottom: 0.75rem;
+	}
+
+	.vote-badge.first {
+		background: #3b82f6;
+	}
+
+	.vote-badge.second {
+		background: #8b5cf6;
+	}
+
+	.vote-badge.third {
+		background: #ec4899;
+	}
+
+	.vote-tier h4 {
+		margin: 0 0 0.5rem 0;
 		color: #111827;
-		font-size: 1.125rem;
 	}
 
-	.faq-item p {
+	.vote-tier p {
 		margin: 0;
 		color: #6b7280;
+		font-size: 0.9375rem;
 	}
 
-	kbd {
-		padding: 0.125rem 0.375rem;
-		background: #f3f4f6;
-		border: 1px solid #d1d5db;
-		border-radius: 4px;
-		font-family: monospace;
+	/* Activity Grid */
+	.activity-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 1.5rem;
+		margin: 2rem 0;
+	}
+
+	.activity-card {
+		padding: 1.5rem;
+		background: white;
+		border: 2px solid #e5e7eb;
+		border-radius: 12px;
+		text-align: center;
+		transition: all 0.2s ease;
+	}
+
+	.activity-card:hover {
+		border-color: #3b82f6;
+		box-shadow: 0 8px 24px rgba(59, 130, 246, 0.1);
+	}
+
+	.activity-icon {
+		font-size: 2.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.activity-card h4 {
+		margin: 0 0 0.5rem 0;
+		color: #111827;
+	}
+
+	.activity-card p {
+		margin: 0;
+		color: #6b7280;
+		font-size: 0.9375rem;
+	}
+
+	/* Config Table */
+	.config-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 1.5rem 0;
+		background: white;
+		border-radius: 12px;
+		overflow: hidden;
+		border: 1px solid #e5e7eb;
+	}
+
+	.config-table th,
+	.config-table td {
+		padding: 0.875rem 1rem;
+		text-align: left;
+	}
+
+	.config-table thead {
+		background: #f9fafb;
+	}
+
+	.config-table th {
 		font-size: 0.875rem;
+		font-weight: 600;
 		color: #374151;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
-	@media (max-width: 1024px) {
-		.docs-sidebar {
-			display: none;
-		}
+	.config-table td {
+		font-size: 0.9375rem;
+		color: #4b5563;
+		border-top: 1px solid #e5e7eb;
+	}
 
-		.docs-content {
-			padding: 1.5rem 1rem;
-		}
+	.config-table tbody tr:hover {
+		background: #f9fafb;
 	}
 
 	@media (max-width: 768px) {
-		.doc-section h1 {
-			font-size: 2rem;
+		.example-box {
+			grid-template-columns: 1fr;
 		}
 
-		.doc-section h2 {
-			font-size: 1.5rem;
+		.config-table {
+			font-size: 0.875rem;
 		}
 
-		.step {
-			flex-direction: column;
-		}
-
-		.step-number {
-			width: 32px;
-			height: 32px;
-			font-size: 1rem;
+		.config-table th,
+		.config-table td {
+			padding: 0.75rem;
 		}
 	}
 </style>

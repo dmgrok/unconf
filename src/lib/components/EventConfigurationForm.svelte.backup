@@ -1,17 +1,40 @@
 <!--
   Event Configuration Form Component
-  Real-time validation with business rules for event creation and editing
+  Multi-step wizard with real-time validation and guided experience
 -->
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { writable } from 'svelte/store';
   import type { Event } from '../../types/entities';
+  import FormInput from './ui/FormInput.svelte';
+  import FormTextarea from './ui/FormTextarea.svelte';
+  import Button from './ui/Button.svelte';
+  import ProgressSteps from './ui/ProgressSteps.svelte';
 
-  export let eventId: string | null = null;
-  export let initialData: Partial<Event> | null = null;
-  export let organizerId: string;
-  export let organizerName = '';
-  export let mode: 'create' | 'edit' = 'create';
+  interface EventConfigurationFormProps {
+    eventId?: string | null;
+    initialData?: Partial<Event> | null;
+    organizerId: string;
+    organizerName?: string;
+    mode?: 'create' | 'edit';
+  }
+
+  let {
+    eventId = null,
+    initialData = null,
+    organizerId,
+    organizerName = '',
+    mode = 'create'
+  }: EventConfigurationFormProps = $props();
+
+  // Wizard steps
+  const steps = [
+    { label: 'Basic Info', icon: '📝' },
+    { label: 'Settings', icon: '⚙️' },
+    { label: 'Voting Rules', icon: '🗳️' }
+  ];
+
+  let currentStep = $state(0);
 
   const dispatch = createEventDispatcher();
 

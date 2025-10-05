@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from 'svelte';
+  import { Check, AlertTriangle, X } from 'lucide-svelte';
   import type { LifecycleMetrics, EventHealthMetrics } from '../services/eventLifecycle';
 
   export let refreshInterval: number = 30000; // 30 seconds
@@ -136,12 +137,12 @@
     }
   }
 
-  function getHealthIcon(health: 'healthy' | 'warning' | 'critical'): string {
+  function getHealthIcon(health: 'healthy' | 'warning' | 'critical') {
     switch (health) {
-      case 'healthy': return '✓';
-      case 'warning': return '⚠';
-      case 'critical': return '✕';
-      default: return '?';
+      case 'healthy': return Check;
+      case 'warning': return AlertTriangle;
+      case 'critical': return X;
+      default: return AlertTriangle;
     }
   }
 
@@ -182,7 +183,9 @@
 
   {#if error}
     <div class="error-banner">
-      <span class="error-icon">⚠</span>
+      <span class="error-icon">
+        <AlertTriangle size={20} />
+      </span>
       {error}
     </div>
   {/if}
@@ -269,7 +272,7 @@
             <div class="health-item">
               <div class="health-header">
                 <span class="health-icon {getHealthColor(health.health)}">
-                  {getHealthIcon(health.health)}
+                  <svelte:component this={getHealthIcon(health.health)} size={20} />
                 </span>
                 <span class="event-id">{health.eventId}</span>
                 <span class="event-status">{health.status}</span>

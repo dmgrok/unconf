@@ -3,7 +3,7 @@
  * Manages activity orchestration, state transitions, and configurations
  */
 
-import type { ActivityType, ActivityState } from '../../types/enums';
+import { ActivityType, ActivityState } from '../../types/enums.js';
 import { EventEmitter } from 'events';
 
 export interface ActivityConfiguration {

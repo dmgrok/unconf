@@ -53,15 +53,14 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     redirectTo: '/auth/signin'
   },
   '/events/*/join': {
-    requireAuth: true,
-    requiredRole: 'user',
+    requireAuth: false, // Changed from true - allow guests to join
     allowGuests: true, // Guests can join events
-    redirectTo: '/auth/signin'
   },
 
   // Public routes (no protection needed)
   '/': {},
   '/about': {},
+  '/join': {}, // Guest join page
   '/events': {},
   '/events/*': { allowGuests: true },
 };
@@ -147,8 +146,8 @@ export const authMiddleware: Handle = async ({ event, resolve }) => {
   // Add user info to locals for easy access in load functions
   event.locals.user = user ? {
     id: user.id!,
-    name: user.name,
-    email: user.email,
+    name: user.name ?? null,
+    email: user.email ?? null,
     role: (user.role as UserRole) || 'user',
     isGuest: user.isGuest || false,
     sessionId: user.sessionId

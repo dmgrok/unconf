@@ -1,0 +1,49 @@
+# Task ID: 8
+# Title: Implement Topic Management System
+# Status: done
+# Dependencies: 7, 6
+# Priority: medium
+# Description: Build topic submission, editing, and management functionality for discussions
+# Details:
+Create topic submission forms with real-time validation and character limits. Implement topic editing with proper authorization (only proposer or organizer). Add topic status management (draft/active/frozen) with real-time updates via WebSocket. Include topic tagging system and search functionality. Add organizer controls for topic curation and approval workflows.
+
+# Test Strategy:
+Test topic submission by participants and organizers, real-time updates across clients, edit permissions, status changes, and search functionality
+
+# Subtasks:
+## 1. Create Topic Submission Forms with Validation [done]
+### Dependencies: None
+### Description: Build topic submission forms with real-time validation, character limits, and input sanitization
+### Details:
+Create Svelte components for topic submission forms with fields for title, description, category, and tags. Implement real-time validation for character limits (title: 100 chars, description: 500 chars), required fields, and content sanitization. Add form state management and error handling with user-friendly messages.
+
+## 2. Implement Topic Editing with Authorization [done]
+### Dependencies: 8.1
+### Description: Add topic editing functionality with role-based authorization checks
+### Details:
+Create topic editing interface accessible only to topic proposers and organizers. Implement authorization middleware to verify edit permissions before allowing changes. Add edit history tracking and conflict resolution for concurrent edits. Include draft saving functionality for partial edits.
+
+## 3. Add Topic Status Management [done]
+### Dependencies: 8.1
+### Description: Implement topic lifecycle with draft, active, and frozen status states
+### Details:
+Create status management system with three states: draft (editable, not visible to participants), active (live discussion), and frozen (read-only archive). Add status transition controls for organizers and automatic status changes based on discussion timeline. Include status indicators in topic displays.
+
+## 4. Integrate Real-time Updates via WebSocket [done]
+### Dependencies: 8.2, 8.3
+### Description: Add WebSocket integration for real-time topic updates and notifications
+### Details:
+Implement WebSocket event handlers for topic creation, edits, status changes, and new comments. Add real-time notifications for topic updates to subscribed users. Create event broadcasting system for topic changes and ensure proper event ordering and conflict resolution.
+
+## 5. Add Topic Tagging and Search Functionality [done]
+### Dependencies: 8.1
+### Description: Implement tagging system and search capabilities for topic discovery
+### Details:
+Create tag management system with predefined and custom tags. Implement search functionality with filtering by title, description, tags, status, and author. Add search indexing for performance and autocomplete suggestions. Include advanced search filters and sorting options.
+
+## 6. Create Organizer Curation and Approval Workflows [pending]
+### Dependencies: 8.3, 8.4
+### Description: Build organizer dashboard for topic curation, approval, and moderation
+### Details:
+Create organizer dashboard with topic queue management, approval workflows, and bulk actions. Implement topic moderation tools including editing, status changes, and deletion capabilities. Add approval notifications and workflow tracking. Include topic analytics and engagement metrics for organizers.
+

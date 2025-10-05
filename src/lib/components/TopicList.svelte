@@ -14,7 +14,7 @@
   export let userId: string;
   export let userRole: 'guest' | 'participant' | 'organizer' | 'admin' = 'participant';
   export let showActions = true;
-  export let enableVoting = true;
+  export const enableVoting = true;
   
   const dispatch = createEventDispatcher();
   

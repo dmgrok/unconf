@@ -1,0 +1,61 @@
+# Task ID: 9
+# Title: Build Weighted Voting System
+# Status: done
+# Dependencies: 8, 6
+# Priority: high
+# Description: Implement 1st/2nd/3rd choice voting with real-time updates and transparency
+# Details:
+Create voting interface with drag-and-drop or button-based selection for 1st, 2nd, 3rd choices. Implement vote validation ensuring one vote per weight per user. Add real-time vote counting with WebSocket updates throttled to 2 updates/second. Include vote transparency features showing participant voting status without revealing specific choices. Add voting rule configuration (max votes per topic, voting windows).
+
+# Test Strategy:
+Test vote submission and validation, real-time vote updates, vote weight constraints, transparency features, and concurrent voting by multiple users
+
+# Subtasks:
+## 1. Create Weighted Voting Interface [done]
+### Dependencies: None
+### Description: Build drag-and-drop or button-based UI for 1st/2nd/3rd choice selection
+### Details:
+Implement voting interface component with drag-and-drop functionality for ranking choices or alternative button-based selection. Include visual indicators for 1st, 2nd, and 3rd choice positions with clear weight distinctions.
+
+## 2. Implement Vote Validation Logic [done]
+### Dependencies: 9.1
+### Description: Ensure one vote per weight per user with proper validation
+### Details:
+Create validation system to enforce one vote per weight category per user. Implement checks for duplicate votes, weight conflicts, and user authorization before accepting votes.
+
+## 3. Build Real-time Vote Counting System [done]
+### Dependencies: 9.2
+### Description: Implement WebSocket-based vote counting with live updates
+### Details:
+Create real-time vote counting backend that processes weighted votes and calculates results. Implement WebSocket connections for live vote count updates to all connected clients.
+
+## 4. Add Vote Update Throttling [done]
+### Dependencies: 9.3
+### Description: Implement 2 updates per second throttling for WebSocket updates
+### Details:
+Add throttling mechanism to limit WebSocket vote updates to maximum 2 per second. Implement update batching and queuing to ensure smooth performance under high voting load.
+
+## 5. Create Vote Transparency Features [done]
+### Dependencies: 9.2
+### Description: Show participant voting status without revealing specific choices
+### Details:
+Implement transparency system showing who has voted and voting progress without exposing individual vote choices. Create participant status indicators and voting completion tracking.
+
+## 6. Implement Voting Rule Configuration [done]
+### Dependencies: None
+### Description: Add configuration for max votes per topic and voting windows
+### Details:
+Create configuration system for voting rules including maximum votes per topic, voting time windows, and weight distribution rules. Implement admin interface for rule management.
+
+## 7. Build Voting Status Indicators [done]
+### Dependencies: 9.5, 9.6
+### Description: Create visual indicators for voting progress and status
+### Details:
+Implement visual status indicators showing voting progress, remaining time, participant status, and voting rule compliance. Create progress bars and status badges for clear user feedback.
+
+## 8. Test Concurrent Voting Scenarios [done]
+### Dependencies: 9.4, 9.7
+### Description: Test system performance under concurrent voting load
+### Details:
+Create comprehensive test suite for concurrent voting scenarios including multiple users voting simultaneously, vote conflicts, and system performance under load. Test throttling effectiveness and data consistency.
+

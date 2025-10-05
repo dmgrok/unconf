@@ -70,8 +70,8 @@ export class AnalyticsService {
 	private flushTimer?: ReturnType<typeof setTimeout>;
 
 	constructor(storagePath: string) {
-		this.analyticsRepo = new AnalyticsRepository({ storagePath });
-		this.liveAnalyticsRepo = new LiveAnalyticsRepository({ storagePath });
+		this.analyticsRepo = new AnalyticsRepository({ dataDir: storagePath });
+		this.liveAnalyticsRepo = new LiveAnalyticsRepository({ dataDir: storagePath });
 		this.eventBuffer = new Map();
 		this.startAutoFlush();
 	}

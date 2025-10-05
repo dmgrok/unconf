@@ -13,7 +13,10 @@ import type { RequestEvent } from '@sveltejs/kit';
 export interface CSPConfig {
   'default-src': string[];
   'script-src': string[];
+  'script-src-elem'?: string[];
   'style-src': string[];
+  'style-src-elem'?: string[];
+  'style-src-attr'?: string[];
   'img-src': string[];
   'font-src': string[];
   'connect-src': string[];
@@ -41,10 +44,24 @@ const developmentCSP: CSPConfig = {
     'ws://localhost:*',
     'ws://127.0.0.1:*'
   ],
+  'script-src-elem': [
+    "'self'",
+    "'unsafe-inline'", // Required for inline scripts
+    'localhost:*',
+    '127.0.0.1:*'
+  ],
   'style-src': [
     "'self'",
     "'unsafe-inline'", // Required for Svelte components
     'fonts.googleapis.com'
+  ],
+  'style-src-elem': [
+    "'self'",
+    "'unsafe-inline'", // Required for Svelte component <style> tags
+    'fonts.googleapis.com'
+  ],
+  'style-src-attr': [
+    "'unsafe-inline'" // Required for inline style attributes
   ],
   'img-src': [
     "'self'",
@@ -91,6 +108,14 @@ const productionCSP: CSPConfig = {
     "'unsafe-inline'", // Still needed for Svelte component styles
     'fonts.googleapis.com'
   ],
+  'style-src-elem': [
+    "'self'",
+    "'unsafe-inline'", // Required for Svelte component <style> tags
+    'fonts.googleapis.com'
+  ],
+  'style-src-attr': [
+    "'unsafe-inline'" // Required for inline style attributes
+  ],
   'img-src': [
     "'self'",
     'data:',
@@ -131,6 +156,7 @@ export function generateNonce(): string {
  */
 export function buildCSPHeader(config: CSPConfig, nonce?: string): string {
   const directives: string[] = [];
+  const isDevelopment = process.env.NODE_ENV !== 'production';
 
   for (const [directive, values] of Object.entries(config)) {
     if (typeof values === 'boolean') {
@@ -140,8 +166,10 @@ export function buildCSPHeader(config: CSPConfig, nonce?: string): string {
     } else if (Array.isArray(values)) {
       let valueList = [...values];
 
-      // Add nonce to script-src and style-src if provided
-      if (nonce && (directive === 'script-src' || directive === 'style-src')) {
+      // Add nonce to script-src, script-src-elem, style-src, and style-src-elem if provided
+      // In development, skip nonces for style directives to allow SvelteKit inline styles
+      if (nonce && (directive === 'script-src' || directive === 'script-src-elem' ||
+                    (!isDevelopment && (directive === 'style-src' || directive === 'style-src-elem')))) {
         valueList.push(`'nonce-${nonce}'`);
       }
 
@@ -166,14 +194,17 @@ export function addCSPHeaders(event: RequestEvent, nonce?: string): void {
   const config = getCSPConfig();
   const cspHeader = buildCSPHeader(config, nonce);
 
-  // Set CSP header
-  event.setHeaders({
-    'Content-Security-Policy': cspHeader,
-    // Also set as report-only for testing
-    ...(process.env.NODE_ENV === 'development' && {
+  // In development, use report-only mode to allow Svelte event handlers
+  // In production, enforce CSP strictly
+  if (process.env.NODE_ENV === 'development') {
+    event.setHeaders({
       'Content-Security-Policy-Report-Only': cspHeader
-    })
-  });
+    });
+  } else {
+    event.setHeaders({
+      'Content-Security-Policy': cspHeader
+    });
+  }
 }
 
 /**

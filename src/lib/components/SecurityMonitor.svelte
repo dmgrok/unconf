@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+	import { Clock, Moon } from 'lucide-svelte';
 	import { user, isAuthenticated } from '$lib/stores/auth';
 	import { sessionManager } from '$lib/auth/session';
 	import { secureSessionManager, sessionSecurity } from '$lib/auth/security';
@@ -135,7 +136,9 @@
 	{#if showExpiryWarning}
 		<div class="security-warning expiry-warning">
 			<div class="warning-content">
-				<span class="warning-icon">⏰</span>
+				<span class="warning-icon">
+					<Clock size={24} />
+				</span>
 				<div class="warning-message">
 					<strong>Session Expiring</strong>
 					<p>Your session will expire in {formatTime(sessionStatus.timeRemaining)}</p>
@@ -156,7 +159,9 @@
 	{#if showInactivityWarning}
 		<div class="security-warning inactivity-warning">
 			<div class="warning-content">
-				<span class="warning-icon">😴</span>
+				<span class="warning-icon">
+					<Moon size={24} />
+				</span>
 				<div class="warning-message">
 					<strong>Inactive Session</strong>
 					<p>Your session will timeout due to inactivity in {formatTime(sessionStatus.inactivityTimeRemaining)}</p>

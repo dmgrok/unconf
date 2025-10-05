@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CheckCircle, AlertTriangle } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 
@@ -106,7 +107,9 @@
 
 		{:else if step === 'success'}
 			<div class="success-state">
-				<div class="success-icon">✅</div>
+				<div class="success-icon">
+					<CheckCircle size={48} />
+				</div>
 				<h2>Recovery Instructions Sent</h2>
 				<p class="message">{message}</p>
 
@@ -122,7 +125,9 @@
 
 		{:else if step === 'error'}
 			<div class="error-state">
-				<div class="error-icon">⚠️</div>
+				<div class="error-icon">
+					<AlertTriangle size={48} />
+				</div>
 				<h2>Recovery Information</h2>
 				<p class="message">{message}</p>
 

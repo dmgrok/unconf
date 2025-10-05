@@ -21,6 +21,7 @@ export interface BaseEntity {
 export interface Event extends BaseEntity {
 	title: string;
 	description: string;
+	slug: string; // URL-friendly identifier (e.g., 'demo-2024', 'tech-unconference')
 	status: 'draft' | 'active' | 'paused' | 'completed';
 	organizerId: string;
 	maxParticipants?: number;

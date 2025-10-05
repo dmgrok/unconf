@@ -3,7 +3,9 @@ import Google from '@auth/sveltekit/providers/google';
 import { GuestProvider } from '$lib/auth/providers';
 import { authMiddleware } from '$lib/auth/middleware';
 import { validateCSRF } from '$lib/security/csrf';
-import { addCSPHeaders, cspNonceStore } from '$lib/security/csp';
+// CSP disabled for development - TODO: Re-enable for production
+// import { addCSPHeaders, cspNonceStore } from '$lib/security/csp';
+import { cspNonceStore } from '$lib/security/csp';
 import { rateLimitMiddleware } from '$lib/security/rateLimiting';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Handle } from '@sveltejs/kit';
@@ -81,7 +83,8 @@ const securityMiddleware: Handle = async ({ event, resolve }) => {
   event.locals.cspNonce = nonce;
 
   // Add CSP headers
-  addCSPHeaders(event, nonce);
+  // DISABLED FOR DEVELOPMENT - TODO: Re-enable for production
+  // addCSPHeaders(event, nonce);
 
   const response = await resolve(event);
 

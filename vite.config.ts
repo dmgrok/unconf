@@ -83,5 +83,9 @@ export default defineConfig({
 	},
 	optimizeDeps: {
 		include: ['socket.io-client']
+	},
+	ssr: {
+		noExternal: [],
+		external: ['socket.io', 'engine.io']
 	}
 });

@@ -1,0 +1,55 @@
+# Task ID: 11
+# Title: Implement Collaborative Word-Chain Game
+# Status: done
+# Dependencies: 10, 6
+# Priority: medium
+# Description: Build the multiplayer word-chain game for group intelligence activity
+# Details:
+Create word-chain game logic where each word starts with the last letter of the previous word. Implement word validation using local dictionary and optional API integration. Add real-time word submission and chain display with WebSocket broadcasting. Include turn-based rotation or simultaneous submission modes with conflict resolution (first valid wins). Add profanity filtering and rate limiting for abuse prevention.
+
+# Test Strategy:
+Test word validation logic, real-time word chain updates, turn management, conflict resolution, profanity filtering, and concurrent player submissions
+
+# Subtasks:
+## 1. Create word-chain game logic and validation [done]
+### Dependencies: None
+### Description: Implement core game logic for word chaining where each word must start with the last letter of the previous word
+### Details:
+Create game state management, word chain validation rules, and basic game flow logic. Implement functions to check if a word follows the chain rule and track the current game state.
+
+## 2. Implement word validation using dictionary API/local dictionary [done]
+### Dependencies: 11.1
+### Description: Add word validation system using both local dictionary and optional API integration
+### Details:
+Integrate dictionary API or local word list to validate submitted words. Implement fallback mechanisms and caching for better performance and reliability.
+
+## 3. Add real-time word submission and display [done]
+### Dependencies: 11.2
+### Description: Implement WebSocket-based real-time word submission and chain display functionality
+### Details:
+Create WebSocket handlers for word submissions and broadcast updates to all connected players. Implement real-time chain display with smooth updates and visual feedback.
+
+## 4. Create turn-based or simultaneous submission modes [done]
+### Dependencies: 11.3
+### Description: Implement different game modes for turn-based rotation and simultaneous submissions
+### Details:
+Build game mode selection and management. Implement turn rotation logic for turn-based mode and concurrent submission handling for simultaneous mode.
+
+## 5. Implement conflict resolution (first valid wins) [done]
+### Dependencies: 11.4
+### Description: Add conflict resolution system for handling simultaneous submissions
+### Details:
+Implement timestamp-based conflict resolution where the first valid submission wins. Add proper handling of rejected submissions and user feedback.
+
+## 6. Add profanity filtering and rate limiting [done]
+### Dependencies: 11.5
+### Description: Implement abuse prevention with profanity filtering and submission rate limiting
+### Details:
+Integrate profanity filter for word submissions and implement rate limiting to prevent spam. Add user reporting and moderation features for inappropriate content.
+
+## 7. Create game UI with chain timeline and input validation [done]
+### Dependencies: 11.6
+### Description: Build the user interface for the word-chain game with visual chain display and input validation
+### Details:
+Create responsive game interface with word chain timeline, input field with validation feedback, player status indicators, and game controls. Include visual cues for turn order and submission status.
+

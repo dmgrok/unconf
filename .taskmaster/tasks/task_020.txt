@@ -1,0 +1,49 @@
+# Task ID: 20
+# Title: Build Analytics and Reporting System
+# Status: done
+# Dependencies: 12, 13
+# Priority: medium
+# Description: Implement event analytics with exportable reports and organizer insights
+# Details:
+Create analytics collection system tracking participation metrics, activity dwell times, voting funnel, and engagement patterns. Implement exportable reports in CSV/JSON format for rounds, teams, and game sessions. Add organizer dashboard widgets showing real-time and historical analytics. Include activity switch history with latency metrics and organizer attribution.
+
+# Test Strategy:
+Test analytics data collection accuracy, report generation and export, dashboard widgets, and historical data retrieval
+
+# Subtasks:
+## 1. Create analytics data collection system [done]
+### Dependencies: None
+### Description: Implement event tracking for participation metrics, activity dwell times, voting funnel, and engagement patterns
+### Details:
+Set up analytics data models and collection endpoints to track user participation, time spent in activities, voting behavior funnel analysis, and overall engagement metrics. Create database schema for storing analytics events with proper indexing for performance.
+
+## 2. Implement exportable reports functionality [done]
+### Dependencies: 20.1
+### Description: Build CSV/JSON export system for rounds, teams, and game sessions data
+### Details:
+Create report generation service that can export analytics data in CSV and JSON formats. Include filtering options for date ranges, specific rounds, teams, or game sessions. Implement background job processing for large exports.
+
+## 3. Build organizer dashboard widgets [done]
+### Dependencies: 20.1
+### Description: Create real-time analytics dashboard components for organizers
+### Details:
+Develop dashboard widgets showing real-time participation metrics, activity engagement, and voting statistics. Include charts and graphs for visual representation of data trends and current event status.
+
+## 4. Implement activity switch history tracking [done]
+### Dependencies: 20.1
+### Description: Create system to track activity transitions with latency metrics and organizer attribution
+### Details:
+Build functionality to record when activities are switched, measure transition latency, and track which organizer initiated the change. Store historical activity flow data for analysis.
+
+## 5. Create historical data retrieval and storage [done]
+### Dependencies: 20.1, 20.2
+### Description: Implement data archival system and historical analytics queries
+### Details:
+Set up data archival processes for long-term analytics storage. Create efficient query mechanisms for retrieving historical data across different time periods. Implement data retention policies and cleanup procedures.
+
+## 6. Add analytics data validation and testing [done]
+### Dependencies: 20.1, 20.2, 20.3, 20.4, 20.5
+### Description: Implement comprehensive testing suite for analytics accuracy and performance
+### Details:
+Create test suites to verify analytics data collection accuracy, report generation correctness, dashboard widget functionality, and historical data retrieval performance. Include load testing for analytics system under concurrent usage.
+

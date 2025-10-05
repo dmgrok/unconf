@@ -16,11 +16,6 @@
 				"OLLAMA_API_KEY": "YOUR_OLLAMA_API_KEY_HERE"
 			}
 		},
-		"playwright": {
-			"type": "stdio",
-			"command": "npx",
-			"args": ["-y", "@executeautomation/playwright-mcp-server"]
-		},
 		"puppeteer": {
 			"type": "stdio",
 			"command": "npx",

@@ -192,7 +192,7 @@
   <div class="form-group">
     <label for="topic-tags" class="form-label">
       Tags (Optional)
-      <span class="tag-count">
+      <span class="tag-count" class:warning={tags.length >= maxTags - 1}>
         {tags.length}/{maxTags} tags
       </span>
     </label>

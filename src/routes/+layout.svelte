@@ -9,6 +9,7 @@
 	import { waitLocale } from '$lib/i18n';
 	import { initializeLocale } from '$lib/utils/locale-persistence';
 	import '$lib/i18n'; // Initialize i18n
+	import '$lib/styles/app.css'; // Global design system
 	import '$lib/styles/responsive.css'; // Mobile-responsive styles
 	import '$lib/styles/touch.css'; // Touch-optimized interactions
 
@@ -19,6 +20,7 @@
 	let WebVitalsMonitor = $state<any>(null);
 
 	let { children, data } = $props();
+	let signingIn = $state(false);
 
 	// Initialize auth state when session data changes
 	$effect(() => {
@@ -29,6 +31,37 @@
 			sessionManager.saveSession($user);
 		}
 	});
+
+	async function handleGuestSignIn() {
+		signingIn = true;
+		try {
+			await signIn('guest');
+		} catch (error) {
+			console.error('Guest sign in error:', error);
+			alert('Failed to sign in as guest. Please try again.');
+			signingIn = false;
+		}
+	}
+
+	async function handleGoogleSignIn() {
+		signingIn = true;
+		try {
+			await signIn('google');
+		} catch (error) {
+			console.error('Google sign in error:', error);
+			alert('Failed to sign in with Google. Please try again.');
+			signingIn = false;
+		}
+	}
+
+	async function handleSignOut() {
+		try {
+			await signOut();
+		} catch (error) {
+			console.error('Sign out error:', error);
+			alert('Failed to sign out. Please try again.');
+		}
+	}
 
 	// Auto-refresh session monitoring and i18n initialization
 	onMount(async () => {
@@ -81,26 +114,40 @@
 	<div class="nav-container">
 		<a href="/" class="nav-brand">UnConf</a>
 
+		<div class="nav-links">
+			<a href="/" class="nav-link" class:active={$page.url.pathname === '/'}>
+				Home
+			</a>
+			<a href="/create" class="nav-link" class:active={$page.url.pathname === '/create'}>
+				Create Event
+			</a>
+			{#if $isAuthenticated}
+				<a href="/events" class="nav-link" class:active={$page.url.pathname.startsWith('/events')}>
+					My Events
+				</a>
+			{/if}
+		</div>
+
 		<div class="nav-auth">
 			{#if LanguageSwitcher}
 				<LanguageSwitcher />
 			{/if}
 			{#if $isAuthenticated && $user}
 				<span class="user-info">
-					Hello, {$user.name || $user.email || 'User'}!
+					{$user.name || $user.email || 'User'}
 					{#if $isGuest}
 						<span class="guest-badge">Guest</span>
 					{/if}
 				</span>
-				<button onclick={() => signOut()} class="auth-button">
+				<button onclick={handleSignOut} class="auth-button">
 					Sign Out
 				</button>
 			{:else}
-				<button onclick={() => signIn('google')} class="auth-button">
-					Sign In with Google
+				<button onclick={handleGoogleSignIn} class="auth-button" disabled={signingIn}>
+					{signingIn ? 'Signing in...' : 'Sign In'}
 				</button>
-				<button onclick={() => signIn('guest')} class="auth-button guest">
-					Continue as Guest
+				<button onclick={handleGuestSignIn} class="auth-button guest" disabled={signingIn}>
+					{signingIn ? 'Wait...' : 'Guest'}
 				</button>
 			{/if}
 		</div>
@@ -151,12 +198,57 @@
 		text-decoration: none;
 		color: #333;
 		white-space: nowrap;
+		flex-shrink: 0;
 	}
 
 	/* Mobile: Smaller brand */
 	@media (max-width: 767px) {
 		.nav-brand {
 			font-size: 1.25rem;
+		}
+	}
+
+	.nav-links {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		flex: 1;
+		justify-content: center;
+	}
+
+	.nav-link {
+		padding: 0.5rem 1rem;
+		text-decoration: none;
+		color: #666;
+		border-radius: 6px;
+		transition: all 0.2s;
+		font-weight: 500;
+		white-space: nowrap;
+		min-height: 44px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.nav-link:hover {
+		background: #e9ecef;
+		color: #333;
+	}
+
+	.nav-link.active {
+		background: #007bff;
+		color: white;
+	}
+
+	/* Mobile: Hide text, show icons or minimal text */
+	@media (max-width: 767px) {
+		.nav-links {
+			gap: 0.25rem;
+		}
+
+		.nav-link {
+			padding: 0.5rem 0.75rem;
+			font-size: 0.85rem;
 		}
 	}
 
@@ -180,16 +272,16 @@
 		align-items: center;
 		gap: 0.5rem;
 		font-size: 0.9rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 150px;
 	}
 
 	/* Mobile: Hide user info text, keep badge */
-	@media (max-width: 640px) {
+	@media (max-width: 767px) {
 		.user-info {
-			font-size: 0;
-		}
-
-		.guest-badge {
-			font-size: 0.7rem;
+			display: none;
 		}
 	}
 

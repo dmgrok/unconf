@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import { authStore, type AuthUser } from '$lib/stores/auth';
-  import EventConfigurationForm from '$lib/components/EventConfigurationForm.svelte';
+  import EventConfigurationForm from '$lib/components/EventConfigurationFormNew.svelte';
   import type { Event as EventEntity } from '../../../../types/entities';
   import { onMount } from 'svelte';
 
@@ -14,7 +14,7 @@
   type EventSavedDetail = { event: EventEntity };
   type ErrorDetail = { message: string; details?: Array<{ message: string }> };
 
-  $: eventId = $page.params.eventId;
+  let eventId = $derived($page.params.eventId);
 
   onMount(async () => {
     await authStore.initialize();

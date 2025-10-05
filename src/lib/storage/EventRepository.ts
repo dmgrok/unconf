@@ -113,6 +113,29 @@ export class EventRepository extends JSONRepository<Event> {
 		return this.findBy({ organizerId }, options);
 	}
 
+	async findBySlug(slug: string): Promise<RepositoryOperationResult<Event>> {
+		try {
+			const result = await this.findBy({ slug });
+			if (!result.success || !result.data || result.data.length === 0) {
+				return {
+					success: false,
+					error: this.createError('NOT_FOUND', `Event with slug ${slug} not found`)
+				};
+			}
+
+			return {
+				success: true,
+				data: result.data[0]
+			};
+		} catch (error) {
+			const message = error instanceof Error ? error.message : String(error);
+			return {
+				success: false,
+				error: this.createError('REPOSITORY_ERROR', `Failed to find event by slug: ${message}`)
+			};
+		}
+	}
+
 	async findByAccessCode(accessCode: string): Promise<RepositoryOperationResult<Event>> {
 		try {
 			const result = await this.findBy({ accessCode });
