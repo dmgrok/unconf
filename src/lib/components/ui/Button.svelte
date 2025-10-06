@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import type { Snippet } from 'svelte';
 
 	interface ButtonProps {
@@ -27,34 +27,27 @@
 	}: ButtonProps = $props();
 
 	let isDisabled = $derived(disabled || loading);
-	let buttonElement: HTMLButtonElement;
+	const dispatch = createEventDispatcher<{ click: MouseEvent }>();
 
-	onMount(() => {
-		console.log('[Button] onMount - onclick:', !!onclick, 'buttonElement:', !!buttonElement);
-		if (onclick && buttonElement) {
-			console.log('[Button] Adding click listener');
-			buttonElement.addEventListener('click', (e) => {
-				console.log('[Button] Click event fired!');
-				if (!isDisabled) {
-					console.log('[Button] Calling onclick handler');
-					onclick(e);
-				} else {
-					console.log('[Button] Button is disabled, not calling onclick');
-				}
-			});
-		} else {
-			console.log('[Button] Not adding listener - onclick:', !!onclick, 'buttonElement:', !!buttonElement);
+	function handleClick(event: MouseEvent) {
+		if (isDisabled) {
+			event.preventDefault();
+			event.stopPropagation();
+			return;
 		}
-	});
+
+		onclick?.(event);
+		dispatch('click', event);
+	}
 </script>
 
 <button
-	bind:this={buttonElement}
 	type={type}
 	class="btn btn-{variant} btn-{size} {className}"
 	class:btn-loading={loading}
 	class:btn-icon={icon}
 	disabled={isDisabled}
+		onclick={handleClick}
 >
 	{#if loading}
 		<span class="btn-spinner" aria-hidden="true"></span>

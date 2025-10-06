@@ -63,6 +63,10 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   '/join': {}, // Guest join page
   '/events': {},
   '/events/*': { allowGuests: true },
+  '/auth/*': {}, // Auth pages (error, recovery)
+  '/signin': {}, // Custom signin page
+  '/docs': {},
+  '/docs/*': {},
 };
 
 // Check if user has required role

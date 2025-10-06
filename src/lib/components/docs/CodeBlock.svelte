@@ -31,7 +31,7 @@
 	}
 
 	// Simple syntax highlighting for common languages
-	const highlightedCode = $derived(() => {
+	const highlightedCode = $derived.by(() => {
 		const lines = code.split('\n');
 
 		return lines.map((line, index) => {
@@ -122,7 +122,7 @@
 		</button>
 	{/if}
 
-	<pre class="code-content" class:with-line-numbers={showLineNumbers}><code bind:this={codeEl}>{#each highlightedCode() as line}<span class="code-line" class:highlighted={line.highlighted}>{#if showLineNumbers}<span class="line-number">{line.number}</span>{/if}<span class="line-content">{@html line.content}</span>
+	<pre class="code-content" class:with-line-numbers={showLineNumbers}><code bind:this={codeEl}>{#each highlightedCode as line}<span class="code-line" class:highlighted={line.highlighted}>{#if showLineNumbers}<span class="line-number">{line.number}</span>{/if}<span class="line-content">{@html line.content}</span>
 </span>{/each}</code></pre>
 </div>
 

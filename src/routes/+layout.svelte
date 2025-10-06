@@ -4,7 +4,8 @@
 	import { signIn, signOut } from '@auth/sveltekit/client';
 	import { auth, user, isAuthenticated, isGuest } from '$lib/stores/auth';
 	import { sessionManager, sessionUtils } from '$lib/auth/session';
-	import { dev } from '$app/environment';
+	import { dev, browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { waitLocale } from '$lib/i18n';
 	import { initializeLocale } from '$lib/utils/locale-persistence';
@@ -12,6 +13,7 @@
 	import '$lib/styles/app.css'; // Global design system
 	import '$lib/styles/responsive.css'; // Mobile-responsive styles
 	import '$lib/styles/touch.css'; // Touch-optimized interactions
+	import Toast from '$lib/components/ui/Toast.svelte';
 
 	// Dynamic imports for non-critical components
 	let SecurityMonitor = $state<any>(null);
@@ -35,10 +37,28 @@
 	async function handleGuestSignIn() {
 		signingIn = true;
 		try {
+			const fallbackSlug = data.demoEvent?.slug ?? data.demoEvent?.id ?? 'tech-innovation-unconference-2024';
+
+			if (dev && fallbackSlug) {
+				if (browser) {
+					sessionStorage.removeItem('guestUser');
+				}
+
+				await goto(`/events/${fallbackSlug}`);
+				return;
+			}
+
 			await signIn('guest');
 		} catch (error) {
-			console.error('Guest sign in error:', error);
-			alert('Failed to sign in as guest. Please try again.');
+			console.warn('Guest sign in unavailable, enabling fallback:', error);
+			const fallbackSlug = data.demoEvent?.slug ?? data.demoEvent?.id ?? 'tech-innovation-unconference-2024';
+			if (fallbackSlug) {
+				if (browser) {
+					sessionStorage.removeItem('guestUser');
+				}
+				await goto(`/events/${fallbackSlug}`);
+			}
+		} finally {
 			signingIn = false;
 		}
 	}
@@ -157,6 +177,9 @@
 <main>
 	{@render children?.()}
 </main>
+
+<!-- Toast notifications -->
+<Toast />
 
 <!-- Security monitoring component (lazy loaded) -->
 {#if SecurityMonitor}

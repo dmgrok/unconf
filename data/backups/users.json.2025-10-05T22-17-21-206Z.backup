@@ -56,7 +56,7 @@
     "password": "$2b$10$xnSJIfrW8VUQDfkc.A.i4ORoK85IRhy1xGNasS/Mf.5Q6d5WxCIJe",
     "role": "organizer",
     "isGuest": false,
-    "lastActiveAt": "2025-10-05T22:17:21.206Z",
+    "lastActiveAt": "2025-10-05T20:59:02.994Z",
     "preferences": {
       "language": "en",
       "notifications": true,
@@ -67,6 +67,6 @@
       "isTest": true
     },
     "createdAt": "2025-10-05T20:59:02.996Z",
-    "updatedAt": "2025-10-05T22:17:21.206Z"
+    "updatedAt": "2025-10-05T20:59:02.996Z"
   }
 ]

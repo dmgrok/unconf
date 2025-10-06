@@ -51,6 +51,7 @@ export interface EventSettings {
 export interface User extends BaseEntity {
 	name: string;
 	email?: string;
+	password?: string; // Hashed password for email/password auth
 	role: UserRole;
 	isGuest: boolean;
 	avatar?: string;

@@ -23,24 +23,16 @@
 		loginError = '';
 
 		try {
-			const result = await signIn('credentials', {
+			// Let AuthJS handle the redirect automatically
+			await signIn('email-password', {
 				email: email.trim(),
 				password,
-				redirect: false
+				callbackUrl: $page.url.searchParams.get('callbackUrl') || '/'
 			});
-
-			if (result?.error) {
-				loginError = 'Invalid email or password';
-				loading = false;
-				return;
-			}
-
-			// Redirect on success
-			const callbackUrl = $page.url.searchParams.get('callbackUrl') || '/';
-			goto(callbackUrl);
+			// If we reach here, signin was successful and redirect will happen
 		} catch (error) {
 			console.error('Sign in error:', error);
-			loginError = 'Failed to sign in. Please try again.';
+			loginError = 'Invalid email or password. Please try again.';
 			loading = false;
 		}
 	};
@@ -121,7 +113,7 @@
 						class="form-input"
 						class:error={loginError}
 						disabled={loading}
-						on:keypress={(e) => {
+						onkeypress={(e) => {
 							if (e.key === 'Enter') {
 								handleEmailPasswordSignIn();
 							}

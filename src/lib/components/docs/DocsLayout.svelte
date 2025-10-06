@@ -76,7 +76,7 @@
 	const currentPath = $derived($page.url.pathname);
 
 	// Generate breadcrumbs from current path
-	const breadcrumbs = $derived(() => {
+	const breadcrumbs = $derived.by(() => {
 		const paths = currentPath.split('/').filter(Boolean);
 		return paths.map((path, index) => ({
 			label: path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, ' '),
@@ -85,7 +85,7 @@
 	});
 
 	// Get previous and next pages
-	const allPages = $derived(() => {
+	const allPages = $derived.by(() => {
 		const pages: NavItem[] = [];
 		sections.forEach((section) => {
 			pages.push(...section.items);
@@ -93,10 +93,10 @@
 		return pages;
 	});
 
-	const currentIndex = $derived(allPages().findIndex((p) => p.href === currentPath));
-	const previousPage = $derived(currentIndex > 0 ? allPages()[currentIndex - 1] : null);
+	const currentIndex = $derived(allPages.findIndex((p) => p.href === currentPath));
+	const previousPage = $derived(currentIndex > 0 ? allPages[currentIndex - 1] : null);
 	const nextPage = $derived(
-		currentIndex < allPages().length - 1 ? allPages()[currentIndex + 1] : null
+		currentIndex < allPages.length - 1 ? allPages[currentIndex + 1] : null
 	);
 
 	function scrollToSection(id: string) {
@@ -161,16 +161,16 @@
 	<main class="docs-main">
 		<div class="docs-content-wrapper">
 			<!-- Breadcrumbs -->
-			{#if showBreadcrumbs && breadcrumbs().length > 0}
+			{#if showBreadcrumbs && breadcrumbs.length > 0}
 				<nav class="breadcrumbs" aria-label="Breadcrumb">
 					<ol>
 						<li><a href="/">Home</a></li>
-						{#each breadcrumbs() as crumb, index}
+						{#each breadcrumbs as crumb, index}
 							<li>
 								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
 								</svg>
-								{#if index === breadcrumbs().length - 1}
+								{#if index === breadcrumbs.length - 1}
 									<span aria-current="page">{crumb.label}</span>
 								{:else}
 									<a href={crumb.href}>{crumb.label}</a>

@@ -3,6 +3,7 @@
     "id": "17591415061602o9y66rnh",
     "title": "Tech Innovation Unconference 2024",
     "description": "A collaborative space for technologists, entrepreneurs, and innovators to share ideas, discuss emerging trends, and build connections. Join us for an engaging day of learning and networking!",
+    "slug": "tech-innovation-unconference-2024",
     "status": "active",
     "organizerId": "17591415061598uwl53nn6",
     "maxParticipants": 100,
@@ -1064,5 +1065,104 @@
     "id": "event_1759660149361_xoeo1y6lx",
     "createdAt": "2025-10-05T10:29:09.361Z",
     "updatedAt": "2025-10-05T10:29:09.361Z"
+  },
+  {
+    "title": "Weighted Voting System Demo",
+    "description": "Test the new weighted voting system with 1st, 2nd, and 3rd choice voting",
+    "slug": "weighted-voting-system-demo-9zx3",
+    "status": "draft",
+    "accessCode": "H3Q7LB9I",
+    "organizerId": "demo-user-001",
+    "maxParticipants": 50,
+    "settings": {
+      "allowGuestAccess": true,
+      "requireRegistration": false,
+      "enableVoting": true,
+      "enableGroupIntelligence": false,
+      "enableDiscussionGroups": false,
+      "enableTeamDistribution": false,
+      "votingTimeLimit": 300,
+      "maxVotesPerTopic": 1,
+      "maxTopicsPerUser": 5,
+      "autoAdvanceActivities": false
+    },
+    "metadata": {
+      "participantCount": 0,
+      "topicCount": 0,
+      "voteCount": 0,
+      "votingRounds": 1,
+      "durationMs": 604800000,
+      "durationDays": 7,
+      "isPrivate": false
+    },
+    "id": "event_1759660149379_9oamdrac0",
+    "createdAt": "2025-10-05T10:29:09.379Z",
+    "updatedAt": "2025-10-05T10:29:09.379Z"
+  },
+  {
+    "title": "Weighted Voting System Demo",
+    "description": "Test the new weighted voting system with 1st, 2nd, and 3rd choice voting",
+    "slug": "weighted-voting-system-demo-21a3",
+    "status": "draft",
+    "accessCode": "ELERFHFX",
+    "organizerId": "demo-user-001",
+    "maxParticipants": 50,
+    "settings": {
+      "allowGuestAccess": true,
+      "requireRegistration": false,
+      "enableVoting": true,
+      "enableGroupIntelligence": false,
+      "enableDiscussionGroups": false,
+      "enableTeamDistribution": false,
+      "votingTimeLimit": 300,
+      "maxVotesPerTopic": 1,
+      "maxTopicsPerUser": 5,
+      "autoAdvanceActivities": false
+    },
+    "metadata": {
+      "participantCount": 0,
+      "topicCount": 0,
+      "voteCount": 0,
+      "votingRounds": 1,
+      "durationMs": 604800000,
+      "durationDays": 7,
+      "isPrivate": false
+    },
+    "id": "event_1759661029445_q43pzl08k",
+    "createdAt": "2025-10-05T10:43:49.445Z",
+    "updatedAt": "2025-10-05T10:43:49.445Z"
+  },
+  {
+    "title": "Weighted Voting System Demo",
+    "description": "Test the new weighted voting system with 1st, 2nd, and 3rd choice voting",
+    "slug": "weighted-voting-system-demo-er0j",
+    "status": "draft",
+    "accessCode": "XI522SEZ",
+    "organizerId": "demo-user-001",
+    "maxParticipants": 50,
+    "settings": {
+      "allowGuestAccess": true,
+      "requireRegistration": false,
+      "enableVoting": true,
+      "enableGroupIntelligence": false,
+      "enableDiscussionGroups": false,
+      "enableTeamDistribution": false,
+      "votingTimeLimit": 300,
+      "maxVotesPerTopic": 1,
+      "maxTopicsPerUser": 5,
+      "autoAdvanceActivities": false
+    },
+    "metadata": {
+      "participantCount": 0,
+      "topicCount": 0,
+      "voteCount": 0,
+      "votingRounds": 1,
+      "durationMs": 604800000,
+      "durationDays": 7,
+      "isPrivate": false
+    },
+    "id": "event_1759661046729_s79t9o9e4",
+    "createdAt": "2025-10-05T10:44:06.729Z",
+    "updatedAt": "2025-10-05T10:44:06.729Z"
   }
 ]

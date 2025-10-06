@@ -1,6 +1,6 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import Google from '@auth/sveltekit/providers/google';
-import { GuestProvider } from '$lib/auth/providers';
+import { GuestProvider, EmailPasswordProvider } from '$lib/auth/providers';
 import { authMiddleware } from '$lib/auth/middleware';
 import { validateCSRF } from '$lib/security/csrf';
 // CSP disabled for development - TODO: Re-enable for production
@@ -17,6 +17,7 @@ import {
 
 export const { handle: authHandle } = SvelteKitAuth({
   providers: [
+    EmailPasswordProvider,
     Google({
       clientId: GOOGLE_CLIENT_ID,
       clientSecret: GOOGLE_CLIENT_SECRET,
@@ -46,7 +47,7 @@ export const { handle: authHandle } = SvelteKitAuth({
     },
   },
   pages: {
-    signIn: '/auth/signin',
+    signIn: '/signin',
     error: '/auth/error',
   },
 });
