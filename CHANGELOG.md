@@ -16,6 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `scan-injection.yml` - Scans issues, comments, and PRs for prompt injection attacks
   - Updated `issue-triage.yml` with Lakera Guard as first-pass security filter before AI screening
   - Uses Lakera Guard v2 API with ML-based detection (language-agnostic)
+- **Automated implementation setup** in `issue-triage.yml`
+  - Automatically creates feature branches for high-value issues
+  - Moves accepted issues to `implementation` status
+  - Assigns issues to repository owner
+  - Branch naming: `issue-{number}-{title-slug}`
+- **Preview deployment workflow** (`preview-deploy.yml`)
+  - Triggers on PR creation for issue branches
+  - Links PRs back to related issues
+  - Integrates with Vercel automatic preview deployments
 
 ### Changed
 - Updated project focus to community-driven micro-tools

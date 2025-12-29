@@ -619,3 +619,121 @@ jobs:
             });
             
             console.log(`Issue #${issue.number} triaged: ${decision} (value: ${valueScore}, breaking: ${isPotentiallyBreaking})`);
+
+  # ============================================
+  # JOB 3: IMPLEMENTATION SETUP (for accepted high-value issues)
+  # ============================================
+  implementation-setup:
+    needs: triage
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if high-value issue
+        id: check
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(l => l.name);
+            const isHighValue = labels.includes('high-value');
+            const needsReview = labels.includes('needs-review');
+            
+            console.log(`Issue #${issue.number} - high-value: ${isHighValue}, needs-review: ${needsReview}`);
+            
+            core.setOutput('is_high_value', isHighValue ? 'true' : 'false');
+            core.setOutput('should_implement', (isHighValue && needsReview) ? 'true' : 'false');
+            return isHighValue && needsReview;
+
+      - name: Checkout repository
+        if: steps.check.outputs.should_implement == 'true'
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create feature branch
+        if: steps.check.outputs.should_implement == 'true'
+        id: branch
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const issueNumber = issue.number;
+            const title = issue.title.toLowerCase()
+              .replace(/[^a-z0-9\s-]/g, '')
+              .replace(/\s+/g, '-')
+              .substring(0, 50);
+            
+            const branchName = `issue-${issueNumber}-${title}`;
+            
+            try {
+              // Get the default branch SHA
+              const { data: ref } = await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `heads/${context.payload.repository.default_branch}`
+              });
+              
+              // Create new branch
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/heads/${branchName}`,
+                sha: ref.object.sha
+              });
+              
+              console.log(`✅ Created branch: ${branchName}`);
+              core.setOutput('branch_name', branchName);
+              return branchName;
+              
+            } catch (error) {
+              if (error.status === 422) {
+                console.log(`Branch ${branchName} already exists`);
+                core.setOutput('branch_name', branchName);
+                return branchName;
+              }
+              throw error;
+            }
+
+      - name: Update issue labels and assign
+        if: steps.check.outputs.should_implement == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const branchName = '${{ steps.branch.outputs.branch_name }}';
+            
+            // Remove needs-review, add implementation
+            await github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              name: 'needs-review'
+            }).catch(e => console.log('Label removal failed:', e.message));
+            
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              labels: ['implementation', 'in-progress']
+            });
+            
+            // Assign to repository owner
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              assignees: [context.payload.repository.owner.login]
+            }).catch(e => console.log('Assignment failed:', e.message));
+            
+            // Post implementation instructions
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `🚀 **Ready for Implementation**\n\nThis issue has been approved and set up for development.\n\n**Branch:** \`${branchName}\`\n\n**Next Steps:**\n1. Checkout the feature branch\n2. Implement the feature/fix\n3. Run tests: \`npm run test\`\n4. Create PR when ready\n\n---\n\n### Development Checklist\n- [ ] Feature implemented\n- [ ] Tests added/updated\n- [ ] Documentation updated\n- [ ] Accessibility tested\n- [ ] PR created\n\n---\n*Automated setup - Ready for development*`
+            });
+            
+            console.log(`✅ Issue #${issue.number} moved to implementation with branch: ${branchName}`);;
