@@ -104,10 +104,10 @@
       <h2>Error</h2>
       <p>{error}</p>
       <div class="error-actions">
-        <button class="btn btn-secondary" on:click={() => goto('/')}>
+        <button class="btn btn-secondary" onclick={() => goto('/')}>
           Go Home
         </button>
-        <button class="btn btn-primary" on:click={loadEvent}>
+        <button class="btn btn-primary" onclick={loadEvent}>
           Try Again
         </button>
       </div>
@@ -122,7 +122,7 @@
     <div class="not-found">
       <h2>Event Not Found</h2>
       <p>The event you're looking for doesn't exist or has been removed.</p>
-      <button class="btn btn-primary" on:click={() => goto('/')}>
+      <button class="btn btn-primary" onclick={() => goto('/')}>
         Go Home
       </button>
     </div>
