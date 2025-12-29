@@ -1,0 +1,11 @@
+#!/bin/bash
+# Git pre-commit hook
+# Copy this file to .git/hooks/pre-commit and make it executable:
+#   cp .github/hooks/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+
+# Run the CI validation script (skipping E2E tests for speed)
+./scripts/pre-commit-ci.sh --skip-e2e
+
+# Exit with the script's exit code
+exit $?

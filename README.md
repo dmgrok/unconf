@@ -88,8 +88,24 @@ This project is built from community requests. Need something? Ask for it!
 git clone https://github.com/dmgrok/unconf.git
 cd unconf
 npm install
+
+# Install pre-commit hook (optional but recommended)
+cp .github/hooks/pre-commit .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+
 npm run dev
 ```
+
+### Testing Before Commit
+
+Run CI checks locally before committing:
+
+```bash
+npm run pre-commit:quick   # Fast - skips E2E tests (~30s)
+npm run pre-commit         # Full - includes E2E tests (~2-3min)
+```
+
+See [Pre-Commit Testing Guide](docs/PRE_COMMIT_TESTING.md) for details.
 
 ### Project Structure
 
@@ -145,7 +161,9 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines.
 | [CONTRIBUTING.md](docs/CONTRIBUTING.md) | How to contribute |
 | [DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) | UI/UX guidelines |
 | [TESTING.md](TESTING.md) | Testing guide |
-This project demonstrates AI-assisted development. We're transparent about:
+| [PRE_COMMIT_TESTING.md](docs/PRE_COMMIT_TESTING.md) | Local CI testing |
+
+---
 
 - How requests are evaluated
 - What gets built and why

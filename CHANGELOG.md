@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Triggers on PR creation for issue branches
   - Links PRs back to related issues
   - Integrates with Vercel automatic preview deployments
+- **Pre-commit CI testing** (`scripts/pre-commit-ci.sh`)
+  - Local CI validation before commits
+  - Git hook template in `.github/hooks/pre-commit`
+  - npm scripts: `npm run pre-commit:quick` and `npm run pre-commit`
+  - Documentation in `docs/PRE_COMMIT_TESTING.md`
 
 ### Changed
 - Updated project focus to community-driven micro-tools

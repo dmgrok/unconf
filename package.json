@@ -39,7 +39,9 @@
     "test:security:manual": "node scripts/security-test.mjs",
     "test:security:full": "npm run test:security && npm run test:security:manual",
     "security:audit": "npm audit --audit-level=moderate",
-    "security:check": "npm run security:audit && npm run lint"
+    "security:check": "npm run security:audit && npm run lint",
+    "pre-commit": "bash scripts/pre-commit-ci.sh",
+    "pre-commit:quick": "bash scripts/pre-commit-ci.sh --skip-e2e"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
