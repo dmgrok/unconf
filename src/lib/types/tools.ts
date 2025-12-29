@@ -6,6 +6,84 @@
  */
 
 // =============================================================================
+// SAVED ACTIVITIES
+// =============================================================================
+
+export type ActivityType = 'shuffler' | 'poll' | 'timer' | 'survey';
+
+export interface SavedActivity {
+  id: string;
+  type: ActivityType;
+  name: string;
+  description?: string;
+  eventId?: string;         // Optional - can be standalone or attached to event
+  createdBy: string;        // User ID
+  createdAt: string;        // ISO date string
+  updatedAt: string;
+  shareCode: string;        // Short code for sharing
+  data: ActivityData;       // Type-specific data
+}
+
+export type ActivityData = 
+  | ShufflerActivityData 
+  | PollActivityData 
+  | TimerActivityData 
+  | SurveyActivityData;
+
+export interface ShufflerActivityData {
+  type: 'shuffler';
+  gridData: string[][];     // The participant data grid
+  config: {
+    hasHeader: boolean;
+    nameColumn: number;
+    emailColumn: number | null;
+    criteriaColumn1: number | null;
+    criteriaColumn2: number | null;
+    criteriaName1: string;
+    criteriaName2: string;
+    groupSize: number;
+  };
+  results?: DistributionGroup[];
+}
+
+export interface PollActivityData {
+  type: 'poll';
+  question: string;
+  options: string[];
+  allowMultiple: boolean;
+  votes: Record<string, number>;
+  status: 'open' | 'closed';
+}
+
+export interface TimerActivityData {
+  type: 'timer';
+  label: string;
+  durationMinutes: number;
+  status: 'ready' | 'running' | 'paused' | 'done';
+}
+
+export interface SurveyActivityData {
+  type: 'survey';
+  title: string;
+  description?: string;
+  questions: SurveyQuestion[];
+  status: SurveyStatus;
+  allowAnonymous: boolean;
+}
+
+/**
+ * Generate a short activity share code (8 chars)
+ */
+export function generateActivityCode(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+// =============================================================================
 // EVENTS
 // =============================================================================
 
@@ -103,10 +181,37 @@ export interface DistributionResult {
 
 /**
  * Parse tab-separated values (Excel paste)
+ * Handles different line endings (Windows \r\n, Mac \r, Unix \n)
+ * Also handles CSV if tabs not detected
  */
 export function parseTSV(text: string): string[][] {
-  const lines = text.trim().split('\n');
-  return lines.map(line => line.split('\t').map(cell => cell.trim()));
+  if (!text || !text.trim()) return [];
+  
+  // Normalize line endings
+  const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines = normalized.trim().split('\n');
+  
+  if (lines.length === 0) return [];
+  
+  // Detect delimiter: tab or comma or semicolon
+  const firstLine = lines[0];
+  let delimiter = '\t';
+  
+  if (!firstLine.includes('\t')) {
+    // No tabs, check for comma or semicolon
+    const commaCount = (firstLine.match(/,/g) || []).length;
+    const semicolonCount = (firstLine.match(/;/g) || []).length;
+    
+    if (semicolonCount > commaCount) {
+      delimiter = ';';
+    } else if (commaCount > 0) {
+      delimiter = ',';
+    }
+  }
+  
+  return lines.map(line => 
+    line.split(delimiter).map(cell => cell.trim().replace(/^["']|["']$/g, ''))
+  );
 }
 
 /**

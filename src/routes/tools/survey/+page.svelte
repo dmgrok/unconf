@@ -174,6 +174,178 @@
     resultsUrl = '';
     error = '';
   }
+  
+  // Template loading functions
+  function loadSessionFeedback() {
+    title = 'Session Feedback';
+    description = 'Help us improve! Share your thoughts on this session.';
+    questions = [
+      {
+        id: generateId(),
+        type: 'rating',
+        question: 'How would you rate this session overall?',
+        required: true,
+        ratingMax: 5,
+        ratingLabels: ['Poor', 'Excellent'],
+      },
+      {
+        id: generateId(),
+        type: 'rating',
+        question: 'How relevant was the content to you?',
+        required: true,
+        ratingMax: 5,
+        ratingLabels: ['Not relevant', 'Very relevant'],
+      },
+      {
+        id: generateId(),
+        type: 'text',
+        question: 'What did you like most about this session?',
+        required: false,
+        placeholder: 'Share what worked well...',
+      },
+      {
+        id: generateId(),
+        type: 'text',
+        question: 'What could be improved?',
+        required: false,
+        placeholder: 'Your suggestions...',
+      },
+    ];
+  }
+  
+  function loadEventRegistration() {
+    title = 'Event Registration';
+    description = 'Please complete this form to register for the event.';
+    questions = [
+      {
+        id: generateId(),
+        type: 'text',
+        question: 'What is your name?',
+        required: true,
+        placeholder: 'Full name',
+      },
+      {
+        id: generateId(),
+        type: 'single-choice',
+        question: 'What is your experience level with this topic?',
+        required: true,
+        options: ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
+      },
+      {
+        id: generateId(),
+        type: 'multiple-choice',
+        question: 'Which sessions interest you most?',
+        required: false,
+        options: ['Workshop A', 'Workshop B', 'Panel Discussion', 'Networking'],
+      },
+      {
+        id: generateId(),
+        type: 'single-choice',
+        question: 'Do you have any dietary requirements?',
+        required: true,
+        options: ['None', 'Vegetarian', 'Vegan', 'Gluten-free', 'Other'],
+      },
+    ];
+  }
+  
+  function loadPostEventSurvey() {
+    title = 'Post-Event Survey';
+    description = 'Thank you for attending! Your feedback helps us improve future events.';
+    questions = [
+      {
+        id: generateId(),
+        type: 'rating',
+        question: 'Overall, how satisfied were you with the event?',
+        required: true,
+        ratingMax: 5,
+        ratingLabels: ['Very dissatisfied', 'Very satisfied'],
+      },
+      {
+        id: generateId(),
+        type: 'rating',
+        question: 'How likely are you to recommend this event to others? (NPS)',
+        required: true,
+        ratingMax: 10,
+        ratingLabels: ['Not likely', 'Very likely'],
+      },
+      {
+        id: generateId(),
+        type: 'yes-no',
+        question: 'Would you attend a similar event in the future?',
+        required: true,
+      },
+      {
+        id: generateId(),
+        type: 'text',
+        question: 'Any additional comments or suggestions?',
+        required: false,
+        placeholder: 'Share your thoughts...',
+      },
+    ];
+  }
+  
+  function loadKnowledgeCheck() {
+    title = 'Knowledge Check';
+    description = 'Quick quiz to see what you learned!';
+    questions = [
+      {
+        id: generateId(),
+        type: 'single-choice',
+        question: 'Question 1: [Replace with your question]',
+        required: true,
+        options: ['Option A', 'Option B', 'Option C', 'Option D'],
+      },
+      {
+        id: generateId(),
+        type: 'single-choice',
+        question: 'Question 2: [Replace with your question]',
+        required: true,
+        options: ['True', 'False'],
+      },
+      {
+        id: generateId(),
+        type: 'multiple-choice',
+        question: 'Question 3: Select all that apply [Replace with your question]',
+        required: true,
+        options: ['Answer 1', 'Answer 2', 'Answer 3', 'Answer 4'],
+      },
+    ];
+  }
+  
+  function loadUnconferenceTopics() {
+    title = 'Unconference: Propose & Vote on Topics';
+    description = 'Suggest topics you want to discuss and vote on others! The most popular topics will be selected for our sessions.';
+    questions = [
+      {
+        id: generateId(),
+        type: 'text',
+        question: 'Propose a topic you\'d like to discuss',
+        required: false,
+        placeholder: 'e.g., "How to build better team culture" or "AI tools for productivity"',
+      },
+      {
+        id: generateId(),
+        type: 'multiple-choice',
+        question: 'Vote for topics you\'re interested in (select up to 3)',
+        required: false,
+        options: ['[Topic proposals will appear here]', 'Add your own above!', 'Voting opens soon'],
+      },
+      {
+        id: generateId(),
+        type: 'single-choice',
+        question: 'Would you like to lead/facilitate a session?',
+        required: false,
+        options: ['Yes, I\'d love to lead a discussion', 'Maybe, depends on the topic', 'No, I prefer to participate'],
+      },
+      {
+        id: generateId(),
+        type: 'text',
+        question: 'Any specific questions you want answered today?',
+        required: false,
+        placeholder: 'What burning questions do you have?',
+      },
+    ];
+  }
 </script>
 
 <svelte:head>
@@ -217,6 +389,49 @@
         <a href="/create">Create an event</a> to link surveys to participants.
       </p>
     </div>
+    
+    <!-- Use Case Examples -->
+    <section class="use-cases">
+      <h3>🎯 Quick Start Templates</h3>
+      <p class="use-cases-intro">Click a template to prefill your survey:</p>
+      <div class="use-case-grid">
+        <button class="use-case-card" onclick={loadSessionFeedback}>
+          <span class="use-case-icon">⭐</span>
+          <div class="use-case-content">
+            <strong>Session Feedback</strong>
+            <span>Rate speakers and collect improvement ideas</span>
+          </div>
+        </button>
+        <button class="use-case-card" onclick={loadUnconferenceTopics}>
+          <span class="use-case-icon">🎪</span>
+          <div class="use-case-content">
+            <strong>Unconference Topics</strong>
+            <span>Propose & vote on discussion topics in real-time</span>
+          </div>
+        </button>
+        <button class="use-case-card" onclick={loadEventRegistration}>
+          <span class="use-case-icon">📝</span>
+          <div class="use-case-content">
+            <strong>Event Registration</strong>
+            <span>Collect dietary needs, interests, experience level</span>
+          </div>
+        </button>
+        <button class="use-case-card" onclick={loadPostEventSurvey}>
+          <span class="use-case-icon">🎯</span>
+          <div class="use-case-content">
+            <strong>Post-Event Survey</strong>
+            <span>Overall satisfaction and NPS questions</span>
+          </div>
+        </button>
+        <button class="use-case-card" onclick={loadKnowledgeCheck}>
+          <span class="use-case-icon">🤔</span>
+          <div class="use-case-content">
+            <strong>Knowledge Check</strong>
+            <span>Quick quiz to gauge understanding</span>
+          </div>
+        </button>
+      </div>
+    </section>
     
     {#if error}
       <div class="error-box">{error}</div>
@@ -875,6 +1090,75 @@
   @media (max-width: 500px) {
     .question-type-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  /* Use Cases Section */
+  .use-cases {
+    margin-bottom: 1.5rem;
+  }
+  
+  .use-cases h3 {
+    font-size: 1rem;
+    margin: 0 0 0.5rem;
+    color: #374151;
+  }
+  
+  .use-cases-intro {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin: 0 0 0.75rem;
+  }
+  
+  .use-case-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .use-case-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  
+  .use-case-card:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+  }
+  
+  .use-case-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+  
+  .use-case-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+  
+  .use-case-content strong {
+    font-size: 0.85rem;
+    color: #1f2937;
+  }
+  
+  .use-case-content span {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  
+  @media (max-width: 480px) {
+    .use-case-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

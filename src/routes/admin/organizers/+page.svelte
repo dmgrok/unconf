@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { User } from '$lib/types';
+	import type { User } from '../../../types';
 
 	interface OrganizerInfo extends User {
 		eventCount: number;

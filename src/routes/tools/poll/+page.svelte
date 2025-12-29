@@ -1,28 +1,87 @@
 <script lang="ts">
-  import { generateId } from '$lib/types/tools';
+  import QRCode from 'qrcode';
+  import { browser } from '$app/environment';
+  
+  type PollType = 'options' | 'open';
+  
+  type OpenResponse = {
+    id: string;
+    text: string;
+    votes: number;
+  };
   
   type LocalPoll = {
     question: string;
+    pollType: PollType;
     options: string[];
     votes: Record<string, number>;
+    openResponses: OpenResponse[];
+    maxWords: number;
     status: 'open' | 'closed';
+    allowMultiple: boolean;
   };
   
   // Poll state (local only in standalone mode)
   let activePoll = $state<LocalPoll | null>(null);
   let voted = $state(false);
-  let votedOption = $state<string | null>(null);
+  let votedOptions = $state<string[]>([]);
+  let openResponse = $state('');
+  let upvotedResponses = $state<string[]>([]); // Track which responses user has upvoted
   
   // Create poll form
   let question = $state('');
+  let pollType = $state<PollType>('options');
   let options = $state(['', '']);
+  let allowMultiple = $state(false);
+  let maxWords = $state(10);
+  
+  // QR Code
+  let showQRCode = $state(false);
+  let qrCodeDataUrl = $state('');
   
   let totalVotes = $derived(activePoll 
     ? Object.values(activePoll.votes).reduce((sum, count) => sum + count, 0)
     : 0);
   
+  let wordCount = $derived(openResponse.trim() ? openResponse.trim().split(/\s+/).length : 0);
+  let isOverWordLimit = $derived(activePoll ? wordCount > activePoll.maxWords : false);
+  
+  // Sort open responses by votes (highest first)
+  let sortedResponses = $derived(
+    activePoll?.openResponses 
+      ? [...activePoll.openResponses].sort((a, b) => b.votes - a.votes)
+      : []
+  );
+  
+  let totalResponseVotes = $derived(
+    activePoll?.openResponses 
+      ? activePoll.openResponses.reduce((sum, r) => sum + r.votes, 0)
+      : 0
+  );
+  
+  // Generate QR code when needed
+  $effect(() => {
+    if (showQRCode && browser) {
+      generateQRCode();
+    }
+  });
+  
+  async function generateQRCode() {
+    if (!browser) return;
+    const url = window.location.href;
+    try {
+      qrCodeDataUrl = await QRCode.toDataURL(url, {
+        width: 200,
+        margin: 2,
+        color: { dark: '#1e3a5f', light: '#ffffff' }
+      });
+    } catch (err) {
+      console.error('QR generation error:', err);
+    }
+  }
+  
   function addOption() {
-    if (options.length < 6) {
+    if (options.length < 10) {
       options = [...options, ''];
     }
   }
@@ -34,41 +93,123 @@
   }
   
   function createPoll() {
-    const validOptions = options.filter(o => o.trim());
-    if (!question.trim() || validOptions.length < 2) {
-      return;
-    }
+    if (!question.trim()) return;
     
-    activePoll = {
-      question: question.trim(),
-      options: validOptions,
-      votes: Object.fromEntries(validOptions.map(o => [o, 0])),
-      status: 'open',
-    };
+    if (pollType === 'options') {
+      const validOptions = options.filter(o => o.trim());
+      if (validOptions.length < 2) return;
+      
+      activePoll = {
+        question: question.trim(),
+        pollType: 'options',
+        options: validOptions,
+        votes: Object.fromEntries(validOptions.map(o => [o, 0])),
+        openResponses: [],
+        maxWords: 10,
+        status: 'open',
+        allowMultiple,
+      };
+    } else {
+      activePoll = {
+        question: question.trim(),
+        pollType: 'open',
+        options: [],
+        votes: {},
+        openResponses: [],
+        maxWords,
+        status: 'open',
+        allowMultiple: false,
+      };
+    }
     
     question = '';
     options = ['', ''];
+    allowMultiple = false;
+    pollType = 'options';
+    maxWords = 10;
   }
   
   function vote(option: string) {
-    if (voted || !activePoll) return;
+    if (!activePoll || activePoll.pollType !== 'options') return;
     
-    activePoll.votes[option]++;
+    if (activePoll.allowMultiple) {
+      // Toggle selection for multiple choice
+      if (votedOptions.includes(option)) {
+        votedOptions = votedOptions.filter(o => o !== option);
+        activePoll.votes[option]--;
+      } else {
+        votedOptions = [...votedOptions, option];
+        activePoll.votes[option]++;
+      }
+      activePoll = activePoll; // trigger reactivity
+    } else {
+      // Single choice
+      if (voted) return;
+      activePoll.votes[option]++;
+      activePoll = activePoll;
+      voted = true;
+      votedOptions = [option];
+    }
+  }
+  
+  function submitOpenResponse() {
+    if (!activePoll || !openResponse.trim() || isOverWordLimit) return;
+    
+    const newResponse: OpenResponse = {
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      text: openResponse.trim(),
+      votes: 0,
+    };
+    activePoll.openResponses = [...activePoll.openResponses, newResponse];
+    activePoll = activePoll;
+    // Don't set voted=true so user can still add more responses and upvote
+    openResponse = '';
+  }
+  
+  function upvoteResponse(responseId: string) {
+    if (!activePoll) return;
+    
+    const hasUpvoted = upvotedResponses.includes(responseId);
+    
+    if (hasUpvoted) {
+      // Remove upvote
+      upvotedResponses = upvotedResponses.filter(id => id !== responseId);
+      activePoll.openResponses = activePoll.openResponses.map(r => 
+        r.id === responseId ? { ...r, votes: r.votes - 1 } : r
+      );
+    } else {
+      // Add upvote
+      upvotedResponses = [...upvotedResponses, responseId];
+      activePoll.openResponses = activePoll.openResponses.map(r => 
+        r.id === responseId ? { ...r, votes: r.votes + 1 } : r
+      );
+    }
     activePoll = activePoll; // trigger reactivity
+  }
+  
+  function submitMultipleVote() {
+    if (votedOptions.length === 0) return;
     voted = true;
-    votedOption = option;
   }
   
   function closePoll() {
     activePoll = null;
     voted = false;
-    votedOption = null;
+    votedOptions = [];
+    openResponse = '';
+    upvotedResponses = [];
   }
   
   function resetForNewPoll() {
     activePoll = null;
     voted = false;
-    votedOption = null;
+    votedOptions = [];
+    openResponse = '';
+    upvotedResponses = [];
+  }
+  
+  function toggleQRCode() {
+    showQRCode = !showQRCode;
   }
 </script>
 
@@ -84,13 +225,55 @@
     <p class="subtitle">Create instant polls with live results</p>
   </header>
   
+  <!-- Use Case Examples -->
+  <section class="use-cases">
+    <h3>🎯 Common Use Cases</h3>
+    <div class="use-case-grid">
+      <div class="use-case-card">
+        <span class="use-case-icon">🎤</span>
+        <div class="use-case-content">
+          <strong>Session Topic Vote</strong>
+          <span>Let attendees choose which topic to discuss next</span>
+        </div>
+      </div>
+      <div class="use-case-card">
+        <span class="use-case-icon">☕</span>
+        <div class="use-case-content">
+          <strong>Quick Decisions</strong>
+          <span>"Should we take a break?" or "Lunch preferences?"</span>
+        </div>
+      </div>
+      <div class="use-case-card">
+        <span class="use-case-icon">💡</span>
+        <div class="use-case-content">
+          <strong>Idea Collection</strong>
+          <span>Gather open-ended suggestions from participants</span>
+        </div>
+      </div>
+      <div class="use-case-card">
+        <span class="use-case-icon">🌡️</span>
+        <div class="use-case-content">
+          <strong>Temperature Check</strong>
+          <span>Quick sentiment gauge: "How's the energy?"</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  
   <div class="standalone-notice">
     <span>💡</span>
     <p>
-      <strong>Standalone mode</strong> - Votes are local to this browser session. 
-      <a href="/create">Create an event</a> to share polls with participants.
+      <strong>Standalone mode</strong> - Votes are local to this browser session.
+      <button class="qr-btn-inline" onclick={toggleQRCode}>📱 {showQRCode ? 'Hide' : 'Show'} QR Code</button>
     </p>
   </div>
+  
+  {#if showQRCode && qrCodeDataUrl}
+    <div class="qr-code-section">
+      <img src={qrCodeDataUrl} alt="QR Code to share this poll" />
+      <p>Scan to join this poll</p>
+    </div>
+  {/if}
   
   {#if !activePoll}
     <section class="create-poll">
@@ -108,68 +291,200 @@
           />
         </div>
         
-        <div class="form-group">
-          <span class="form-label">Options</span>
-          {#each options as option, i}
-            <div class="option-row">
-              <input 
-                type="text" 
-                bind:value={options[i]}
-                placeholder="Option {i + 1}"
-                maxlength="100"
-              />
-              {#if options.length > 2}
-                <button type="button" class="remove-btn" onclick={() => removeOption(i)}>×</button>
-              {/if}
-            </div>
-          {/each}
-          {#if options.length < 6}
-            <button type="button" class="add-option-btn" onclick={addOption}>
-              + Add option
+        <div class="form-group poll-type-selector">
+          <span class="form-label">Response Type</span>
+          <div class="type-options">
+            <button 
+              type="button" 
+              class="type-option" 
+              class:active={pollType === 'options'}
+              onclick={() => pollType = 'options'}
+            >
+              <span class="type-icon">📊</span>
+              <span class="type-name">Fixed Options</span>
+              <span class="type-desc">Participants choose from your options</span>
             </button>
-          {/if}
+            <button 
+              type="button" 
+              class="type-option" 
+              class:active={pollType === 'open'}
+              onclick={() => pollType = 'open'}
+            >
+              <span class="type-icon">✍️</span>
+              <span class="type-name">Open Responses</span>
+              <span class="type-desc">Participants write their own answers</span>
+            </button>
+          </div>
         </div>
         
-        <button type="submit" class="create-btn" disabled={!question.trim() || options.filter(o => o.trim()).length < 2}>
-          Create Poll
+        {#if pollType === 'options'}
+          <div class="form-group">
+            <span class="form-label">Options</span>
+            {#each options as option, i}
+              <div class="option-row">
+                <input 
+                  type="text" 
+                  bind:value={options[i]}
+                  placeholder="Option {i + 1}"
+                  maxlength="100"
+                />
+                {#if options.length > 2}
+                  <button type="button" class="remove-btn" onclick={() => removeOption(i)}>×</button>
+                {/if}
+              </div>
+            {/each}
+            {#if options.length < 10}
+              <button type="button" class="add-option-btn" onclick={addOption}>
+                + Add option
+              </button>
+            {/if}
+          </div>
+          
+          <div class="form-group vote-type-group">
+            <label class="checkbox-label">
+              <input type="checkbox" bind:checked={allowMultiple} />
+              <span>Allow multiple selections</span>
+            </label>
+            <p class="help-text">{allowMultiple ? 'Participants can select multiple options' : 'Participants can only select one option'}</p>
+          </div>
+        {:else}
+          <div class="form-group word-limit-group">
+            <label for="maxWords">Word Limit</label>
+            <div class="word-limit-control">
+              <input 
+                id="maxWords"
+                type="range" 
+                min="3" 
+                max="50" 
+                bind:value={maxWords}
+              />
+              <span class="word-limit-value">{maxWords} words</span>
+            </div>
+            <p class="help-text">Responses will be limited to {maxWords} words maximum</p>
+          </div>
+        {/if}
+        
+        <button 
+          type="submit" 
+          class="create-btn" 
+          disabled={!question.trim() || (pollType === 'options' && options.filter(o => o.trim()).length < 2)}
+        >
+          🗳️ Start Poll
         </button>
       </form>
     </section>
   {:else}
     <section class="active-poll">
-      <h2>{activePoll.question}</h2>
-      
-      <div class="poll-options">
-        {#each activePoll.options as option}
-          {@const voteCount = activePoll.votes[option] || 0}
-          {@const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0}
-          {@const isSelected = votedOption === option}
-          
-          <button 
-            class="poll-option"
-            class:voted
-            class:selected={isSelected}
-            onclick={() => vote(option)}
-            disabled={voted}
-          >
-            <span class="option-text">{option}</span>
-            {#if voted}
-              <span class="vote-count">{voteCount} ({percentage}%)</span>
-            {/if}
-            {#if voted}
-              <div class="bar" style="width: {percentage}%"></div>
-            {/if}
-            {#if isSelected}
-              <span class="check">✓</span>
-            {/if}
-          </button>
-        {/each}
+      <div class="poll-header">
+        <h2>{activePoll.question}</h2>
+        {#if activePoll.pollType === 'options'}
+          {#if activePoll.allowMultiple}
+            <span class="poll-type-badge">Multiple choice</span>
+          {:else}
+            <span class="poll-type-badge single">Single choice</span>
+          {/if}
+        {:else}
+          <span class="poll-type-badge open">Open responses • {activePoll.maxWords} words max</span>
+        {/if}
       </div>
       
-      {#if voted}
-        <p class="total-votes">{totalVotes} vote{totalVotes !== 1 ? 's' : ''}</p>
+      {#if activePoll.pollType === 'options'}
+        <div class="poll-options">
+          {#each activePoll.options as option}
+            {@const voteCount = activePoll.votes[option] || 0}
+            {@const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0}
+            {@const isSelected = votedOptions.includes(option)}
+            
+            <button 
+              class="poll-option"
+              class:voted
+              class:selected={isSelected}
+              onclick={() => vote(option)}
+              disabled={!activePoll.allowMultiple && voted}
+            >
+              {#if activePoll.allowMultiple && !voted}
+                <span class="checkbox-indicator" class:checked={isSelected}>{isSelected ? '☑' : '☐'}</span>
+              {/if}
+              <span class="option-text">{option}</span>
+              {#if voted}
+                <span class="vote-count">{voteCount} ({percentage}%)</span>
+              {/if}
+              {#if voted}
+                <div class="bar" style="width: {percentage}%"></div>
+              {/if}
+              {#if isSelected && voted}
+                <span class="check">✓</span>
+              {/if}
+            </button>
+          {/each}
+        </div>
+        
+        {#if activePoll.allowMultiple && !voted}
+          <button class="submit-vote-btn" onclick={submitMultipleVote} disabled={votedOptions.length === 0}>
+            ✓ Submit Vote ({votedOptions.length} selected)
+          </button>
+        {/if}
+        
+        {#if voted}
+          <p class="total-votes">{totalVotes} vote{totalVotes !== 1 ? 's' : ''}</p>
+        {:else if !activePoll.allowMultiple}
+          <p class="vote-prompt">Tap an option to vote</p>
+        {:else}
+          <p class="vote-prompt">Select one or more options, then submit</p>
+        {/if}
       {:else}
-        <p class="vote-prompt">Tap an option to vote</p>
+        <!-- Open Response Mode -->
+        <div class="open-response-form">
+          <textarea 
+            bind:value={openResponse}
+            placeholder="Propose a response..."
+            rows="2"
+            class:over-limit={isOverWordLimit}
+          ></textarea>
+          <div class="response-form-footer">
+            <span class="word-counter" class:over-limit={isOverWordLimit}>
+              {wordCount} / {activePoll.maxWords} words
+            </span>
+            <button 
+              class="submit-response-btn" 
+              onclick={submitOpenResponse}
+              disabled={!openResponse.trim() || isOverWordLimit}
+            >
+              + Add Response
+            </button>
+          </div>
+        </div>
+        
+        {#if activePoll.openResponses.length > 0}
+          <div class="responses-list">
+            <div class="responses-header">
+              <h3>Responses ({activePoll.openResponses.length})</h3>
+              {#if totalResponseVotes > 0}
+                <span class="vote-count-badge">{totalResponseVotes} vote{totalResponseVotes !== 1 ? 's' : ''}</span>
+              {/if}
+            </div>
+            <p class="responses-hint">👆 Tap to upvote responses you agree with</p>
+            <div class="responses-grid">
+              {#each sortedResponses as response (response.id)}
+                {@const hasUpvoted = upvotedResponses.includes(response.id)}
+                <button 
+                  class="response-card" 
+                  class:upvoted={hasUpvoted}
+                  onclick={() => upvoteResponse(response.id)}
+                >
+                  <span class="response-text">"{response.text}"</span>
+                  <span class="response-vote-btn" class:active={hasUpvoted}>
+                    {hasUpvoted ? '👍' : '👆'} {response.votes > 0 ? response.votes : ''}
+                  </span>
+                </button>
+              {/each}
+            </div>
+          </div>
+        {:else}
+          <div class="no-responses">
+            <p>No responses yet. Be the first to propose one!</p>
+          </div>
+        {/if}
       {/if}
       
       <div class="poll-actions">
@@ -237,10 +552,43 @@
     color: #0c4a6e;
   }
   
-  .standalone-notice a {
+  .qr-btn-inline {
+    background: none;
+    border: 1px solid #bae6fd;
     color: #0284c7;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
   }
   
+  .qr-btn-inline:hover {
+    background: #e0f2fe;
+  }
+  
+  /* QR Code Section */
+  .qr-code-section {
+    text-align: center;
+    padding: 1.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .qr-code-section img {
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+  }
+  
+  .qr-code-section p {
+    margin: 0.75rem 0 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
   /* Create Poll Form */
   .create-poll {
     background: #f8fafc;
@@ -314,6 +662,32 @@
     color: #374151;
   }
   
+  .vote-type-group {
+    background: #f0f9ff;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .checkbox-label input {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .help-text {
+    margin: 0.5rem 0 0;
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+  
   .create-btn {
     width: 100%;
     padding: 1rem;
@@ -340,9 +714,28 @@
     text-align: center;
   }
   
-  .active-poll h2 {
+  .poll-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .poll-header h2 {
     font-size: 1.5rem;
-    margin: 0 0 1.5rem;
+    margin: 0 0 0.5rem;
+  }
+  
+  .poll-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #dbeafe;
+    color: #1e40af;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  .poll-type-badge.single {
+    background: #fef3c7;
+    color: #92400e;
   }
   
   .poll-options {
@@ -380,6 +773,15 @@
     background: #eff6ff;
   }
   
+  .checkbox-indicator {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+  }
+  
+  .checkbox-indicator.checked {
+    color: #2563eb;
+  }
+  
   .option-text {
     position: relative;
     z-index: 1;
@@ -412,6 +814,28 @@
     color: #2563eb;
     font-weight: bold;
     z-index: 1;
+  }
+  
+  .submit-vote-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .submit-vote-btn:hover:not(:disabled) {
+    background: #059669;
+  }
+  
+  .submit-vote-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
   
   .total-votes {
@@ -458,5 +882,359 @@
   
   .close-poll-btn:hover {
     background: #fecaca;
+  }
+  
+  /* Poll Type Selector */
+  .poll-type-selector {
+    margin-bottom: 1.5rem;
+  }
+  
+  .type-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  
+  .type-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 1rem;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  
+  .type-option:hover {
+    border-color: #2563eb;
+  }
+  
+  .type-option.active {
+    border-color: #2563eb;
+    background: #eff6ff;
+  }
+  
+  .type-icon {
+    font-size: 1.5rem;
+  }
+  
+  .type-name {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  
+  .type-desc {
+    font-size: 0.7rem;
+    color: #6b7280;
+  }
+  
+  /* Word Limit Control */
+  .word-limit-group {
+    background: #f0f9ff;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .word-limit-control {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .word-limit-control input[type="range"] {
+    flex: 1;
+    height: 8px;
+    border-radius: 4px;
+    background: #dbeafe;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  .word-limit-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #2563eb;
+    cursor: pointer;
+  }
+  
+  .word-limit-value {
+    font-weight: 600;
+    color: #2563eb;
+    min-width: 70px;
+  }
+  
+  /* Open Response Form */
+  .open-response-form {
+    text-align: left;
+  }
+  
+  .open-response-form textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 1rem;
+    resize: vertical;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+  
+  .open-response-form textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+  }
+  
+  .open-response-form textarea.over-limit {
+    border-color: #ef4444;
+    background: #fef2f2;
+  }
+  
+  .word-counter {
+    text-align: right;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin: 0.5rem 0;
+  }
+  
+  .word-counter.over-limit {
+    color: #ef4444;
+    font-weight: 600;
+  }
+  
+  /* Responses List */
+  .responses-list {
+    margin-top: 2rem;
+    text-align: left;
+  }
+  
+  .responses-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+  }
+  
+  .responses-list h3 {
+    font-size: 1rem;
+    margin: 0;
+    color: #374151;
+  }
+  
+  .vote-count-badge {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  
+  .responses-hint {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin: 0 0 0.75rem;
+  }
+  
+  .responses-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .response-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: #f8fafc;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: #374151;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+  
+  .response-card:hover {
+    border-color: #2563eb;
+    background: #eff6ff;
+  }
+  
+  .response-card.upvoted {
+    border-color: #2563eb;
+    background: #dbeafe;
+  }
+  
+  .response-text {
+    flex: 1;
+    font-style: italic;
+  }
+  
+  .response-vote-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background: white;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #6b7280;
+    min-width: 40px;
+    justify-content: center;
+  }
+  
+  .response-vote-btn.active {
+    background: #2563eb;
+    color: white;
+  }
+  
+  .no-responses {
+    background: #f8fafc;
+    border: 2px dashed #d1d5db;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .no-responses p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+  }
+  
+  /* Open Response Form - Updated */
+  .open-response-form {
+    text-align: left;
+    margin-bottom: 0.5rem;
+  }
+  
+  .open-response-form textarea {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 1rem;
+    resize: vertical;
+    box-sizing: border-box;
+    font-family: inherit;
+    min-height: 60px;
+  }
+  
+  .open-response-form textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+  }
+  
+  .open-response-form textarea.over-limit {
+    border-color: #ef4444;
+    background: #fef2f2;
+  }
+  
+  .response-form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+  }
+  
+  .word-counter {
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+  
+  .word-counter.over-limit {
+    color: #ef4444;
+    font-weight: 600;
+  }
+  
+  .submit-response-btn {
+    padding: 0.5rem 1rem;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .submit-response-btn:hover:not(:disabled) {
+    background: #059669;
+  }
+  
+  .submit-response-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .poll-type-badge.open {
+    background: #f0fdf4;
+    color: #15803d;
+  }
+  
+  /* Use Cases Section */
+  .use-cases {
+    margin-bottom: 1.5rem;
+  }
+  
+  .use-cases h3 {
+    font-size: 1rem;
+    margin: 0 0 0.75rem;
+    color: #374151;
+  }
+  
+  .use-case-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .use-case-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+  }
+  
+  .use-case-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+  
+  .use-case-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+  
+  .use-case-content strong {
+    font-size: 0.85rem;
+    color: #1f2937;
+  }
+  
+  .use-case-content span {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  
+  @media (max-width: 480px) {
+    .use-case-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

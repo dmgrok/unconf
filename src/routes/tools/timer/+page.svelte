@@ -104,6 +104,41 @@
   {/if}
   
   {#if !displayMode}
+    <!-- Use Case Examples -->
+    <section class="use-cases">
+      <h3>🎯 Common Use Cases</h3>
+      <div class="use-case-grid">
+        <div class="use-case-card">
+          <span class="use-case-icon">🎤</span>
+          <div class="use-case-content">
+            <strong>Lightning Talks</strong>
+            <span>5-10 min presentations with visible countdown</span>
+          </div>
+        </div>
+        <div class="use-case-card">
+          <span class="use-case-icon">💬</span>
+          <div class="use-case-content">
+            <strong>Breakout Sessions</strong>
+            <span>Keep discussion groups on track</span>
+          </div>
+        </div>
+        <div class="use-case-card">
+          <span class="use-case-icon">☕</span>
+          <div class="use-case-content">
+            <strong>Break Countdown</strong>
+            <span>Show when the session resumes</span>
+          </div>
+        </div>
+        <div class="use-case-card">
+          <span class="use-case-icon">🗳️</span>
+          <div class="use-case-content">
+            <strong>Voting Windows</strong>
+            <span>Time-boxed voting or brainstorming</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    
     <div class="standalone-notice">
       <span>💡</span>
       <p>
@@ -408,5 +443,61 @@
   
   .display-mode .standalone-notice {
     display: none;
+  }
+  
+  /* Use Cases Section */
+  .use-cases {
+    max-width: 400px;
+    margin-bottom: 1rem;
+  }
+  
+  .use-cases h3 {
+    font-size: 0.9rem;
+    margin: 0 0 0.75rem;
+    opacity: 0.9;
+    text-align: center;
+  }
+  
+  .use-case-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .use-case-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+  }
+  
+  .use-case-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  
+  .use-case-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+  
+  .use-case-content strong {
+    font-size: 0.75rem;
+    color: white;
+  }
+  
+  .use-case-content span {
+    font-size: 0.65rem;
+    opacity: 0.8;
+  }
+  
+  @media (max-width: 480px) {
+    .use-case-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
