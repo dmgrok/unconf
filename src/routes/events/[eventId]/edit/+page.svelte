@@ -7,10 +7,10 @@
   import { onMount } from 'svelte';
   import { toast } from '$lib/stores/toast';
 
-  let isLoading = true;
-  let user: AuthUser | null = null;
-  let event: EventEntity | null = null;
-  let error: string | null = null;
+  let isLoading = $state(true);
+  let user = $state<AuthUser | null>(null);
+  let event = $state<EventEntity | null>(null);
+  let error = $state<string | null>(null);
 
   type EventSavedDetail = { event: EventEntity };
   type ErrorDetail = { message: string; details?: Array<{ message: string }> };

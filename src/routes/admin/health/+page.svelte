@@ -48,15 +48,15 @@
 
 	let healthData: HealthData | null = null;
 	let loading = true;
+	let refreshInterval: ReturnType<typeof setInterval> | null = null;
 	let error = '';
-	let refreshInterval: number;
 	let autoRefresh = true;
 	let selectedComponent: string | null = null;
 
 	onMount(() => {
 		fetchHealthData();
 		if (autoRefresh) {
-			refreshInterval = setInterval(fetchHealthData, 10000); // Every 10 seconds
+			refreshInterval = setInterval(fetchHealthData, 10000);
 		}
 	});
 
