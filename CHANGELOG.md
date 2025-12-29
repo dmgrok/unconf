@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AGENTS.md for AI agent instructions
 - CHANGELOG.md for version tracking
 - Documentation guidelines in CONTRIBUTING.md
+- **Lakera Guard integration** for prompt injection detection in GitHub workflows
+  - `scan-injection.yml` - Scans issues, comments, and PRs for prompt injection attacks
+  - Updated `issue-triage.yml` with Lakera Guard as first-pass security filter before AI screening
+  - Uses Lakera Guard v2 API with ML-based detection (language-agnostic)
 
 ### Changed
 - Updated project focus to community-driven micro-tools

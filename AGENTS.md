@@ -23,17 +23,19 @@
 - Modify WebSocket events or data flow
 - Add or remove dependencies
 - Change configuration files
+- **Add or modify GitHub Actions workflows** (`.github/workflows/*.yml`)
 
 ### Documentation Checklist
 
 When making code changes, verify these are updated:
 
 ```markdown
-□ CHANGELOG.md        - Add entry for user-facing changes
+□ CHANGELOG.md        - Add entry for user-facing changes AND CI/CD workflow changes
 □ README.md           - Update if features/tools change
 □ Type definitions    - Update JSDoc comments in .ts files
 □ API docs            - Update if endpoints change
 □ Component docs      - Update if props/events change
+□ Workflow changes    - Document new/modified GitHub Actions in CHANGELOG
 ```
 
 ### CHANGELOG.md Format
