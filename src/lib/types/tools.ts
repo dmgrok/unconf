@@ -53,7 +53,7 @@ export interface Participant {
 export type ParticipantRole = 'organizer' | 'participant';
 
 // =============================================================================
-// TEAM SHUFFLER
+// TEAM SHUFFLER / GROUP DISTRIBUTION
 // =============================================================================
 
 export interface ShuffleResult {
@@ -67,6 +67,106 @@ export interface ShuffleResult {
 export interface Team {
   name: string;
   members: string[];      // Participant names
+}
+
+/**
+ * Enhanced Group Distribution - supports Excel paste with configurable columns
+ */
+export interface GroupDistributionConfig {
+  groupSize: number;                    // Target number of people per group
+  nameColumn: number;                   // Column index for name (0-based)
+  emailColumn?: number;                 // Column index for email (optional)
+  criteriaColumns: number[];            // Up to 2 columns for diversity criteria
+  criteriaNames: string[];              // Names for the criteria (e.g., "Department", "Location")
+}
+
+export interface DistributionPerson {
+  name: string;
+  email?: string;
+  criteria: Record<string, string>;     // criteriaName -> value
+  rawRow: string[];                     // Original row data
+}
+
+export interface DistributionGroup {
+  id: number;
+  name: string;
+  members: DistributionPerson[];
+}
+
+export interface DistributionResult {
+  id: string;
+  groups: DistributionGroup[];
+  config: GroupDistributionConfig;
+  totalPeople: number;
+  createdAt: string;
+}
+
+/**
+ * Parse tab-separated values (Excel paste)
+ */
+export function parseTSV(text: string): string[][] {
+  const lines = text.trim().split('\n');
+  return lines.map(line => line.split('\t').map(cell => cell.trim()));
+}
+
+/**
+ * Distribute people into groups while maximizing diversity
+ * Uses a greedy algorithm that tries to avoid putting people with 
+ * the same criteria values in the same group
+ */
+export function distributeWithDiversity(
+  people: DistributionPerson[],
+  groupSize: number,
+  criteriaNames: string[]
+): DistributionGroup[] {
+  if (people.length === 0) return [];
+  
+  const numGroups = Math.ceil(people.length / groupSize);
+  const groups: DistributionGroup[] = Array.from({ length: numGroups }, (_, i) => ({
+    id: i + 1,
+    name: `Group ${i + 1}`,
+    members: [],
+  }));
+  
+  // Shuffle people first for randomness
+  const shuffled = shuffleArray([...people]);
+  
+  // For each person, find the best group (one that minimizes criteria overlap)
+  for (const person of shuffled) {
+    let bestGroup = 0;
+    let bestScore = Infinity;
+    
+    for (let i = 0; i < groups.length; i++) {
+      const group = groups[i];
+      
+      // Skip if group is full
+      if (group.members.length >= groupSize) continue;
+      
+      // Calculate overlap score - lower is better
+      let score = 0;
+      for (const criteriaName of criteriaNames) {
+        const personValue = person.criteria[criteriaName];
+        if (personValue) {
+          const sameValueCount = group.members.filter(
+            m => m.criteria[criteriaName] === personValue
+          ).length;
+          score += sameValueCount;
+        }
+      }
+      
+      // Prefer less full groups as tiebreaker
+      score += group.members.length * 0.1;
+      
+      if (score < bestScore) {
+        bestScore = score;
+        bestGroup = i;
+      }
+    }
+    
+    groups[bestGroup].members.push(person);
+  }
+  
+  return groups;
 }
 
 // =============================================================================
