@@ -1367,5 +1367,709 @@
     "id": "topic_1759702646413_gty4alqvq",
     "createdAt": "2025-10-05T22:17:26.413Z",
     "updatedAt": "2025-10-05T22:17:26.413Z"
+  },
+  {
+    "title": "AI Ethics in Product Development",
+    "description": "Discuss ethical considerations when building AI-powered features",
+    "eventId": "event_1759734319718_kg3g4h4kl",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "ai",
+      "ethics",
+      "product"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T07:05:19.729Z",
+      "editCount": 0
+    },
+    "id": "topic_1759734319729_8nqbhriin",
+    "createdAt": "2025-10-06T07:05:19.729Z",
+    "updatedAt": "2025-10-06T07:05:19.729Z"
+  },
+  {
+    "title": "Remote Team Collaboration Best Practices",
+    "description": "Share strategies for effective remote team collaboration",
+    "eventId": "event_1759734319718_kg3g4h4kl",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "remote",
+      "collaboration",
+      "team"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T07:05:19.738Z",
+      "editCount": 0
+    },
+    "id": "topic_1759734319738_sybvjnvn4",
+    "createdAt": "2025-10-06T07:05:19.738Z",
+    "updatedAt": "2025-10-06T07:05:19.738Z"
+  },
+  {
+    "title": "Sustainable Software Development",
+    "description": "How to build software with environmental sustainability in mind",
+    "eventId": "event_1759734319718_kg3g4h4kl",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "sustainability",
+      "development",
+      "environment"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T07:05:19.742Z",
+      "editCount": 0
+    },
+    "id": "topic_1759734319742_7vo16vpva",
+    "createdAt": "2025-10-06T07:05:19.742Z",
+    "updatedAt": "2025-10-06T07:05:19.742Z"
+  },
+  {
+    "title": "Developer Mental Health & Burnout",
+    "description": "Addressing mental health challenges in software development",
+    "eventId": "event_1759734319718_kg3g4h4kl",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "mental-health",
+      "burnout",
+      "wellbeing"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T07:05:19.746Z",
+      "editCount": 0
+    },
+    "id": "topic_1759734319746_fxni8n3z0",
+    "createdAt": "2025-10-06T07:05:19.746Z",
+    "updatedAt": "2025-10-06T07:05:19.746Z"
+  },
+  {
+    "title": "AI Ethics in Product Development",
+    "description": "Discuss ethical considerations when building AI-powered features",
+    "eventId": "event_1759737194973_ubnthffgl",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "ai",
+      "ethics",
+      "product"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T07:53:14.978Z",
+      "editCount": 0
+    },
+    "id": "topic_1759737194979_h51u801dv",
+    "createdAt": "2025-10-06T07:53:14.979Z",
+    "updatedAt": "2025-10-06T07:53:14.979Z"
+  },
+  {
+    "title": "Remote Team Collaboration Best Practices",
+    "description": "Share strategies for effective remote team collaboration",
+    "eventId": "event_1759737194973_ubnthffgl",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "remote",
+      "collaboration",
+      "team"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T07:53:14.985Z",
+      "editCount": 0
+    },
+    "id": "topic_1759737194985_kjm4w7u0i",
+    "createdAt": "2025-10-06T07:53:14.985Z",
+    "updatedAt": "2025-10-06T07:53:14.985Z"
+  },
+  {
+    "title": "Sustainable Software Development",
+    "description": "How to build software with environmental sustainability in mind",
+    "eventId": "event_1759737194973_ubnthffgl",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "sustainability",
+      "development",
+      "environment"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T07:53:14.989Z",
+      "editCount": 0
+    },
+    "id": "topic_1759737194989_60wbih7pz",
+    "createdAt": "2025-10-06T07:53:14.989Z",
+    "updatedAt": "2025-10-06T07:53:14.989Z"
+  },
+  {
+    "title": "Developer Mental Health & Burnout",
+    "description": "Addressing mental health challenges in software development",
+    "eventId": "event_1759737194973_ubnthffgl",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "mental-health",
+      "burnout",
+      "wellbeing"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T07:53:14.994Z",
+      "editCount": 0
+    },
+    "id": "topic_1759737194994_nkxckvsgs",
+    "createdAt": "2025-10-06T07:53:14.994Z",
+    "updatedAt": "2025-10-06T07:53:14.994Z"
+  },
+  {
+    "title": "AI Ethics in Product Development",
+    "description": "Discuss ethical considerations when building AI-powered features",
+    "eventId": "event_1759737807717_sx7e1tskb",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "ai",
+      "ethics",
+      "product"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T08:03:27.725Z",
+      "editCount": 0
+    },
+    "id": "topic_1759737807725_1ey3qdvws",
+    "createdAt": "2025-10-06T08:03:27.725Z",
+    "updatedAt": "2025-10-06T08:03:27.725Z"
+  },
+  {
+    "title": "Remote Team Collaboration Best Practices",
+    "description": "Share strategies for effective remote team collaboration",
+    "eventId": "event_1759737807717_sx7e1tskb",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "remote",
+      "collaboration",
+      "team"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T08:03:27.733Z",
+      "editCount": 0
+    },
+    "id": "topic_1759737807733_l0r9a0d7x",
+    "createdAt": "2025-10-06T08:03:27.733Z",
+    "updatedAt": "2025-10-06T08:03:27.733Z"
+  },
+  {
+    "title": "Sustainable Software Development",
+    "description": "How to build software with environmental sustainability in mind",
+    "eventId": "event_1759737807717_sx7e1tskb",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "sustainability",
+      "development",
+      "environment"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T08:03:27.739Z",
+      "editCount": 0
+    },
+    "id": "topic_1759737807739_ts1z1qzsu",
+    "createdAt": "2025-10-06T08:03:27.739Z",
+    "updatedAt": "2025-10-06T08:03:27.739Z"
+  },
+  {
+    "title": "Developer Mental Health & Burnout",
+    "description": "Addressing mental health challenges in software development",
+    "eventId": "event_1759737807717_sx7e1tskb",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "mental-health",
+      "burnout",
+      "wellbeing"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T08:03:27.745Z",
+      "editCount": 0
+    },
+    "id": "topic_1759737807745_g8sn7hjw8",
+    "createdAt": "2025-10-06T08:03:27.745Z",
+    "updatedAt": "2025-10-06T08:03:27.745Z"
+  },
+  {
+    "title": "AI Ethics in Product Development",
+    "description": "Discuss ethical considerations when building AI-powered features",
+    "eventId": "event_1759742893497_z6qpncuwk",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "ai",
+      "ethics",
+      "product"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T09:28:13.508Z",
+      "editCount": 0
+    },
+    "id": "topic_1759742893508_2f6xmnnwc",
+    "createdAt": "2025-10-06T09:28:13.508Z",
+    "updatedAt": "2025-10-06T09:28:13.508Z"
+  },
+  {
+    "title": "Remote Team Collaboration Best Practices",
+    "description": "Share strategies for effective remote team collaboration",
+    "eventId": "event_1759742893497_z6qpncuwk",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "remote",
+      "collaboration",
+      "team"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T09:28:13.516Z",
+      "editCount": 0
+    },
+    "id": "topic_1759742893516_mcdj5nfhw",
+    "createdAt": "2025-10-06T09:28:13.516Z",
+    "updatedAt": "2025-10-06T09:28:13.516Z"
+  },
+  {
+    "title": "Sustainable Software Development",
+    "description": "How to build software with environmental sustainability in mind",
+    "eventId": "event_1759742893497_z6qpncuwk",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "sustainability",
+      "development",
+      "environment"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T09:28:13.521Z",
+      "editCount": 0
+    },
+    "id": "topic_1759742893521_4tdz2zuzi",
+    "createdAt": "2025-10-06T09:28:13.521Z",
+    "updatedAt": "2025-10-06T09:28:13.521Z"
+  },
+  {
+    "title": "Developer Mental Health & Burnout",
+    "description": "Addressing mental health challenges in software development",
+    "eventId": "event_1759742893497_z6qpncuwk",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "mental-health",
+      "burnout",
+      "wellbeing"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T09:28:13.527Z",
+      "editCount": 0
+    },
+    "id": "topic_1759742893527_55qufsgbr",
+    "createdAt": "2025-10-06T09:28:13.527Z",
+    "updatedAt": "2025-10-06T09:28:13.527Z"
+  },
+  {
+    "title": "AI Ethics in Product Development",
+    "description": "Discuss ethical considerations when building AI-powered features",
+    "eventId": "event_1759743617816_rzirlr0ic",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "ai",
+      "ethics",
+      "product"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T09:40:17.824Z",
+      "editCount": 0
+    },
+    "id": "topic_1759743617824_iiy7mz01l",
+    "createdAt": "2025-10-06T09:40:17.824Z",
+    "updatedAt": "2025-10-06T09:40:17.824Z"
+  },
+  {
+    "title": "Remote Team Collaboration Best Practices",
+    "description": "Share strategies for effective remote team collaboration",
+    "eventId": "event_1759743617816_rzirlr0ic",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "remote",
+      "collaboration",
+      "team"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T09:40:17.832Z",
+      "editCount": 0
+    },
+    "id": "topic_1759743617832_hv11nxujv",
+    "createdAt": "2025-10-06T09:40:17.832Z",
+    "updatedAt": "2025-10-06T09:40:17.832Z"
+  },
+  {
+    "title": "Sustainable Software Development",
+    "description": "How to build software with environmental sustainability in mind",
+    "eventId": "event_1759743617816_rzirlr0ic",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "sustainability",
+      "development",
+      "environment"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T09:40:17.838Z",
+      "editCount": 0
+    },
+    "id": "topic_1759743617838_a1g4talri",
+    "createdAt": "2025-10-06T09:40:17.838Z",
+    "updatedAt": "2025-10-06T09:40:17.838Z"
+  },
+  {
+    "title": "Developer Mental Health & Burnout",
+    "description": "Addressing mental health challenges in software development",
+    "eventId": "event_1759743617816_rzirlr0ic",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "mental-health",
+      "burnout",
+      "wellbeing"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T09:40:17.845Z",
+      "editCount": 0
+    },
+    "id": "topic_1759743617845_pqjiw0dt9",
+    "createdAt": "2025-10-06T09:40:17.845Z",
+    "updatedAt": "2025-10-06T09:40:17.845Z"
+  },
+  {
+    "title": "AI Ethics in Product Development",
+    "description": "Discuss ethical considerations when building AI-powered features",
+    "eventId": "event_1759753211636_syxhvg08i",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "ai",
+      "ethics",
+      "product"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T12:20:11.652Z",
+      "editCount": 0
+    },
+    "id": "topic_1759753211652_y5mvy39f1",
+    "createdAt": "2025-10-06T12:20:11.652Z",
+    "updatedAt": "2025-10-06T12:20:11.652Z"
+  },
+  {
+    "title": "Remote Team Collaboration Best Practices",
+    "description": "Share strategies for effective remote team collaboration",
+    "eventId": "event_1759753211636_syxhvg08i",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "remote",
+      "collaboration",
+      "team"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T12:20:11.660Z",
+      "editCount": 0
+    },
+    "id": "topic_1759753211660_scof62xtg",
+    "createdAt": "2025-10-06T12:20:11.660Z",
+    "updatedAt": "2025-10-06T12:20:11.660Z"
+  },
+  {
+    "title": "Sustainable Software Development",
+    "description": "How to build software with environmental sustainability in mind",
+    "eventId": "event_1759753211636_syxhvg08i",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "sustainability",
+      "development",
+      "environment"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T12:20:11.666Z",
+      "editCount": 0
+    },
+    "id": "topic_1759753211666_0ft8qs00r",
+    "createdAt": "2025-10-06T12:20:11.666Z",
+    "updatedAt": "2025-10-06T12:20:11.666Z"
+  },
+  {
+    "title": "Developer Mental Health & Burnout",
+    "description": "Addressing mental health challenges in software development",
+    "eventId": "event_1759753211636_syxhvg08i",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "mental-health",
+      "burnout",
+      "wellbeing"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-06T12:20:11.674Z",
+      "editCount": 0
+    },
+    "id": "topic_1759753211674_ltzx7b5cy",
+    "createdAt": "2025-10-06T12:20:11.674Z",
+    "updatedAt": "2025-10-06T12:20:11.674Z"
+  },
+  {
+    "title": "AI Ethics in Product Development",
+    "description": "Discuss ethical considerations when building AI-powered features",
+    "eventId": "event_1760910766523_kb7zotr3q",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "ai",
+      "ethics",
+      "product"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-19T21:52:46.530Z",
+      "editCount": 0
+    },
+    "id": "topic_1760910766530_4l2dky31r",
+    "createdAt": "2025-10-19T21:52:46.530Z",
+    "updatedAt": "2025-10-19T21:52:46.530Z"
+  },
+  {
+    "title": "Remote Team Collaboration Best Practices",
+    "description": "Share strategies for effective remote team collaboration",
+    "eventId": "event_1760910766523_kb7zotr3q",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "remote",
+      "collaboration",
+      "team"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-19T21:52:46.537Z",
+      "editCount": 0
+    },
+    "id": "topic_1760910766537_helsw7c7k",
+    "createdAt": "2025-10-19T21:52:46.537Z",
+    "updatedAt": "2025-10-19T21:52:46.537Z"
+  },
+  {
+    "title": "Sustainable Software Development",
+    "description": "How to build software with environmental sustainability in mind",
+    "eventId": "event_1760910766523_kb7zotr3q",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "sustainability",
+      "development",
+      "environment"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-19T21:52:46.542Z",
+      "editCount": 0
+    },
+    "id": "topic_1760910766542_vammjr2pt",
+    "createdAt": "2025-10-19T21:52:46.542Z",
+    "updatedAt": "2025-10-19T21:52:46.542Z"
+  },
+  {
+    "title": "Developer Mental Health & Burnout",
+    "description": "Addressing mental health challenges in software development",
+    "eventId": "event_1760910766523_kb7zotr3q",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "mental-health",
+      "burnout",
+      "wellbeing"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-19T21:52:46.546Z",
+      "editCount": 0
+    },
+    "id": "topic_1760910766546_paxeya723",
+    "createdAt": "2025-10-19T21:52:46.546Z",
+    "updatedAt": "2025-10-19T21:52:46.546Z"
+  },
+  {
+    "title": "AI Ethics in Product Development",
+    "description": "Discuss ethical considerations when building AI-powered features",
+    "eventId": "event_1760911667569_s8m9khwkk",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "ai",
+      "ethics",
+      "product"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-19T22:07:47.581Z",
+      "editCount": 0
+    },
+    "id": "topic_1760911667581_i52a9juoq",
+    "createdAt": "2025-10-19T22:07:47.581Z",
+    "updatedAt": "2025-10-19T22:07:47.581Z"
+  },
+  {
+    "title": "Remote Team Collaboration Best Practices",
+    "description": "Share strategies for effective remote team collaboration",
+    "eventId": "event_1760911667569_s8m9khwkk",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "remote",
+      "collaboration",
+      "team"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-19T22:07:47.587Z",
+      "editCount": 0
+    },
+    "id": "topic_1760911667587_e8ljemduo",
+    "createdAt": "2025-10-19T22:07:47.587Z",
+    "updatedAt": "2025-10-19T22:07:47.587Z"
+  },
+  {
+    "title": "Sustainable Software Development",
+    "description": "How to build software with environmental sustainability in mind",
+    "eventId": "event_1760911667569_s8m9khwkk",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "sustainability",
+      "development",
+      "environment"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-19T22:07:47.592Z",
+      "editCount": 0
+    },
+    "id": "topic_1760911667592_zij3y7cyu",
+    "createdAt": "2025-10-19T22:07:47.592Z",
+    "updatedAt": "2025-10-19T22:07:47.592Z"
+  },
+  {
+    "title": "Developer Mental Health & Burnout",
+    "description": "Addressing mental health challenges in software development",
+    "eventId": "event_1760911667569_s8m9khwkk",
+    "submittedBy": "demo-user-001",
+    "status": "draft",
+    "tags": [
+      "mental-health",
+      "burnout",
+      "wellbeing"
+    ],
+    "voteCount": 0,
+    "totalVoteWeight": 0,
+    "averageWeight": 0,
+    "metadata": {
+      "submissionTimestamp": "2025-10-19T22:07:47.596Z",
+      "editCount": 0
+    },
+    "id": "topic_1760911667596_8b403fc5p",
+    "createdAt": "2025-10-19T22:07:47.596Z",
+    "updatedAt": "2025-10-19T22:07:47.596Z"
   }
 ]

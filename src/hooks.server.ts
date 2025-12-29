@@ -1,6 +1,4 @@
-import { SvelteKitAuth } from '@auth/sveltekit';
-import Google from '@auth/sveltekit/providers/google';
-import { GuestProvider, EmailPasswordProvider } from '$lib/auth/providers';
+import { handle as authHandle } from './auth';
 import { authMiddleware } from '$lib/auth/middleware';
 import { validateCSRF } from '$lib/security/csrf';
 // CSP disabled for development - TODO: Re-enable for production
@@ -9,48 +7,6 @@ import { cspNonceStore } from '$lib/security/csp';
 import { rateLimitMiddleware } from '$lib/security/rateLimiting';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Handle } from '@sveltejs/kit';
-import {
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
-  AUTH_SECRET
-} from '$env/static/private';
-
-export const { handle: authHandle } = SvelteKitAuth({
-  providers: [
-    EmailPasswordProvider,
-    Google({
-      clientId: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-    }),
-    GuestProvider,
-  ],
-  secret: AUTH_SECRET,
-  trustHost: true,
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role || 'user'; // Use user's role or default to 'user'
-        token.sessionId = user.sessionId;
-        token.isGuest = user.isGuest || false;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.sessionId = token.sessionId as string;
-        session.user.isGuest = token.isGuest as boolean;
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: '/signin',
-    error: '/auth/error',
-  },
-});
 
 // Rate limiting middleware
 const rateLimitingMiddleware: Handle = async ({ event, resolve }) => {

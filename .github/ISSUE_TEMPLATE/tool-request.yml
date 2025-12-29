@@ -1,0 +1,102 @@
+name: 🛠️ Tool Request
+description: Request a new tool for event organizers
+title: "[Tool]: "
+labels: ["tool-request", "community"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📬 Request a Tool
+        
+        This project is built entirely from community requests. We build what you need!
+        
+        **Note:** Requests are evaluated and may be rejected with explanation if they:
+        - Duplicate free tools that already exist
+        - Require significant infrastructure
+        - Don't fit the "simple event tools" scope
+
+  - type: input
+    id: tool-name
+    attributes:
+      label: Tool Name
+      description: What would you call this tool?
+      placeholder: "e.g., Name Badge Generator, Feedback Collector"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the specific problem you face when organizing events.
+      placeholder: "When I organize workshops, I need to... but currently I have to..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: How should it work?
+      description: Describe the simplest version that would help you.
+      placeholder: |
+        1. I paste a list of names
+        2. I click a button
+        3. I get downloadable badges
+    validations:
+      required: true
+
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: How simple should it be?
+      description: We prioritize simple, focused tools
+      options:
+        - "Dead simple - one input, one output"
+        - "A few options - but still fits on one page"
+        - "More complex - might need multiple steps"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: event-connected
+    attributes:
+      label: Should it connect to an event?
+      description: Does this tool need to know about participants or event data?
+      options:
+        - "Yes - needs participant list from the event"
+        - "No - standalone tool, no event context needed"
+        - "Optional - works both ways"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Existing alternatives
+      description: Have you looked for free tools that do this? Why don't they work for you?
+      placeholder: "I tried X but it requires signup / costs money / doesn't integrate with..."
+    validations:
+      required: false
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: How important is this to you?
+      options:
+        - "Nice to have - would be cool"
+        - "Important - would use it regularly"  
+        - "Critical - blocking my event planning"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: acknowledgment
+    attributes:
+      label: Acknowledgment
+      options:
+        - label: I understand this request will be evaluated and may be rejected with explanation
+          required: true
+        - label: I've searched existing issues and this isn't a duplicate
+          required: true
+        - label: I've checked that no free tool already does this well
+          required: true

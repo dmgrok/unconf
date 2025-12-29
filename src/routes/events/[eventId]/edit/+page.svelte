@@ -5,6 +5,7 @@
   import EventConfigurationForm from '$lib/components/EventConfigurationFormNew.svelte';
   import type { Event as EventEntity } from '../../../../types/entities';
   import { onMount } from 'svelte';
+  import { toast } from '$lib/stores/toast';
 
   let isLoading = true;
   let user: AuthUser | null = null;
@@ -53,7 +54,7 @@
     const { event: updatedEvent } = event.detail;
     console.log('Event updated successfully:', updatedEvent);
 
-    alert(`Event "${updatedEvent.title}" updated successfully!`);
+    toast.success(`Event "${updatedEvent.title}" updated successfully!`);
     goto(`/events/${updatedEvent.id}`);
   }
 
@@ -61,12 +62,16 @@
     const { message, details } = event.detail;
     console.error('Event update error:', message, details);
 
-    let errorMsg = message;
-    if (details && Array.isArray(details)) {
-      errorMsg += '\n\nValidation errors:\n' + details.map(d => `• ${d.message}`).join('\n');
+    if (details && Array.isArray(details) && details.length > 0) {
+      // Show main error
+      toast.error(message, 7000);
+      // Show first few validation errors
+      details.slice(0, 3).forEach((d, i) => {
+        setTimeout(() => toast.warning(d.message, 6000), i * 500);
+      });
+    } else {
+      toast.error(message);
     }
-
-    alert(errorMsg);
   }
 
   function handleCancel() {

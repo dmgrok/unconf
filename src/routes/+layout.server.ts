@@ -3,7 +3,7 @@ import { dev } from '$app/environment';
 import { EventRepository } from '$lib/storage';
 
 export const load: LayoutServerLoad = async (event) => {
-  const session = await event.locals.getSession?.();
+  const session = await event.locals.auth();
 
   // Load demo event for development
   let demoEvent = null;

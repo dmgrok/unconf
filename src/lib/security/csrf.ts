@@ -89,9 +89,9 @@ export async function validateCSRF(event: RequestEvent): Promise<void> {
     return;
   }
 
-  // Skip validation for certain endpoints (like health checks, CSP reports)
+  // Skip validation for certain endpoints (like health checks, CSP reports, auth)
   // In development, skip CSRF for all API endpoints to allow testing
-  const skipPaths = ['/api/health', '/api/websocket', '/api/csp-report'];
+  const skipPaths = ['/api/health', '/api/websocket', '/api/csp-report', '/auth'];
 
   // Development mode: Skip CSRF for all /api endpoints
   if (process.env.NODE_ENV === 'development' && url.pathname.startsWith('/api')) {

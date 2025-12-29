@@ -23,16 +23,30 @@
 		loginError = '';
 
 		try {
-			// Let AuthJS handle the redirect automatically
-			await signIn('email-password', {
+			// Use redirect: false to get the result and handle redirect manually
+			const result = await signIn('credentials', {
 				email: email.trim(),
 				password,
+				redirect: false,
 				callbackUrl: $page.url.searchParams.get('callbackUrl') || '/'
 			});
-			// If we reach here, signin was successful and redirect will happen
+
+			console.log('SignIn result:', result);
+
+			// Check if signin was successful
+			if (result?.error) {
+				console.error('SignIn error:', result.error);
+				loginError = 'Invalid email or password. Please try again.';
+				loading = false;
+			} else {
+				// Signin successful, manually redirect
+				const redirectUrl = $page.url.searchParams.get('callbackUrl') || '/';
+				console.log('Redirecting to:', redirectUrl);
+				goto(redirectUrl);
+			}
 		} catch (error) {
-			console.error('Sign in error:', error);
-			loginError = 'Invalid email or password. Please try again.';
+			console.error('Sign in exception:', error);
+			loginError = 'An error occurred. Please try again.';
 			loading = false;
 		}
 	};
@@ -96,28 +110,27 @@
 		<div class="signin-options">
 			{#if !showEventCodeInput}
 				<!-- Email/Password Login Form -->
-				<div class="email-password-form">
+				<form onsubmit={(e) => { e.preventDefault(); handleEmailPasswordSignIn(); }} class="email-password-form">
 					<input
 						type="email"
+						name="email"
 						bind:value={email}
 						placeholder="Email"
 						class="form-input"
 						class:error={loginError}
 						disabled={loading}
+						required
 					/>
 
 					<input
 						type="password"
+						name="password"
 						bind:value={password}
 						placeholder="Password"
 						class="form-input"
 						class:error={loginError}
 						disabled={loading}
-						onkeypress={(e) => {
-							if (e.key === 'Enter') {
-								handleEmailPasswordSignIn();
-							}
-						}}
+						required
 					/>
 
 					{#if loginError}
@@ -125,13 +138,13 @@
 					{/if}
 
 					<button
-						onclick={handleEmailPasswordSignIn}
+						type="submit"
 						disabled={loading || !email.trim() || !password.trim()}
 						class="signin-button primary full-width"
 					>
 						{loading ? 'Signing in...' : 'Sign In'}
 					</button>
-				</div>
+				</form>
 
 				<div class="divider">
 					<span>or</span>
