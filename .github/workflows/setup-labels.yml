@@ -1,0 +1,76 @@
+name: Setup Issue Labels
+
+on:
+  workflow_dispatch: # Manual trigger only
+
+permissions:
+  issues: write
+
+jobs:
+  create-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Labels
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const labels = [
+              // Triage status
+              { name: 'auto-triaged', color: '0e8a16', description: 'Automatically processed by triage bot' },
+              { name: 'needs-review', color: 'fbca04', description: 'Awaiting maintainer review' },
+              { name: 'needs-human-review', color: 'd93f0b', description: 'Requires human review - potential breaking change' },
+              
+              // Rejection reasons
+              { name: 'insufficient-info', color: 'cfd3d7', description: 'Discarded - not enough information provided' },
+              { name: 'out-of-scope', color: 'cfd3d7', description: 'Outside project scope' },
+              { name: 'not-differentiator', color: 'cfd3d7', description: 'Commodity tool - better alternatives exist' },
+              { name: 'needs-value-prop', color: 'e99695', description: 'Missing value for organizers or participants' },
+              { name: 'security-review', color: 'b60205', description: 'Flagged for security review' },
+              
+              // Issue types
+              { name: 'bug', color: 'd73a4a', description: 'Something isn\'t working' },
+              { name: 'improvement', color: 'a2eeef', description: 'Enhancement to existing feature' },
+              { name: 'tool-request', color: '7057ff', description: 'Request for a new tool' },
+              { name: 'triage', color: 'ededed', description: 'Needs type classification' },
+              
+              // Priority/value
+              { name: 'high-value', color: '0052cc', description: 'High value for organizers and participants' },
+              { name: 'good-first-issue', color: '7057ff', description: 'Good for newcomers' },
+              
+              // Breaking changes
+              { name: 'breaking-change', color: 'b60205', description: 'May introduce breaking changes' },
+              
+              // Agent workflow
+              { name: 'agent-ready', color: '0052cc', description: 'Ready for coding agent implementation' },
+              { name: 'agent-in-progress', color: '1d76db', description: 'Being worked on by coding agent' }
+            ];
+            
+            for (const label of labels) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label.name,
+                  color: label.color,
+                  description: label.description
+                });
+                console.log(`✅ Created label: ${label.name}`);
+              } catch (e) {
+                if (e.status === 422) {
+                  // Label exists, update it
+                  await github.rest.issues.updateLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    name: label.name,
+                    color: label.color,
+                    description: label.description
+                  });
+                  console.log(`🔄 Updated label: ${label.name}`);
+                } else {
+                  console.log(`❌ Error with label ${label.name}:`, e.message);
+                }
+              }
+            }
+            
+            console.log('\n✅ Label setup complete!');
