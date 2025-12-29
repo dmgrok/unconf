@@ -15,6 +15,9 @@
   let resultsUrl = $state('');
   let copied = $state(false);
   
+  // View mode: 'setup' (creating survey) | 'share' (after creation with links)
+  let viewMode = $state<'setup' | 'share'>('setup');
+  
   const questionTypes: { type: QuestionType; label: string; icon: string }[] = [
     { type: 'single-choice', label: 'Single Choice', icon: '○' },
     { type: 'multiple-choice', label: 'Multiple Choice', icon: '☑' },
@@ -150,6 +153,8 @@
         resultsUrl = `${window.location.origin}/survey/${data.survey.id}/results`;
         // Store in session for results access
         sessionStorage.setItem(`survey_${data.survey.id}_creator`, 'true');
+        // Switch to share view
+        viewMode = 'share';
       } else {
         error = 'Failed to create survey';
       }
@@ -173,6 +178,7 @@
     shareUrl = '';
     resultsUrl = '';
     error = '';
+    viewMode = 'setup';
   }
   
   // Template loading functions
@@ -354,27 +360,44 @@
 </svelte:head>
 
 <main>
-  {#if shareUrl}
-    <!-- Success state -->
-    <div class="success-container">
+  {#if viewMode === 'share' && shareUrl}
+    <!-- Share View - After Survey Creation -->
+    <div class="share-view">
       <div class="success-icon">✅</div>
       <h1>Survey Created!</h1>
-      <p class="success-message">Share this link with respondents:</p>
       
-      <div class="share-box">
-        <input type="text" readonly value={shareUrl} class="share-url" />
-        <button class="copy-btn" onclick={copyShareUrl}>
-          {copied ? '✓ Copied!' : '📋 Copy'}
-        </button>
+      <div class="view-sections">
+        <!-- Participant Link Section -->
+        <div class="view-section">
+          <h2>👥 For Participants</h2>
+          <p>Share this link so participants can respond:</p>
+          <div class="share-box">
+            <input type="text" readonly value={shareUrl} class="share-url" />
+            <button class="copy-btn" onclick={copyShareUrl}>
+              {copied ? '✓ Copied!' : '📋 Copy'}
+            </button>
+          </div>
+          <a href={shareUrl} class="btn primary" target="_blank">Preview Survey →</a>
+        </div>
+        
+        <!-- Results Display Section -->
+        <div class="view-section results-section">
+          <h2>📊 Live Results View</h2>
+          <p><strong>Display this URL on a screen</strong> for participants to see responses in real-time:</p>
+          <div class="share-box">
+            <input type="text" readonly value={resultsUrl} class="share-url" />
+            <button class="copy-btn" onclick={() => { navigator.clipboard.writeText(resultsUrl); copied = true; setTimeout(() => copied = false, 2000); }}>
+              {copied ? '✓ Copied!' : '📋 Copy'}
+            </button>
+          </div>
+          <a href={resultsUrl} class="btn secondary" target="_blank">Open Results Display 🖥️</a>
+          <p class="view-hint">💡 <strong>Tip:</strong> Open results view on a projector or shared screen. Participants will see live updates as responses come in.</p>
+        </div>
       </div>
       
-      <div class="success-actions">
-        <a href={shareUrl} class="btn primary" target="_blank">Preview Survey →</a>
-        <a href={resultsUrl} class="btn secondary">View Results 📊</a>
-        <button class="btn outline" onclick={startNew}>Create Another</button>
-      </div>
+      <button class="btn outline btn-full" onclick={startNew}>+ Create Another Survey</button>
     </div>
-  {:else}
+  {:else if viewMode === 'setup'}
     <!-- Builder state -->
     <header>
       <a href="/tools" class="back">← All Tools</a>
@@ -606,7 +629,7 @@
   }
   
   .back {
-    color: #6b7280;
+    color: var(--color-text-secondary);
     text-decoration: none;
     font-size: 0.875rem;
   }
@@ -621,7 +644,7 @@
   }
   
   .subtitle {
-    color: #6b7280;
+    color: var(--color-text-secondary);
     margin: 0;
   }
   
@@ -662,7 +685,7 @@
   
   /* Survey Meta */
   .survey-meta {
-    background: #f8fafc;
+    background: var(--color-surface-secondary);
     padding: 1.5rem;
     border-radius: 12px;
     margin-bottom: 1.5rem;
@@ -721,12 +744,12 @@
   }
   
   .empty-questions {
-    background: #f8fafc;
-    border: 2px dashed #d1d5db;
+    background: var(--color-surface-secondary);
+    border: 2px dashed var(--color-border);
     padding: 2rem;
     border-radius: 12px;
     text-align: center;
-    color: #6b7280;
+    color: var(--color-text-secondary);
   }
   
   .questions-list {
@@ -855,9 +878,9 @@
     width: 100%;
     padding: 0.5rem;
     background: none;
-    border: 1px dashed #d1d5db;
+    border: 1px dashed var(--color-border);
     border-radius: 6px;
-    color: #6b7280;
+    color: var(--color-text-secondary);
     cursor: pointer;
     font-size: 0.85rem;
   }
@@ -873,14 +896,14 @@
     justify-content: center;
     gap: 0.5rem;
     padding: 0.75rem;
-    background: #f8fafc;
+    background: var(--color-surface-secondary);
     border-radius: 8px;
     margin-bottom: 0.75rem;
   }
   
   .rating-label {
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--color-text-secondary);
   }
   
   .rating-stars {
@@ -899,7 +922,7 @@
     gap: 1rem;
     justify-content: center;
     padding: 0.75rem;
-    background: #f8fafc;
+    background: var(--color-surface-secondary);
     border-radius: 8px;
     margin-bottom: 0.75rem;
   }
@@ -916,9 +939,9 @@
   .text-preview input {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
-    background: #f8fafc;
+    background: var(--color-surface-secondary);
     margin-bottom: 0.75rem;
   }
   
@@ -927,7 +950,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--color-text-secondary);
     cursor: pointer;
   }
   
@@ -938,14 +961,14 @@
   
   /* Add question section */
   .add-question-section {
-    background: #f8fafc;
+    background: var(--color-surface-secondary);
     padding: 1rem;
     border-radius: 12px;
   }
   
   .add-label {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--color-text-secondary);
     margin: 0 0 0.75rem;
   }
   
@@ -1008,7 +1031,66 @@
     cursor: not-allowed;
   }
   
-  /* Success state */
+  /* Share View - After Creation */
+  .share-view {
+    padding: 2rem 1rem;
+  }
+  
+  .share-view .success-icon {
+    font-size: 4rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .share-view h1 {
+    text-align: center;
+    margin: 0 0 2rem;
+  }
+  
+  .view-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .view-section {
+    background: var(--color-surface-secondary);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 2px solid var(--color-border);
+  }
+  
+  .view-section h2 {
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem;
+    color: var(--color-text-primary);
+  }
+  
+  .view-section p {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+  }
+  
+  .results-section {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-color: rgba(99, 102, 241, 0.3);
+  }
+  
+  .view-hint {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    font-size: 0.85rem !important;
+  }
+  
+  .btn-full {
+    width: 100%;
+  }
+  
+  /* Success state (legacy) */
   .success-container {
     text-align: center;
     padding: 3rem 1rem;
@@ -1077,14 +1159,14 @@
   }
   
   .btn.secondary {
-    background: #f3f4f6;
-    color: #374151;
+    background: var(--color-surface-secondary);
+    color: var(--color-text-primary);
   }
   
   .btn.outline {
-    background: white;
-    color: #6b7280;
-    border: 1px solid #e5e7eb;
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
   }
   
   @media (max-width: 500px) {
@@ -1101,12 +1183,12 @@
   .use-cases h3 {
     font-size: 1rem;
     margin: 0 0 0.5rem;
-    color: #374151;
+    color: var(--color-text-primary);
   }
   
   .use-cases-intro {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--color-text-secondary);
     margin: 0 0 0.75rem;
   }
   
@@ -1121,8 +1203,8 @@
     align-items: flex-start;
     gap: 0.75rem;
     padding: 0.75rem;
-    background: #f8fafc;
-    border: 2px solid #e5e7eb;
+    background: var(--color-surface-secondary);
+    border: 2px solid var(--color-border);
     border-radius: 10px;
     cursor: pointer;
     text-align: left;

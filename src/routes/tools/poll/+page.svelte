@@ -28,6 +28,9 @@
   let openResponse = $state('');
   let upvotedResponses = $state<string[]>([]); // Track which responses user has upvoted
   
+  // View mode: 'setup' (creating poll) | 'results' (display for participants)
+  let viewMode = $state<'setup' | 'results'>('setup');
+  
   // Create poll form
   let question = $state('');
   let pollType = $state<PollType>('options');
@@ -122,11 +125,19 @@
       };
     }
     
-    question = '';
-    options = ['', ''];
-    allowMultiple = false;
-    pollType = 'options';
-    maxWords = 10;
+    // Switch to results view for real-time display
+    viewMode = 'results';
+  }
+  
+  function backToSetup() {
+    viewMode = 'setup';
+    activePoll = null;
+    voted = false;
+    votedOptions = [];
+    openResponse = '';
+    upvotedResponses = [];
+    // Switch to results view for real-time display
+    viewMode = 'results';
   }
   
   function vote(option: string) {
@@ -275,7 +286,20 @@
     </div>
   {/if}
   
-  {#if !activePoll}
+  <!-- View Mode Selector (shown when poll is active) -->
+  {#if activePoll && viewMode === 'results'}
+    <div class="view-mode-controls">
+      <button class="back-to-setup-btn" onclick={backToSetup}>
+        ← Back to Setup
+      </button>
+      <div class="view-info">
+        <span class="live-indicator">🟢</span>
+        <strong>Live Results View</strong> - Display this screen for participants to see responses in real-time
+      </div>
+    </div>
+  {/if}
+  
+  {#if viewMode === 'setup' && !activePoll}
     <section class="create-poll">
       <h2>Create a Poll</h2>
       
@@ -373,8 +397,9 @@
         </button>
       </form>
     </section>
-  {:else}
-    <section class="active-poll">
+  {:else if viewMode === 'results' && activePoll}
+    <!-- Results View - Real-time Display -->
+    <section class="results-display">
       <div class="poll-header">
         <h2>{activePoll.question}</h2>
         {#if activePoll.pollType === 'options'}
@@ -507,6 +532,84 @@
     font-family: system-ui, -apple-system, sans-serif;
   }
   
+  /* View Mode Controls */
+  .view-mode-controls {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+    border: 2px solid rgba(34, 197, 94, 0.3);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .back-to-setup-btn {
+    padding: 0.5rem 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--color-text-primary);
+    font-weight: 500;
+    align-self: flex-start;
+  }
+  
+  .back-to-setup-btn:hover {
+    background: var(--color-surface-secondary);
+  }
+  
+  .view-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .live-indicator {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  /* Results Display (larger for projection) */
+  .results-display {
+    background: var(--color-surface);
+    border-radius: 14px;
+    padding: 2rem;
+    border: 2px solid var(--color-border);
+  }
+  
+  .results-display .poll-header h2 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .results-display .poll-option {
+    font-size: 1.1rem;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .results-display .option-percent {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .results-display .vote-count {
+    font-size: 0.95rem;
+  }
+  
+  .results-display .response-item {
+    font-size: 1.1rem;
+    padding: 1.25rem;
+  }
+  
   .back {
     color: #6b7280;
     text-decoration: none;
@@ -591,7 +694,7 @@
 
   /* Create Poll Form */
   .create-poll {
-    background: #f8fafc;
+    background: var(--color-surface-secondary);
     padding: 1.5rem;
     border-radius: 12px;
   }
@@ -599,6 +702,7 @@
   .create-poll h2 {
     margin: 0 0 1.5rem;
     font-size: 1.25rem;
+    color: var(--color-text-primary);
   }
   
   .form-group {

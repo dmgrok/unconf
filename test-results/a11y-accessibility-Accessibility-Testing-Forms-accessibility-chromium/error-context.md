@@ -1,0 +1,160 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "UnConf" [ref=e5] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e6]:
+        - link "Home" [ref=e7] [cursor=pointer]:
+          - /url: /
+        - link "Create Event" [ref=e8] [cursor=pointer]:
+          - /url: /create
+      - generic [ref=e9]:
+        - button "Language" [ref=e11] [cursor=pointer]:
+          - generic [ref=e12] [cursor=pointer]: 🇺🇸
+          - generic [ref=e13] [cursor=pointer]: English
+          - generic [ref=e14] [cursor=pointer]: ▼
+        - button "Sign In" [ref=e15] [cursor=pointer]
+        - button "Guest" [ref=e16] [cursor=pointer]
+  - main [ref=e17]:
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - generic [ref=e23]: 🤖 100% AI-Built
+          - heading "Focus on Your Event, Not the Tech" [level=1] [ref=e24]:
+            - text: Focus on Your Event,
+            - text: Not the Tech
+          - paragraph [ref=e25]:
+            - text: Simple, powerful tools that let event organizers do what matters most —
+            - strong [ref=e26]: connect people
+            - text: .
+          - generic [ref=e27]:
+            - link "✨ Create Event" [ref=e28] [cursor=pointer]:
+              - /url: /create
+              - generic [ref=e29] [cursor=pointer]: ✨
+              - text: Create Event
+            - generic [ref=e30]:
+              - generic [ref=e31]: or
+              - generic [ref=e32]:
+                - textbox "Event code" [ref=e33]
+                - button "Join" [disabled] [ref=e34]
+        - generic [ref=e35]:
+          - generic [ref=e36]:
+            - heading "Your Toolkit" [level=2] [ref=e37]
+            - paragraph [ref=e38]: Use standalone or connect to an event
+          - generic [ref=e39]:
+            - link "🎲 Team Shuffler Randomly assign participants to groups →" [ref=e40] [cursor=pointer]:
+              - /url: /tools/shuffler
+              - generic [ref=e41] [cursor=pointer]: 🎲
+              - generic [ref=e42] [cursor=pointer]:
+                - heading "Team Shuffler" [level=3] [ref=e43] [cursor=pointer]
+                - paragraph [ref=e44] [cursor=pointer]: Randomly assign participants to groups
+              - generic [ref=e45] [cursor=pointer]: →
+            - link "⏱️ Session Timer Full-screen countdown for talks →" [ref=e46] [cursor=pointer]:
+              - /url: /tools/timer
+              - generic [ref=e47] [cursor=pointer]: ⏱️
+              - generic [ref=e48] [cursor=pointer]:
+                - heading "Session Timer" [level=3] [ref=e49] [cursor=pointer]
+                - paragraph [ref=e50] [cursor=pointer]: Full-screen countdown for talks
+              - generic [ref=e51] [cursor=pointer]: →
+            - link "🗳️ Quick Poll Single-question live voting →" [ref=e52] [cursor=pointer]:
+              - /url: /tools/poll
+              - generic [ref=e53] [cursor=pointer]: 🗳️
+              - generic [ref=e54] [cursor=pointer]:
+                - heading "Quick Poll" [level=3] [ref=e55] [cursor=pointer]
+                - paragraph [ref=e56] [cursor=pointer]: Single-question live voting
+              - generic [ref=e57] [cursor=pointer]: →
+            - link "📋 Survey Builder Multi-question forms with various types →" [ref=e58] [cursor=pointer]:
+              - /url: /tools/survey
+              - generic [ref=e59] [cursor=pointer]: 📋
+              - generic [ref=e60] [cursor=pointer]:
+                - heading "Survey Builder" [level=3] [ref=e61] [cursor=pointer]
+                - paragraph [ref=e62] [cursor=pointer]: Multi-question forms with various types
+              - generic [ref=e63] [cursor=pointer]: →
+            - generic [ref=e64]:
+              - generic [ref=e65]: 📱
+              - generic [ref=e66]:
+                - heading "QR Check-In" [level=3] [ref=e67]
+                - paragraph [ref=e68]: Scan to join events
+              - generic [ref=e69]: Soon
+      - generic [ref=e70]:
+        - generic [ref=e71]:
+          - generic [ref=e72]: 🧪
+          - heading "The Experiment" [level=2] [ref=e73]
+        - generic [ref=e74]:
+          - paragraph [ref=e75]:
+            - strong [ref=e76]: Can a fully functional app be built without human developers?
+          - paragraph [ref=e77]:
+            - text: This entire platform is being developed by
+            - strong [ref=e78]: agentic AI
+            - text: — guided only by user needs and feedback. No human writes the code. We're exploring the boundaries of AI-assisted development to understand where AI excels and where human expertise remains essential.
+          - generic [ref=e79]:
+            - generic [ref=e80]:
+              - generic [ref=e81]: "0"
+              - generic [ref=e82]: Lines written by humans
+            - generic [ref=e83]:
+              - generic [ref=e84]: 100%
+              - generic [ref=e85]: AI-generated code
+            - generic [ref=e86]:
+              - generic [ref=e87]: ∞
+              - generic [ref=e88]: User-driven decisions
+          - paragraph [ref=e89]:
+            - emphasis [ref=e90]: Every feature, every fix, every line of code — generated by Claude in response to real user requests. This is an exploration of what's possible today.
+      - generic [ref=e91]:
+        - generic [ref=e92]:
+          - heading "Dead Simple" [level=2] [ref=e93]
+          - paragraph [ref=e94]: Get started in under a minute
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - generic [ref=e97]: 🎯
+            - heading "Create" [level=3] [ref=e98]
+            - paragraph [ref=e99]: Start an event, get a code instantly
+          - generic [ref=e101]:
+            - generic [ref=e102]: 📤
+            - heading "Share" [level=3] [ref=e103]
+            - paragraph [ref=e104]: Send the code — no accounts needed
+          - generic [ref=e106]:
+            - generic [ref=e107]: 🚀
+            - heading "Run" [level=3] [ref=e108]
+            - paragraph [ref=e109]: Use tools, engage your audience
+      - generic [ref=e111]:
+        - heading "Shape This Experiment" [level=2] [ref=e112]
+        - paragraph [ref=e113]: Need a tool we don't have? Your request becomes the AI's next task. Watch it get built in real-time.
+        - link "📬 Request a Tool" [ref=e114] [cursor=pointer]:
+          - /url: https://github.com/dmgrok/unconf/issues/new?template=tool-request.yml
+          - generic [ref=e115] [cursor=pointer]: 📬
+          - text: Request a Tool
+      - generic [ref=e117]:
+        - generic [ref=e118]:
+          - generic [ref=e119]: 🧪
+          - generic [ref=e120]: Event Tools Lab
+        - paragraph [ref=e121]: An experiment in AI-only development
+        - generic [ref=e122]:
+          - link "GitHub" [ref=e123] [cursor=pointer]:
+            - /url: https://github.com/dmgrok/unconf
+          - generic [ref=e124]: •
+          - generic [ref=e125]: Built by Claude
+          - generic [ref=e126]: •
+          - generic [ref=e127]: Guided by humans
+  - generic [ref=e128]:
+    - generic [ref=e130]: 📊 Core Web Vitals
+    - generic [ref=e131]:
+      - generic [ref=e132]:
+        - generic [ref=e133]: LCP
+        - generic [ref=e134]: 280ms
+        - generic [ref=e135]: "Target: < 2.5s"
+      - generic [ref=e136]:
+        - generic [ref=e137]: CLS
+        - generic [ref=e138]: "0.006"
+        - generic [ref=e139]: "Target: < 0.1"
+      - generic [ref=e140]:
+        - generic [ref=e141]: FCP
+        - generic [ref=e142]: 280ms
+        - generic [ref=e143]: "Target: < 1.8s"
+      - generic [ref=e144]:
+        - generic [ref=e145]: TTFB
+        - generic [ref=e146]: 53ms
+        - generic [ref=e147]: "Target: < 800ms"
+```

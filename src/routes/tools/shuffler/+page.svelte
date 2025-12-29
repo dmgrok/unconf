@@ -26,7 +26,7 @@
   
   // Advanced mode state
   let parsedData = $state<string[][]>([]);
-  let hasHeader = $state(true);
+  let hasHeader = true; // Always true - first row is always header
   let nameColumn = $state(0);
   let emailColumn = $state<number | null>(null);
   let criteriaColumn1 = $state<number | null>(null);
@@ -734,6 +734,7 @@ Jack Anderson`;
       <span>📊</span>
       <p>
         <strong>Data Grid Mode</strong> - Upload a CSV/Excel file, paste data, or enter directly in the grid.
+        <strong>Max 4 columns:</strong> 2 for personal info (name, email) + 2 for classification (department, location, etc.).
         <button class="qr-btn-inline" onclick={toggleQRCode}>📱 {showQRCode ? 'Hide' : 'Show'} QR Code</button>
       </p>
     </div>
@@ -887,13 +888,7 @@ Jack Anderson`;
       <!-- Column Configuration -->
       <section class="column-config">
         <h3>📑 Column Configuration</h3>
-        
-        <div class="config-row">
-          <label class="checkbox-label">
-            <input type="checkbox" bind:checked={hasHeader} />
-            <span>First row is header</span>
-          </label>
-        </div>
+        <p class="config-note">First row is treated as column headers. Maximum 4 columns: 2 for personal info, 2 for diversity criteria.</p>
         
         <div class="config-grid">
           <div class="config-item">
@@ -916,8 +911,8 @@ Jack Anderson`;
           </div>
         </div>
         
-        <h4>🎯 Diversity Criteria (optional)</h4>
-        <p class="config-help">Select up to 2 columns to maximize diversity in groups (e.g., mix departments, locations)</p>
+        <h4>🎯 Diversity Criteria (2 max)</h4>
+        <p class="config-help">Select up to 2 classification columns to maximize diversity in groups (e.g., mix departments, locations)</p>
         
         <div class="config-grid">
           <div class="config-item">
@@ -928,14 +923,6 @@ Jack Anderson`;
                 <option value={i}>{hasHeader ? col : `Column ${i + 1}`}</option>
               {/each}
             </select>
-            {#if criteriaColumn1 !== null}
-              <input 
-                type="text" 
-                bind:value={criteriaName1} 
-                placeholder="Criteria name"
-                class="criteria-name-input"
-              />
-            {/if}
           </div>
           
           <div class="config-item">
@@ -946,14 +933,6 @@ Jack Anderson`;
                 <option value={i}>{hasHeader ? col : `Column ${i + 1}`}</option>
               {/each}
             </select>
-            {#if criteriaColumn2 !== null}
-              <input 
-                type="text" 
-                bind:value={criteriaName2} 
-                placeholder="Criteria name"
-                class="criteria-name-input"
-              />
-            {/if}
           </div>
         </div>
       </section>
@@ -1622,27 +1601,29 @@ Jack Anderson`;
   
   /* Column Configuration */
   .column-config {
-    background: #f8fafc;
+    background: var(--color-surface-secondary);
     padding: 1.5rem;
     border-radius: 12px;
     margin-bottom: 1.5rem;
   }
   
   .column-config h3 {
-    margin: 0 0 1rem;
+    margin: 0 0 0.5rem;
     font-size: 1.1rem;
+    color: var(--color-text-primary);
   }
   
   .column-config h4 {
     margin: 1.5rem 0 0.5rem;
     font-size: 1rem;
-    color: #374151;
+    color: var(--color-text-primary);
   }
   
+  .config-note,
   .config-help {
     margin: 0 0 1rem;
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--color-text-secondary);
   }
   
   .config-row {
@@ -1677,15 +1658,16 @@ Jack Anderson`;
   .config-label {
     font-size: 0.85rem;
     font-weight: 500;
-    color: #374151;
+    color: var(--color-text-primary);
   }
   
   .config-item select {
     padding: 0.5rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     font-size: 0.9rem;
-    background: white;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
   }
   
   .criteria-name-input {

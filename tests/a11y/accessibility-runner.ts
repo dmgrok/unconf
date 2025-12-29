@@ -230,6 +230,3 @@ export function createAccessibilityTests(pages: { url: string; name: string }[])
     }
   });
 }
-
-// Export for use in test files
-export { AccessibilityTestRunner };

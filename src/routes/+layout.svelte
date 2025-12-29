@@ -361,15 +361,19 @@
 	}
 
 	main {
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 2rem 1rem;
 		min-height: calc(100vh - 200px);
 	}
 
-	/* Mobile: Reduced padding */
+	/* Default content container - applied via .page-container class */
+	main:not(:has(.full-width)) {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 2rem 1rem;
+	}
+
+	/* Mobile: Reduced padding for default pages */
 	@media (max-width: 767px) {
-		main {
+		main:not(:has(.full-width)) {
 			padding: 1rem 0.75rem;
 		}
 	}

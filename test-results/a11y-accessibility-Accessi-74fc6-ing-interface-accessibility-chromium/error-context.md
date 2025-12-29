@@ -1,0 +1,59 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - navigation [ref=e3]:
+    - generic [ref=e4]:
+      - link "UnConf" [ref=e5] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e6]:
+        - link "Home" [ref=e7] [cursor=pointer]:
+          - /url: /
+        - link "Create Event" [ref=e8] [cursor=pointer]:
+          - /url: /create
+      - generic [ref=e9]:
+        - button "Language" [ref=e11] [cursor=pointer]:
+          - generic [ref=e12] [cursor=pointer]: 🇺🇸
+          - generic [ref=e13] [cursor=pointer]: English
+          - generic [ref=e14] [cursor=pointer]: ▼
+        - button "Sign In" [ref=e15] [cursor=pointer]
+        - button "Guest" [ref=e16] [cursor=pointer]
+  - main [ref=e17]:
+    - generic [ref=e19]:
+      - img [ref=e21]
+      - heading "404" [level=1] [ref=e24]
+      - heading "Page Not Found" [level=2] [ref=e25]
+      - paragraph [ref=e26]: The page you are looking for does not exist or has been moved.
+      - paragraph [ref=e27]: Event not found
+      - generic [ref=e28]:
+        - button "Go to Homepage" [ref=e29] [cursor=pointer]
+        - button "Go Back" [ref=e30] [cursor=pointer]
+      - generic [ref=e31]:
+        - paragraph [ref=e32]: Looking for something specific?
+        - generic [ref=e33]:
+          - link "Home" [ref=e34] [cursor=pointer]:
+            - /url: /
+          - link "Create Event" [ref=e35] [cursor=pointer]:
+            - /url: /create
+          - link "Sign In" [ref=e36] [cursor=pointer]:
+            - /url: /auth/signin
+  - generic [ref=e37]:
+    - generic [ref=e39]: 📊 Core Web Vitals
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - generic [ref=e42]: LCP
+        - generic [ref=e43]: 472ms
+        - generic [ref=e44]: "Target: < 2.5s"
+      - generic [ref=e45]:
+        - generic [ref=e46]: CLS
+        - generic [ref=e47]: "0.003"
+        - generic [ref=e48]: "Target: < 0.1"
+      - generic [ref=e49]:
+        - generic [ref=e50]: FCP
+        - generic [ref=e51]: 472ms
+        - generic [ref=e52]: "Target: < 1.8s"
+      - generic [ref=e53]:
+        - generic [ref=e54]: TTFB
+        - generic [ref=e55]: 211ms
+        - generic [ref=e56]: "Target: < 800ms"
+```
