@@ -1,17 +1,17 @@
-# 🧪 Event Tools Lab
+# 🧪 UnConference.io
 
 **Community-driven micro-tools for professional events.**
 
 > Built entirely from community requests using AI-assisted development.
 
-[![Deploy Status](https://img.shields.io/badge/deploy-vercel-black)](https://vercel.com)
+[![Deploy Status](https://img.shields.io/badge/deploy-vercel-black)](https://unconference.io)
 [![Community Driven](https://img.shields.io/badge/community-driven-blue)](../../issues/new?template=tool-request.yml)
 
 ---
 
 ## 🎯 What is this?
 
-A collection of **simple, focused tools** for event organizers - built based on what the community actually needs.
+**[unconference.io](https://unconference.io)** - A collection of **simple, focused tools** for event organizers - built based on what the community actually needs.
 
 **This project demonstrates:**
 - AI-assisted development with proper guardrails
@@ -42,7 +42,7 @@ Each tool is connected to an **Event** - create an event, invite participants, t
 
 ### For Event Organizers
 
-1. Go to the app → **Create Event**
+1. Go to **[unconference.io](https://unconference.io)** → **Create Event**
 2. Share the **event code** with participants
 3. Enable the tools you need
 4. Run your event!
@@ -50,7 +50,7 @@ Each tool is connected to an **Event** - create an event, invite participants, t
 ### For Participants
 
 1. Get the event code from your organizer
-2. Go to the app → **Join Event**
+2. Go to **[unconference.io](https://unconference.io)** → **Join Event**
 3. Enter the code
 4. Use the tools!
 
@@ -177,4 +177,4 @@ MIT
 
 ---
 
-*Built with SvelteKit • Deployed on Vercel • AI-assisted by Claude*
+*Built with SvelteKit • Live at [unconference.io](https://unconference.io) • AI-assisted by Claude*

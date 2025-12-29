@@ -30,11 +30,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Git hook template in `.github/hooks/pre-commit`
   - npm scripts: `npm run pre-commit:quick` and `npm run pre-commit`
   - Documentation in `docs/PRE_COMMIT_TESTING.md`
+- **Automated cleanup system** for temporary files
+  - `.cleanup-tracker.json` - Tracks temporary files with metadata (created, purpose, task, status, keepUntil)
+  - `scripts/cleanup-temp-files.mjs` - Node.js cleanup script with pattern matching, dry-run mode, and safeguards
+  - `.github/workflows/weekly-cleanup.yml` - GitHub Action for weekly automated cleanup (Mondays 2 AM UTC)
+  - `docs/CLEANUP_SYSTEM.md` - Comprehensive documentation with usage, configuration, examples, and troubleshooting
+  - AI agent instructions updated in `AGENTS.md` and `.github/copilot-instructions.md`
+- **Poll Tool Improvements**
+  - Vote limit system (maxVotesPerPerson) - configurable from 1-10 votes per person
+  - Heart-based voting UI (🤍 empty, 💙 voted, 🚫 disabled when limit reached)
+  - Pulsing "LIVE RESULTS" indicator with red gradient border
+  - Always-visible vote counts for real-time feedback
+  - Vote limit selector in setup form with live preview
 
 ### Changed
 - Updated project focus to community-driven micro-tools
 - Tools are now event-connected (removed standalone mode)
 - Updated copilot-instructions.md with new project philosophy
+- **Rebranded to UnConference.io** - Updated README.md and documentation from "Event Tools Lab" to "unconference.io"
+
+### Fixed
+- Poll tool `backToSetup()` function - Removed duplicate viewMode assignment that caused blank page
+- Poll tool UI - Removed "Common Use Cases" section for cleaner interface
+
+### Removed
+- Poll tool "Common Use Cases" section HTML and CSS (~100 lines)
 
 ---
 

@@ -183,6 +183,69 @@ test(timer): add countdown accuracy tests
 
 ---
 
+## Temporary File Management
+
+### Creating Temporary Files
+
+When creating temporary files (test scripts, reports, analysis docs), **ALWAYS** register them in `.cleanup-tracker.json`:
+
+```json
+{
+  "temporaryFiles": {
+    "docs/YOUR_FILE.md": {
+      "created": "2024-12-30",
+      "purpose": "Brief description",
+      "task": "Related task/issue",
+      "status": "temporary|completed",
+      "keepUntil": "2025-01-06"
+    }
+  }
+}
+```
+
+### Cleanup Rules
+
+**Automatically cleaned up:**
+- Files matching patterns in `.cleanup-tracker.json`
+- Files older than 7 days (configurable)
+- Completed task documentation after expiry date
+
+**Permanent files (never auto-deleted):**
+- Core documentation: `README.md`, `CHANGELOG.md`, `TESTING.md`, etc.
+- Design system docs: `docs/DESIGN_SYSTEM.md`, `docs/ICON_*.md`
+- Security docs: `docs/security/**`
+- Essential scripts: `scripts/validate-coverage.js`, `scripts/pre-commit-ci.sh`
+
+### Manual Cleanup
+
+```bash
+# Dry run - see what would be deleted
+node scripts/cleanup-temp-files.mjs --dry-run
+
+# Actual cleanup
+node scripts/cleanup-temp-files.mjs
+
+# Verbose output
+node scripts/cleanup-temp-files.mjs --verbose
+```
+
+### Automated Cleanup
+
+- Runs **weekly on Mondays at 2 AM UTC**
+- GitHub Action: `.github/workflows/weekly-cleanup.yml`
+- Can be triggered manually from Actions tab
+- Commits changes automatically if files are deleted
+
+### Best Practices
+
+1. **Register immediately** - When creating temp files, add to tracker
+2. **Set expiry dates** - Use `keepUntil` date (typically +7 days)
+3. **Mark status** - Use `temporary` for WIP, `completed` when done
+4. **Clean as you go** - Delete temp files manually when task is complete
+5. **Check before commit** - Run cleanup script before major commits
+
+---
+
 ## Pre-Commit Checklist
 
 Before committing TypeScript changes:
@@ -194,6 +257,8 @@ Before committing TypeScript changes:
 □ CHANGELOG.md updated (if user-facing)
 □ README.md updated (if features changed)
 □ API changes documented
+□ Temporary files registered in .cleanup-tracker.json
+□ Run cleanup script: node scripts/cleanup-temp-files.mjs --dry-run
 ```
 
 ---

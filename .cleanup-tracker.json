@@ -1,0 +1,47 @@
+{
+  "temporaryFiles": {},
+  "permanentFiles": [
+    "README.md",
+    "CHANGELOG.md",
+    "TESTING.md",
+    "CLAUDE.md",
+    "AGENTS.md",
+    "docs/CONTRIBUTING.md",
+    "docs/DESIGN_SYSTEM.md",
+    "docs/ICON_DESIGN_SYSTEM.md",
+    "docs/ICON_QUICK_REFERENCE.md",
+    "docs/PRE_COMMIT_TESTING.md",
+    "docs/CLEANUP_SYSTEM.md",
+    "docs/security/SECURITY_PROCEDURES.md",
+    "docs/security/VULNERABILITY_REMEDIATION.md",
+    "scripts/validate-coverage.js",
+    "scripts/pre-commit-ci.sh",
+    "scripts/security-test.mjs",
+    "scripts/create-test-organizer.js",
+    "scripts/cleanup-temp-files.mjs",
+    ".cleanup-tracker.json"
+  ],
+  "autoCleanupRules": {
+    "patterns": [
+      "docs/*_REPORT_*.md",
+      "docs/*_FIX_*.md",
+      "docs/*_CHANGES_*.md",
+      "scripts/test-*.{mjs,js}",
+      "scripts/*-test.{mjs,js}",
+      "*.temp.md",
+      "*.tmp.md",
+      ".verification-*.md"
+    ],
+    "excludePatterns": [
+      "docs/CONTRIBUTING.md",
+      "docs/DESIGN_SYSTEM.md",
+      "docs/ICON_*.md",
+      "docs/PRE_COMMIT_TESTING.md",
+      "docs/security/**"
+    ],
+    "maxAgeInDays": 7,
+    "cleanupSchedule": "weekly"
+  },
+  "lastCleanup": "2025-12-29T23:50:34.989Z",
+  "nextCleanup": "2026-01-05T23:50:34.990Z"
+}

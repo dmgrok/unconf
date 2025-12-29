@@ -182,6 +182,45 @@ See `docs/DESIGN_SYSTEM.md` for colors/components. Key theme:
 - E2E tests: Use Playwright page objects from `tests/pages/`
 - Accessibility: All interactive elements must pass axe-core WCAG AA
 
+## Temporary File Management
+
+### When Creating Temporary Files
+
+Always register temporary files (test scripts, reports, analysis docs) in `.cleanup-tracker.json`:
+
+```json
+{
+  "temporaryFiles": {
+    "docs/YOUR_FILE.md": {
+      "created": "2024-12-30",
+      "purpose": "Brief description",
+      "task": "Related task/issue",
+      "status": "temporary|completed",
+      "keepUntil": "2025-01-06"
+    }
+  }
+}
+```
+
+### Cleanup Commands
+
+```bash
+# Preview what will be deleted
+node scripts/cleanup-temp-files.mjs --dry-run
+
+# Run cleanup
+node scripts/cleanup-temp-files.mjs
+
+# Verbose output
+node scripts/cleanup-temp-files.mjs --verbose
+```
+
+### Auto-Cleanup Rules
+- **Runs weekly** (Mondays 2 AM UTC) via GitHub Actions
+- **Auto-deleted**: Files older than 7 days matching patterns
+- **Permanent**: Core docs, design system, security docs, essential scripts
+- **Best practice**: Register temp files immediately, set expiry dates, clean as you go
+
 ## Task Management
 This project uses **Task Master AI** for task tracking:
 ```bash
@@ -196,3 +235,4 @@ See `.taskmaster/CLAUDE.md` for full workflow.
 - ❌ Don't create complex enterprise features before validation
 - ❌ Don't use legacy Svelte stores - use Svelte 5 runes
 - ❌ Don't skip security middleware for convenience
+- ❌ Don't create temporary files without registering in `.cleanup-tracker.json`

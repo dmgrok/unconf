@@ -1,0 +1,59 @@
+name: Weekly Cleanup
+on:
+  schedule:
+    # Run every Monday at 2 AM UTC
+    - cron: '0 2 * * 1'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Run cleanup script
+        run: |
+          node scripts/cleanup-temp-files.mjs --verbose
+      
+      - name: Check for changes
+        id: git-check
+        run: |
+          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit and push changes
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore: automated weekly cleanup of temporary files"
+          git push
+      
+      - name: Create summary
+        if: steps.git-check.outputs.changes == 'true'
+        run: |
+          echo "## 🧹 Weekly Cleanup Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Temporary files have been cleaned up." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Files Removed" >> $GITHUB_STEP_SUMMARY
+          git diff HEAD~1 --name-only --diff-filter=D | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+      
+      - name: No changes summary
+        if: steps.git-check.outputs.changes != 'true'
+        run: |
+          echo "## 🧹 Weekly Cleanup Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "No temporary files to clean up. ✨" >> $GITHUB_STEP_SUMMARY
