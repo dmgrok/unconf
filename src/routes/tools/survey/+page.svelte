@@ -359,7 +359,7 @@
   <meta name="description" content="Create surveys with multiple question types. Free, no signup required." />
 </svelte:head>
 
-<main>
+<div class="survey-container">
   {#if viewMode === 'share' && shareUrl}
     <!-- Share View - After Survey Creation -->
     <div class="share-view">
@@ -618,10 +618,10 @@
       </button>
     </div>
   {/if}
-</main>
+</div>
 
 <style>
-  main {
+  .survey-container {
     max-width: 700px;
     margin: 0 auto;
     padding: 1.5rem 1rem;

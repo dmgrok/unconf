@@ -128,13 +128,23 @@ src/
 ## 🤝 Contributing
 
 1. **Request a tool** - [Open an issue](../../issues/new?template=tool-request.yml)
-2. **Vote on requests** - 👍 issues you want
-3. **Provide feedback** - Use tools and tell us what's missing
+2. **Report bugs** - [Bug report](../../issues/new?template=bug-report.yml)
+3. **Suggest improvements** - [Improvement request](../../issues/new?template=improvement.yml)
+4. **Vote on requests** - 👍 issues you want
+
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for development guidelines.
 
 ---
 
-## 📊 Transparency
+## 📚 Documentation
 
+| Document | Purpose |
+|----------|---------|
+| [CHANGELOG.md](CHANGELOG.md) | Version history |
+| [AGENTS.md](AGENTS.md) | AI agent instructions |
+| [CONTRIBUTING.md](docs/CONTRIBUTING.md) | How to contribute |
+| [DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) | UI/UX guidelines |
+| [TESTING.md](TESTING.md) | Testing guide |
 This project demonstrates AI-assisted development. We're transparent about:
 
 - How requests are evaluated

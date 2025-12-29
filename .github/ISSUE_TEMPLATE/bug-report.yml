@@ -1,0 +1,126 @@
+name: 🐛 Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐛 Report a Bug
+        
+        Thanks for taking the time to report a bug! This helps improve the platform for all event organizers.
+        
+        **Before submitting:** Check if the issue already exists in the [Issues](../../issues) tab.
+
+  - type: dropdown
+    id: tool
+    attributes:
+      label: Which tool or area?
+      description: Where did you encounter the bug?
+      options:
+        - Home/Events
+        - Shuffler
+        - Poll
+        - Timer
+        - Survey
+        - Authentication
+        - WebSocket/Real-time
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: What happened? What did you expect to happen?
+      placeholder: |
+        When I clicked the "Start Timer" button, nothing happened. I expected the timer to start counting down.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this bug?
+      placeholder: |
+        1. Go to the Timer tool
+        2. Set duration to 5 minutes
+        3. Click "Start Timer"
+        4. Nothing happens
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+      placeholder: "The timer should start counting down from 5:00"
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: "The button clicked but nothing started"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How much does this affect your use of the tool?
+      options:
+        - Critical (Can't use the tool at all)
+        - High (Major feature broken)
+        - Medium (Feature works but with issues)
+        - Low (Minor annoyance)
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        Browser, OS, device info (optional but helpful)
+      placeholder: |
+        - Browser: Chrome 131
+        - OS: macOS Sonoma
+        - Device: Desktop
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Logs
+      description: |
+        If applicable, add screenshots or console logs (right-click → Inspect → Console tab)
+      placeholder: "Paste screenshots or error messages here"
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Anything else that might help?
+      placeholder: "This started happening after..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to avoid duplicates
+          required: true
+        - label: I have provided clear steps to reproduce
+          required: true

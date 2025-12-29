@@ -19,6 +19,7 @@
     maxWords: number;
     status: 'open' | 'closed';
     allowMultiple: boolean;
+    maxVotesPerPerson: number;
   };
   
   // Poll state (local only in standalone mode)
@@ -37,6 +38,10 @@
   let options = $state(['', '']);
   let allowMultiple = $state(false);
   let maxWords = $state(10);
+  let maxVotesPerPerson = $state(3); // Default limit for open response upvotes
+  
+  // Track user's vote count for limits
+  let userVoteCount = $state(0);
   
   // QR Code
   let showQRCode = $state(false);
@@ -111,6 +116,7 @@
         maxWords: 10,
         status: 'open',
         allowMultiple,
+        maxVotesPerPerson: 1, // One vote per person for fixed options
       };
     } else {
       activePoll = {
@@ -122,6 +128,7 @@
         maxWords,
         status: 'open',
         allowMultiple: false,
+        maxVotesPerPerson, // Use configurable limit for open responses
       };
     }
     
@@ -136,8 +143,7 @@
     votedOptions = [];
     openResponse = '';
     upvotedResponses = [];
-    // Switch to results view for real-time display
-    viewMode = 'results';
+    userVoteCount = 0;
   }
   
   function vote(option: string) {
@@ -185,12 +191,18 @@
     if (hasUpvoted) {
       // Remove upvote
       upvotedResponses = upvotedResponses.filter(id => id !== responseId);
+      userVoteCount--;
       activePoll.openResponses = activePoll.openResponses.map(r => 
         r.id === responseId ? { ...r, votes: r.votes - 1 } : r
       );
     } else {
+      // Check vote limit
+      if (userVoteCount >= activePoll.maxVotesPerPerson) {
+        return; // Max votes reached
+      }
       // Add upvote
       upvotedResponses = [...upvotedResponses, responseId];
+      userVoteCount++;
       activePoll.openResponses = activePoll.openResponses.map(r => 
         r.id === responseId ? { ...r, votes: r.votes + 1 } : r
       );
@@ -209,6 +221,8 @@
     votedOptions = [];
     openResponse = '';
     upvotedResponses = [];
+    userVoteCount = 0;
+    viewMode = 'setup'; // Return to setup view
   }
   
   function resetForNewPoll() {
@@ -217,6 +231,14 @@
     votedOptions = [];
     openResponse = '';
     upvotedResponses = [];
+    userVoteCount = 0;
+    viewMode = 'setup'; // Return to setup view
+    // Clear form fields for new poll
+    question = '';
+    options = ['', ''];
+    allowMultiple = false;
+    maxWords = 10;
+    maxVotesPerPerson = 3;
   }
   
   function toggleQRCode() {
@@ -229,47 +251,12 @@
   <meta name="description" content="Create instant polls with live results. Free, no signup required." />
 </svelte:head>
 
-<main>
+<div class="poll-container">
   <header>
     <a href="/" class="back">← Event Tools Lab</a>
     <h1>🗳️ Quick Poll</h1>
     <p class="subtitle">Create instant polls with live results</p>
   </header>
-  
-  <!-- Use Case Examples -->
-  <section class="use-cases">
-    <h3>🎯 Common Use Cases</h3>
-    <div class="use-case-grid">
-      <div class="use-case-card">
-        <span class="use-case-icon">🎤</span>
-        <div class="use-case-content">
-          <strong>Session Topic Vote</strong>
-          <span>Let attendees choose which topic to discuss next</span>
-        </div>
-      </div>
-      <div class="use-case-card">
-        <span class="use-case-icon">☕</span>
-        <div class="use-case-content">
-          <strong>Quick Decisions</strong>
-          <span>"Should we take a break?" or "Lunch preferences?"</span>
-        </div>
-      </div>
-      <div class="use-case-card">
-        <span class="use-case-icon">💡</span>
-        <div class="use-case-content">
-          <strong>Idea Collection</strong>
-          <span>Gather open-ended suggestions from participants</span>
-        </div>
-      </div>
-      <div class="use-case-card">
-        <span class="use-case-icon">🌡️</span>
-        <div class="use-case-content">
-          <strong>Temperature Check</strong>
-          <span>Quick sentiment gauge: "How's the energy?"</span>
-        </div>
-      </div>
-    </div>
-  </section>
   
   <div class="standalone-notice">
     <span>💡</span>
@@ -386,6 +373,21 @@
             </div>
             <p class="help-text">Responses will be limited to {maxWords} words maximum</p>
           </div>
+          
+          <div class="form-group vote-limit-group">
+            <label for="maxVotesPerPerson">Votes Per Person</label>
+            <div class="vote-limit-control">
+              <input 
+                id="maxVotesPerPerson"
+                type="range" 
+                min="1" 
+                max="10" 
+                bind:value={maxVotesPerPerson}
+              />
+              <span class="vote-limit-value">{maxVotesPerPerson} vote{maxVotesPerPerson !== 1 ? 's' : ''}</span>
+            </div>
+            <p class="help-text">Each participant can vote for up to {maxVotesPerPerson} response{maxVotesPerPerson !== 1 ? 's' : ''}</p>
+          </div>
         {/if}
         
         <button 
@@ -401,16 +403,24 @@
     <!-- Results View - Real-time Display -->
     <section class="results-display">
       <div class="poll-header">
+        <div class="live-status">
+          <span class="pulse-dot">🔴</span>
+          <strong>LIVE RESULTS</strong>
+          <span class="auto-update-text">Auto-updating</span>
+        </div>
         <h2>{activePoll.question}</h2>
-        {#if activePoll.pollType === 'options'}
-          {#if activePoll.allowMultiple}
-            <span class="poll-type-badge">Multiple choice</span>
+        <div class="poll-meta">
+          {#if activePoll.pollType === 'options'}
+            {#if activePoll.allowMultiple}
+              <span class="poll-type-badge">📊 Multiple choice</span>
+            {:else}
+              <span class="poll-type-badge single">🎯 Single choice</span>
+            {/if}
           {:else}
-            <span class="poll-type-badge single">Single choice</span>
+            <span class="poll-type-badge open">✍️ Open responses • {activePoll.maxWords} words max</span>
+            <span class="poll-type-badge votes-limit">👆 {activePoll.maxVotesPerPerson} vote{activePoll.maxVotesPerPerson !== 1 ? 's' : ''} per person</span>
           {/if}
-        {:else}
-          <span class="poll-type-badge open">Open responses • {activePoll.maxWords} words max</span>
-        {/if}
+        </div>
       </div>
       
       {#if activePoll.pollType === 'options'}
@@ -431,12 +441,8 @@
                 <span class="checkbox-indicator" class:checked={isSelected}>{isSelected ? '☑' : '☐'}</span>
               {/if}
               <span class="option-text">{option}</span>
-              {#if voted}
-                <span class="vote-count">{voteCount} ({percentage}%)</span>
-              {/if}
-              {#if voted}
-                <div class="bar" style="width: {percentage}%"></div>
-              {/if}
+              <span class="vote-count">{voteCount} vote{voteCount !== 1 ? 's' : ''} ({percentage}%)</span>
+              <div class="bar" style="width: {percentage}%"></div>
               {#if isSelected && voted}
                 <span class="check">✓</span>
               {/if}
@@ -484,22 +490,37 @@
           <div class="responses-list">
             <div class="responses-header">
               <h3>Responses ({activePoll.openResponses.length})</h3>
-              {#if totalResponseVotes > 0}
-                <span class="vote-count-badge">{totalResponseVotes} vote{totalResponseVotes !== 1 ? 's' : ''}</span>
-              {/if}
+              <div class="vote-stats">
+                {#if totalResponseVotes > 0}
+                  <span class="vote-count-badge">💙 {totalResponseVotes} total vote{totalResponseVotes !== 1 ? 's' : ''}</span>
+                {/if}
+                <span class="user-votes-remaining" class:limit-reached={userVoteCount >= activePoll.maxVotesPerPerson}>
+                  You: {userVoteCount}/{activePoll.maxVotesPerPerson} votes used
+                </span>
+              </div>
             </div>
-            <p class="responses-hint">👆 Tap to upvote responses you agree with</p>
+            <p class="responses-hint">👆 Click to vote for responses you like (up to {activePoll.maxVotesPerPerson})</p>
             <div class="responses-grid">
               {#each sortedResponses as response (response.id)}
                 {@const hasUpvoted = upvotedResponses.includes(response.id)}
+                {@const canVote = hasUpvoted || userVoteCount < activePoll.maxVotesPerPerson}
                 <button 
                   class="response-card" 
                   class:upvoted={hasUpvoted}
+                  class:disabled={!canVote}
                   onclick={() => upvoteResponse(response.id)}
+                  disabled={!canVote}
                 >
                   <span class="response-text">"{response.text}"</span>
                   <span class="response-vote-btn" class:active={hasUpvoted}>
-                    {hasUpvoted ? '👍' : '👆'} {response.votes > 0 ? response.votes : ''}
+                    {#if hasUpvoted}
+                      <span class="vote-icon">💙</span>
+                    {:else if canVote}
+                      <span class="vote-icon">🤍</span>
+                    {:else}
+                      <span class="vote-icon disabled">🚫</span>
+                    {/if}
+                    <span class="vote-count">{response.votes}</span>
                   </span>
                 </button>
               {/each}
@@ -522,14 +543,20 @@
       </div>
     </section>
   {/if}
-</main>
+</div>
 
 <style>
-  main {
-    max-width: 500px;
+  .poll-container {
+    max-width: 900px; /* Wider for results display */
     margin: 0 auto;
     padding: 1.5rem 1rem;
     font-family: system-ui, -apple-system, sans-serif;
+  }
+  
+  /* Setup view narrower */
+  .create-poll {
+    max-width: 500px;
+    margin: 0 auto;
   }
   
   /* View Mode Controls */
@@ -580,14 +607,62 @@
   .results-display {
     background: var(--color-surface);
     border-radius: 14px;
-    padding: 2rem;
+    padding: 2.5rem;
     border: 2px solid var(--color-border);
+    min-height: 400px; /* Ensure visible even with no votes yet */
+  }
+  
+  .results-display .poll-header {
+    margin-bottom: 2rem;
+  }
+  
+  .live-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .live-status strong {
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  
+  .pulse-dot {
+    animation: pulse-glow 2s infinite;
+  }
+  
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.1); }
+  }
+  
+  .auto-update-text {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    font-style: italic;
+  }
+  
+  .poll-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
   
   .results-display .poll-header h2 {
     font-size: 2rem;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
   }
   
   .results-display .poll-option {
@@ -596,18 +671,8 @@
     margin-bottom: 1rem;
   }
   
-  .results-display .option-percent {
-    font-size: 1.5rem;
-    font-weight: 700;
-  }
-  
   .results-display .vote-count {
     font-size: 0.95rem;
-  }
-  
-  .results-display .response-item {
-    font-size: 1.1rem;
-    padding: 1.25rem;
   }
   
   .back {
@@ -813,11 +878,7 @@
     cursor: not-allowed;
   }
   
-  /* Active Poll */
-  .active-poll {
-    text-align: center;
-  }
-  
+  /* Poll Display */
   .poll-header {
     margin-bottom: 1.5rem;
   }
@@ -1041,16 +1102,25 @@
     background: #f0f9ff;
     padding: 1rem;
     border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+  
+  .vote-limit-group {
+    background: #eff6ff;
+    padding: 1rem;
+    border-radius: 8px;
     margin-bottom: 1.5rem;
   }
   
-  .word-limit-control {
+  .word-limit-control,
+  .vote-limit-control {
     display: flex;
     align-items: center;
     gap: 1rem;
   }
   
-  .word-limit-control input[type="range"] {
+  .word-limit-control input[type="range"],
+  .vote-limit-control input[type="range"] {
     flex: 1;
     height: 8px;
     border-radius: 4px;
@@ -1059,7 +1129,8 @@
     appearance: none;
   }
   
-  .word-limit-control input[type="range"]::-webkit-slider-thumb {
+  .word-limit-control input[type="range"]::-webkit-slider-thumb,
+  .vote-limit-control input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     width: 20px;
     height: 20px;
@@ -1068,7 +1139,8 @@
     cursor: pointer;
   }
   
-  .word-limit-value {
+  .word-limit-value,
+  .vote-limit-value {
     font-weight: 600;
     color: #2563eb;
     min-width: 70px;
@@ -1123,6 +1195,30 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 0.25rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .vote-stats {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .user-votes-remaining {
+    padding: 0.35rem 0.75rem;
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+  
+  .user-votes-remaining.limit-reached {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.3);
   }
   
   .responses-list h3 {
@@ -1175,8 +1271,18 @@
   }
   
   .response-card.upvoted {
-    border-color: #2563eb;
-    background: #dbeafe;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+    border-color: rgba(59, 130, 246, 0.4);
+  }
+  
+  .response-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .response-card.disabled:hover {
+    transform: none;
+    border-color: #e5e7eb;
   }
   
   .response-text {
@@ -1187,19 +1293,39 @@
   .response-vote-btn {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    background: white;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #6b7280;
-    min-width: 40px;
-    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+  }
+  
+  .response-vote-btn .vote-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+  
+  .response-vote-btn .vote-icon.disabled {
+    opacity: 0.4;
+  }
+  
+  .response-vote-btn .vote-count {
+    min-width: 1.5rem;
+    text-align: center;
+    color: var(--color-text-primary);
   }
   
   .response-vote-btn.active {
-    background: #2563eb;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border-color: #2563eb;
+  }
+  
+  .response-vote-btn.active .vote-count {
     color: white;
   }
   
@@ -1284,61 +1410,15 @@
   }
   
   .poll-type-badge.open {
-    background: #f0fdf4;
-    color: #15803d;
+    background: rgba(139, 92, 246, 0.1);
+    color: #7c3aed;
+    border: 1px solid rgba(139, 92, 246, 0.3);
   }
   
-  /* Use Cases Section */
-  .use-cases {
-    margin-bottom: 1.5rem;
+  .poll-type-badge.votes-limit {
+    background: rgba(59, 130, 246, 0.1);
+    color: #2563eb;
+    border: 1px solid rgba(59, 130, 246, 0.3);
   }
   
-  .use-cases h3 {
-    font-size: 1rem;
-    margin: 0 0 0.75rem;
-    color: #374151;
-  }
-  
-  .use-case-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
-  
-  .use-case-card {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: #f8fafc;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-  }
-  
-  .use-case-icon {
-    font-size: 1.25rem;
-    flex-shrink: 0;
-  }
-  
-  .use-case-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-  }
-  
-  .use-case-content strong {
-    font-size: 0.85rem;
-    color: #1f2937;
-  }
-  
-  .use-case-content span {
-    font-size: 0.75rem;
-    color: #6b7280;
-  }
-  
-  @media (max-width: 480px) {
-    .use-case-grid {
-      grid-template-columns: 1fr;
-    }
-  }
 </style>

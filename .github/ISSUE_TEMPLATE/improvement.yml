@@ -1,0 +1,127 @@
+name: ✨ Improvement Request
+description: Suggest an improvement to an existing tool or feature
+title: "[Improvement]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ✨ Suggest an Improvement
+        
+        Have an idea to make an existing tool better? We'd love to hear it!
+        
+        **Note:** For entirely new tools, use the [Tool Request](./tool-request.yml) template instead.
+
+  - type: dropdown
+    id: tool
+    attributes:
+      label: Which tool or area?
+      description: What would you like to improve?
+      options:
+        - Home/Events
+        - Shuffler
+        - Poll
+        - Timer
+        - Survey
+        - Authentication
+        - WebSocket/Real-time
+        - Design/UI
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current Behavior
+      description: How does it work now?
+      placeholder: |
+        Currently, the poll tool shows results in a simple list format.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed Improvement
+      description: What would make it better?
+      placeholder: |
+        Add a visual bar chart showing vote percentages alongside the list.
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefit
+    attributes:
+      label: Why is this better?
+      description: What problem does this solve or what value does it add?
+      placeholder: |
+        Visual charts make it easier to quickly see which option is winning at a glance, especially during live events.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How important is this to you?
+      options:
+        - Nice to have (Would make things slightly better)
+        - Useful (Would improve my workflow)
+        - Important (Would solve a frequent pain point)
+        - Critical (Blocking me from using the tool effectively)
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Workarounds or Alternatives
+      description: How do you currently handle this? (Optional)
+      placeholder: |
+        I manually tally votes in a spreadsheet
+    validations:
+      required: false
+
+  - type: textarea
+    id: mockup
+    attributes:
+      label: Mockup or Example
+      description: |
+        If you have a sketch, screenshot from another tool, or description of how it should look (optional)
+      placeholder: "Attach images or describe the UI here"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Implementation Scope
+      description: How big of a change do you think this is?
+      options:
+        - Small (Quick tweak, < 1 hour)
+        - Medium (New feature area, few hours)
+        - Large (Major redesign, multiple days)
+        - Not sure
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Anything else that might help?
+      placeholder: "I saw this in another tool and it worked great..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues to avoid duplicates
+          required: true
+        - label: This is an improvement to an existing feature (not a new tool)
+          required: true

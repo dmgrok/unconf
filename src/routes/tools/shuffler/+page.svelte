@@ -608,7 +608,7 @@ Jack Anderson`;
   <meta name="description" content="Randomly distribute people into diverse groups. Paste from Excel, configure columns, and maximize team diversity." />
 </svelte:head>
 
-<main>
+<div class="shuffler-container">
   <header>
     <div class="header-row">
       <a href="/" class="back">← Event Tools Lab</a>
@@ -1077,7 +1077,7 @@ Jack Anderson`;
       {/if}
     {/if}
   {/if}
-</main>
+</div>
 
 <!-- Save Activity Dialog -->
 {#if showSaveDialog}
@@ -1134,7 +1134,7 @@ Jack Anderson`;
 {/if}
 
 <style>
-  main {
+  .shuffler-container {
     max-width: 900px;
     margin: 0 auto;
     padding: 1.5rem 1rem;
