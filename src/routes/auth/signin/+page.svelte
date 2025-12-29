@@ -121,14 +121,7 @@
 						class="form-input"
 						class:error={loginError}
 						disabled={loading}
-						on:keypress={(e) => {
-							if (e.key === 'Enter') {
-								handleEmailPasswordSignIn();
-							}
-						}}
-					/>
-
-					{#if loginError}
+					onkeypress={(e) => {
 						<p class="error-message">{loginError}</p>
 					{/if}
 
