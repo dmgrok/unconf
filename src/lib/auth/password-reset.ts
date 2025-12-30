@@ -1,5 +1,13 @@
 import jwt from 'jsonwebtoken';
-import { AUTH_SECRET } from '$env/static/private';
+
+// Get AUTH_SECRET at runtime to avoid build-time errors
+function getAuthSecret(): string {
+  const secret = process.env.AUTH_SECRET;
+  if (!secret) {
+    throw new Error('AUTH_SECRET environment variable is not set');
+  }
+  return secret;
+}
 
 export interface ResetTokenPayload {
   email: string;
@@ -28,7 +36,7 @@ export function generateResetToken(email: string, userId: string): string {
     expiresAt
   };
 
-  return jwt.sign(payload, AUTH_SECRET, {
+  return jwt.sign(payload, getAuthSecret(), {
     expiresIn: '1h',
     issuer: 'unconf-app',
     subject: userId
@@ -38,7 +46,7 @@ export function generateResetToken(email: string, userId: string): string {
 // Verify a password reset token
 export function verifyResetToken(token: string): ResetTokenPayload | null {
   try {
-    const decoded = jwt.verify(token, AUTH_SECRET, {
+    const decoded = jwt.verify(token, getAuthSecret(), {
       issuer: 'unconf-app'
     }) as ResetTokenPayload;
 

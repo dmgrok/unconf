@@ -1,5 +1,13 @@
 import jwt from 'jsonwebtoken';
-import { AUTH_SECRET } from '$env/static/private';
+
+// Get AUTH_SECRET at runtime to avoid build-time errors
+function getAuthSecret(): string {
+  const secret = process.env.AUTH_SECRET;
+  if (!secret) {
+    throw new Error('AUTH_SECRET environment variable is not set');
+  }
+  return secret;
+}
 
 export interface GuestToken {
   id: string;
@@ -46,7 +54,7 @@ export function createGuestToken(): { token: string; user: GuestUser } {
     expiresAt
   };
 
-  const token = jwt.sign(tokenPayload, AUTH_SECRET, {
+  const token = jwt.sign(tokenPayload, getAuthSecret(), {
     expiresIn: '24h',
     issuer: 'unconf-app',
     subject: guestId
@@ -66,7 +74,7 @@ export function createGuestToken(): { token: string; user: GuestUser } {
 // Verify and decode a guest token
 export function verifyGuestToken(token: string): GuestToken | null {
   try {
-    const decoded = jwt.verify(token, AUTH_SECRET, {
+    const decoded = jwt.verify(token, getAuthSecret(), {
       issuer: 'unconf-app'
     }) as GuestToken;
 
@@ -109,7 +117,7 @@ export function refreshGuestToken(currentToken: string): { token: string; user: 
     expiresAt
   };
 
-  const token = jwt.sign(newTokenPayload, AUTH_SECRET, {
+  const token = jwt.sign(newTokenPayload, getAuthSecret(), {
     expiresIn: '24h',
     issuer: 'unconf-app',
     subject: tokenData.id
