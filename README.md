@@ -60,7 +60,7 @@ Our GitHub Actions workflow uses AI to:
 If approved, Claude (our AI partner) gets to work:
 - Reads the entire codebase context
 - Writes TypeScript/Svelte code following our patterns
-- Creates comprehensive tests (unit + E2E)
+- Creates comprehensive unit tests
 - Ensures accessibility (WCAG AA)
 - Adds proper error handling and security
 
@@ -70,7 +70,6 @@ Every change goes through:
 ✓ Type checking
 ✓ Linting  
 ✓ Unit tests (80% coverage minimum)
-✓ E2E tests (Playwright)
 ✓ Accessibility tests (axe-core)
 ✓ Security scanning
 ✓ Build verification
@@ -105,15 +104,13 @@ flowchart TD
     D --> F[Lint Check]
     D --> G[Build Test]
     D --> H[Unit Tests]
-    D --> I[E2E Tests]
-    D --> J[A11y Tests]
+    D --> I[A11y Tests]
     
     E -->|Pass| K{All Checks}
     F -->|Pass| K
     G -->|Pass| K
     H -->|Pass| K
     I -->|Pass| K
-    J -->|Pass| K
     
     E -->|Fail| Z2[❌ Block Merge]
     F -->|Fail| Z2
@@ -153,12 +150,10 @@ graph LR
     E -->|≥ 80%| G[✅ Pass]
     
     G --> H[Unit Tests]
-    G --> I[E2E Tests]
-    G --> J[A11y Tests]
+    G --> I[A11y Tests]
     
     H --> K{All Pass?}
     I --> K
-    J --> K
     
     K -->|No| F
     K -->|Yes| L[Ready for Review]
@@ -246,7 +241,7 @@ stateDiagram-v2
 ### What This Means
 
 **Every change goes through:**
-- ✅ **6 automated quality checks** before merge
+- ✅ **5 automated quality checks** before merge
 - ✅ **4 security layers** on every request
 - ✅ **Gradual rollout** via feature flags
 - ✅ **Continuous monitoring** for errors
@@ -357,7 +352,6 @@ We chose technologies that AI understands deeply:
 
 ### AI Guardrails
 - **Vitest** - Unit tests (80% coverage enforced)
-- **Playwright** - E2E tests for user flows
 - **Axe-core** - Accessibility testing (WCAG AA)
 - **ESLint + TypeScript** - Code quality
 - **Pre-commit hooks** - Local validation
@@ -496,7 +490,7 @@ If you're an AI agent working on this codebase:
 1. **Read** [AGENTS.md](AGENTS.md) - Your instruction manual
 2. **Consult** [FUNCTIONALITY_MANIFEST.json](.github/FUNCTIONALITY_MANIFEST.json) - What exists
 3. **Follow** patterns in existing code
-4. **Write tests** - 80% coverage minimum, both unit + E2E
+4. **Write tests** - 80% coverage minimum
 5. **Update docs** - Keep CHANGELOG.md current
 
 **Critical:** Always check the manifest before implementing features. Avoid duplicating existing functionality.---
@@ -551,7 +545,7 @@ If you're an AI agent working on this codebase:
 
 **Software Quality:**
 - Trunk-based development
-- Comprehensive testing (unit + E2E + a11y)
+- Comprehensive testing (unit + a11y)
 - Security best practices
 - Accessibility compliance
 

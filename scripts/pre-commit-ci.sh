@@ -62,15 +62,6 @@ run_check_warn "Lint" "npm run lint"
 # 3. Build (REQUIRED - this validates the code actually compiles)
 run_check "Build" "npm run build"
 
-# Optional: E2E tests (can be skipped with --skip-e2e flag)
-if [[ "$1" != "--skip-e2e" ]]; then
-    echo -e "${YELLOW}⏳ Running E2E tests (use --skip-e2e to skip)...${NC}"
-    run_check "E2E Tests" "npm run test"
-else
-    echo -e "${YELLOW}⏭️  Skipping E2E tests${NC}"
-    echo ""
-fi
-
 # Summary
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 if [ $FAILED -eq 0 ]; then

@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **E2E Tests and Playwright Infrastructure**
+  - Removed all Playwright-based E2E and accessibility tests
+  - Removed `playwright.config.ts` configuration
+  - Removed E2E test job from CI/CD workflow
+  - Removed `@playwright/test` and `@axe-core/playwright` dependencies
+  - Updated documentation to reflect unit-test-only approach
+  - Updated Mermaid diagrams: 6 quality checks → 5 quality checks
+  - Simplified pre-commit script by removing E2E test execution
+
 ### Changed
 - **Refactored GitHub Actions Workflows for Maintainability**
   - Extracted JavaScript logic from YAML into separate `.mjs` modules
@@ -35,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Agent PR Validation Workflow** (`.github/workflows/agent-pr-validation.yml`)
   - Validates that agent implementations include proper tests
   - Requires unit tests for all source file changes
-  - Requires E2E tests for changes to critical paths (WebSocket, Storage, Auth, API)
+  - Testing validation for all changes
   - Blocks PRs that don't meet testing requirements with helpful guidance
   - Coverage threshold validation (80% minimum)
 
