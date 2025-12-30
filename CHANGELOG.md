@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Agent PR Validation Workflow: Skip Notifications for Bots and Core Contributors**
+  - Fixed "HttpError: Not Found" error when notifying issue creators
+  - Added automatic skip for PRs from: `dependabot[bot]`, `copilot[bot]`, `github-actions[bot]`
+  - Added skip for main repository contributors: `dmgrok`, `a447ah`
+  - Wrapped issue API calls in try-catch to gracefully handle missing issues
+  - Prevents unnecessary notifications for automated PRs and core team contributions
+
 ### Removed
 - **E2E Tests and Playwright Infrastructure**
   - Removed all Playwright-based E2E and accessibility tests

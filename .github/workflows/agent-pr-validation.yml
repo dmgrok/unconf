@@ -163,18 +163,34 @@ jobs:
             const { generateIssueNotification } = await import('${{ github.workspace }}/.github/scripts/validate-pr-tests.mjs');
             
             const pr = context.payload.pull_request;
+            const prAuthor = pr.user.login;
             const issueNumber = parseInt('${{ needs.test-validation.outputs.linked_issue }}');
+            
+            // Skip notification for bots and main contributors
+            const skipUsers = ['dependabot[bot]', 'copilot[bot]', 'github-actions[bot]', 'dmgrok', 'a447ah'];
+            if (skipUsers.includes(prAuthor)) {
+              console.log(`Skipping notification for ${prAuthor} (bot or main contributor)`);
+              return;
+            }
             
             if (!issueNumber) {
               console.log('No linked issue found, skipping notification');
               return;
             }
             
-            const { data: issue } = await github.rest.issues.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issueNumber
-            });
+            // Check if issue exists before proceeding
+            let issue;
+            try {
+              const response = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber
+              });
+              issue = response.data;
+            } catch (error) {
+              console.log(`Issue #${issueNumber} not found or inaccessible: ${error.message}`);
+              return;
+            }
             
             const isNewPR = context.payload.action === 'opened';
             
@@ -244,18 +260,34 @@ jobs:
             const { getLinkedIssueNumber, generateCompletionNotification } = await import('${{ github.workspace }}/.github/scripts/validate-pr-tests.mjs');
             
             const pr = context.payload.pull_request;
+            const prAuthor = pr.user.login;
             const issueNumber = getLinkedIssueNumber(pr);
+            
+            // Skip notification for bots and main contributors
+            const skipUsers = ['dependabot[bot]', 'copilot[bot]', 'github-actions[bot]', 'dmgrok', 'a447ah'];
+            if (skipUsers.includes(prAuthor)) {
+              console.log(`Skipping notification for ${prAuthor} (bot or main contributor)`);
+              return;
+            }
             
             if (!issueNumber) {
               console.log('No linked issue found');
               return;
             }
             
-            const { data: issue } = await github.rest.issues.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: parseInt(issueNumber)
-            });
+            // Check if issue exists before proceeding
+            let issue;
+            try {
+              const response = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: parseInt(issueNumber)
+              });
+              issue = response.data;
+            } catch (error) {
+              console.log(`Issue #${issueNumber} not found or inaccessible: ${error.message}`);
+              return;
+            }
             
             const notification = generateCompletionNotification(pr, issue);
             
