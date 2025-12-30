@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
+import { UserRole } from '../../types/enums';
 import {
 	setupTestEnvironment,
 	setupAuthenticatedTest,
@@ -29,7 +30,7 @@ describe('WebSocket + Authentication Integration', () => {
 					role: user.role!,
 					isGuest: false,
 					sessionId: 'authenticated-session'
-				}, (response) => {
+			}, (response: any) => {
 					expect(response.success).toBe(true);
 					resolve();
 				});
@@ -66,7 +67,7 @@ describe('WebSocket + Authentication Integration', () => {
 					userId: user.id,
 					topicId: topic.id,
 					weight: 'first'
-				}, (response) => {
+			}, (response: any) => {
 					expect(response.success).toBe(true);
 					expect(response.message).toBe('Vote submitted');
 					resolve();
@@ -147,7 +148,7 @@ describe('WebSocket + Authentication Integration', () => {
 					role: 'guest',
 					isGuest: true,
 					sessionId: user.sessionId!
-				}, (response) => {
+				}, (response: any) => {
 					expect(response.success).toBe(true);
 					resolve();
 				});
@@ -181,7 +182,7 @@ describe('WebSocket + Authentication Integration', () => {
 					userId: user.id,
 					topicId: 'topic-001',
 					weight: 'second'
-				}, (response) => {
+				}, (response: any) => {
 					expect(response.success).toBe(true);
 					resolve();
 				});
@@ -219,7 +220,7 @@ describe('WebSocket + Authentication Integration', () => {
 					organizerId: user.id,
 					newActivity: 'team_distribution',
 					timerDuration: 900 // 15 minutes
-				}, (response) => {
+				}, (response: any) => {
 					expect(response.success).toBe(true);
 					expect(response.message).toBe('Activity switched');
 					resolve();
@@ -228,7 +229,7 @@ describe('WebSocket + Authentication Integration', () => {
 
 			// Verify organizer permissions
 			expect(testEnv.authManager.hasPermission('switch_activity')).toBe(true);
-			expect(testEnv.authManager.hasRole('organizer')).toBe(true);
+			expect(testEnv.authManager.hasRole(UserRole.ORGANIZER)).toBe(true);
 		});
 	});
 
@@ -306,7 +307,7 @@ describe('WebSocket + Authentication Integration', () => {
 			const client = testEnv.createSocketClient();
 			let errorReceived = false;
 
-			client.on('connect_error', (error) => {
+			client.on('connect_error', (error: any) => {
 				errorReceived = true;
 				expect(error).toBeInstanceOf(Error);
 			});
@@ -328,7 +329,7 @@ describe('WebSocket + Authentication Integration', () => {
 					role: 'participant',
 					isGuest: false,
 					sessionId: 'invalid-session'
-				}, (response) => {
+				}, (response: any) => {
 					// This should succeed in mock, but in real implementation might fail
 					// Test demonstrates the structure for handling auth failures
 					resolve();

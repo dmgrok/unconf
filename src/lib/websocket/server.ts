@@ -404,7 +404,7 @@ export class UnConfWebSocketServer {
       console.error('Error handling vote submission:', error);
       callback({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to submit vote'
+        error: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Failed to submit vote'
       });
     }
   }
@@ -477,7 +477,7 @@ export class UnConfWebSocketServer {
       console.error('Error handling vote removal:', error);
       callback({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to remove vote'
+        error: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Failed to remove vote'
       });
     }
   }

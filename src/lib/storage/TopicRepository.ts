@@ -111,7 +111,7 @@ export class TopicRepository extends JSONRepository<Topic> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('read_ERROR', `Failed to find topics by tags: ${error.message}`)
+				error: this.createError('read_ERROR', `Failed to find topics by tags: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -143,7 +143,7 @@ export class TopicRepository extends JSONRepository<Topic> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('read_ERROR', `Failed to find top voted topics: ${error.message}`)
+				error: this.createError('read_ERROR', `Failed to find top voted topics: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -182,7 +182,7 @@ export class TopicRepository extends JSONRepository<Topic> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('read_ERROR', `Failed to search topics: ${error.message}`)
+				error: this.createError('read_ERROR', `Failed to search topics: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -224,7 +224,7 @@ export class TopicRepository extends JSONRepository<Topic> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to increment vote stats: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to increment vote stats: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -244,7 +244,7 @@ export class TopicRepository extends JSONRepository<Topic> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to decrement vote stats: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to decrement vote stats: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -279,7 +279,7 @@ export class TopicRepository extends JSONRepository<Topic> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to add tag: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to add tag: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -300,7 +300,7 @@ export class TopicRepository extends JSONRepository<Topic> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to remove tag: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to remove tag: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -324,7 +324,7 @@ export class TopicRepository extends JSONRepository<Topic> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('read_ERROR', `Failed to get all tags: ${error.message}`)
+				error: this.createError('read_ERROR', `Failed to get all tags: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -356,7 +356,7 @@ export class TopicRepository extends JSONRepository<Topic> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to freeze topics: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to freeze topics: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -388,7 +388,7 @@ export class TopicRepository extends JSONRepository<Topic> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to archive topics: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to archive topics: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}

@@ -1626,10 +1626,6 @@ Jack Anderson`;
     color: var(--color-text-secondary);
   }
   
-  .config-row {
-    margin-bottom: 1rem;
-  }
-  
   .checkbox-label {
     display: flex;
     align-items: center;

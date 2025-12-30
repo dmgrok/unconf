@@ -1,4 +1,4 @@
-import type { TopicStatus, VoteWeight } from '../../types/enums';
+import { TopicStatus, VoteWeight } from '../../types/enums';
 
 export interface MockTopic {
 	id: string;
@@ -271,7 +271,7 @@ export const topicScenarios = {
 export const voteScenarios = {
 	// Generate votes for a popular topic
 	popularTopic: (topicId: string, eventId: string) => {
-		const weights: VoteWeight[] = ['first', 'second', 'third'];
+		const weights: VoteWeight[] = [VoteWeight.FIRST, VoteWeight.SECOND, VoteWeight.THIRD];
 		const votes: MockVote[] = [];
 
 		for (let i = 0; i < 20; i++) {

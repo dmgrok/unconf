@@ -12,6 +12,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { z } from 'zod';
 import { sanitizeHtml, sanitizeText, sanitizeUrl } from '$lib/security/xss';
 import {
   detectSQLInjection,
@@ -265,11 +266,11 @@ describe('Security Testing Suite', () => {
       safeData.append('description', 'This is a valid description');
       safeData.append('maxParticipants', '50');
 
-      const schema = validation.createValidationMiddleware({
-        title: 'string',
-        description: 'string',
-        maxParticipants: 'number'
-      });
+      const schema = validation.createValidationMiddleware(z.object({
+        title: z.string(),
+        description: z.string(),
+        maxParticipants: z.number()
+      }));
 
       // This would be tested in actual request context
       expect(() => safeData).not.toThrow();

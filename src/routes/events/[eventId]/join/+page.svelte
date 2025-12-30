@@ -205,16 +205,16 @@
 									autocomplete="off"
 									required
 								/>
-								<Button
-									variant="outline"
+								<button
+									type="button"
+									class="generate-name-btn outline"
 									onclick={generateRandomName}
 									disabled={isJoining}
-									class="generate-name-btn"
 									title="Generate random name"
 								>
 									<Sparkles size={18} />
 									Generate
-								</Button>
+								</button>
 							</div>
 							<p class="help-text">
 								Choose your own name or generate a random one. Names are generated based on your selected site language.

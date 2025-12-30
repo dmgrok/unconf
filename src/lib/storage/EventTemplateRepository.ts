@@ -140,7 +140,7 @@ export class EventTemplateRepository extends JSONRepository<EventTemplate> {
 				data: filteredTemplates
 			};
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('read_ERROR', `Failed to find templates shared with user: ${message}`)
@@ -198,7 +198,7 @@ export class EventTemplateRepository extends JSONRepository<EventTemplate> {
 				data: filteredTemplates
 			};
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('read_ERROR', `Failed to search templates: ${message}`)
@@ -219,7 +219,7 @@ export class EventTemplateRepository extends JSONRepository<EventTemplate> {
 				lastUsedAt: new Date()
 			});
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('UPDATE_ERROR', `Failed to increment usage count: ${message}`)
@@ -241,7 +241,7 @@ export class EventTemplateRepository extends JSONRepository<EventTemplate> {
 				sharedWith: uniqueUserIds
 			});
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('UPDATE_ERROR', `Failed to share template: ${message}`)
@@ -263,7 +263,7 @@ export class EventTemplateRepository extends JSONRepository<EventTemplate> {
 				sharedWith: updatedSharedWith
 			});
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('UPDATE_ERROR', `Failed to unshare template: ${message}`)

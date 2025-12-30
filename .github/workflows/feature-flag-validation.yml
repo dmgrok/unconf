@@ -1,0 +1,139 @@
+# Feature Flag Validation Workflow
+# 
+# Ensures all new features have proper feature flags for trunk-based development.
+# Runs on PRs to validate feature flag requirements.
+
+name: Feature Flag Validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**/*.ts'
+      - 'src/**/*.svelte'
+      - 'src/lib/feature-flags/**'
+
+jobs:
+  validate-feature-flags:
+    name: Validate Feature Flags
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for new tools without feature flags
+        id: check-tools
+        run: |
+          echo "🔍 Checking for new tools..."
+          
+          # Get changed files
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          
+          # Check for new tool pages
+          NEW_TOOLS=""
+          for file in $CHANGED_FILES; do
+            if [[ $file =~ src/routes/events/\[eventId\]/tools/([^/]+)/\+page\.svelte ]]; then
+              TOOL_NAME="${BASH_REMATCH[1]}"
+              
+              # Check if tool has a feature flag config
+              if ! grep -q "\"$TOOL_NAME\":" src/lib/feature-flags/defaults.ts 2>/dev/null; then
+                NEW_TOOLS="$NEW_TOOLS $TOOL_NAME"
+              fi
+            fi
+          done
+          
+          if [ -n "$NEW_TOOLS" ]; then
+            echo "⚠️ New tools found without feature flags:$NEW_TOOLS"
+            echo "has_issues=true" >> $GITHUB_OUTPUT
+            echo "new_tools=$NEW_TOOLS" >> $GITHUB_OUTPUT
+          else
+            echo "✅ All tools have feature flags configured"
+            echo "has_issues=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check feature flag documentation
+        id: check-docs
+        run: |
+          echo "📚 Checking feature flag documentation..."
+          
+          # Verify defaults.ts has proper structure
+          if ! grep -q "GRADUATED TOOLS" src/lib/feature-flags/defaults.ts; then
+            echo "⚠️ Missing GRADUATED TOOLS section in defaults.ts"
+            echo "docs_issue=true" >> $GITHUB_OUTPUT
+          elif ! grep -q "PREVIEW TOOLS" src/lib/feature-flags/defaults.ts; then
+            echo "⚠️ Missing PREVIEW TOOLS section in defaults.ts"
+            echo "docs_issue=true" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Feature flag documentation is complete"
+            echo "docs_issue=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate TypeScript
+        run: npm run check
+
+      - name: Comment on PR if issues found
+        if: steps.check-tools.outputs.has_issues == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const newTools = '${{ steps.check-tools.outputs.new_tools }}'.trim();
+            
+            const body = `## 🚩 Feature Flag Required
+            
+            New tool(s) detected without feature flags: **${newTools}**
+            
+            ### Required Actions
+            
+            1. Add tool configuration to \`src/lib/feature-flags/defaults.ts\`:
+            
+            \`\`\`typescript
+            ${newTools.trim().split(' ').map(tool => `${tool}: {
+              toolId: '${tool}',
+              status: 'preview',  // Start as preview for validation
+              enabled: true,
+              rolloutPercentage: 100,
+              graduationThreshold: 70,
+              minimumUsageCount: 100,
+              minimumPreviewDays: 7,
+            }`).join(',\n')}
+            \`\`\`
+            
+            2. Add to \`TOOL_REGISTRY\` in \`src/lib/feature-flags/stores.ts\`
+            
+            3. Create the flag in GrowthBook dashboard
+            
+            ### Why Feature Flags?
+            
+            We use trunk-based development with feature flags to:
+            - ✅ Deploy safely to production
+            - ✅ Gather user feedback before graduation
+            - ✅ Quickly disable problematic features
+            - ✅ Run A/B tests on new features
+            
+            See [.github/copilot-instructions.md](/.github/copilot-instructions.md) for details.`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Fail if missing feature flags
+        if: steps.check-tools.outputs.has_issues == 'true'
+        run: |
+          echo "❌ PR blocked: New tools must have feature flags"
+          echo "Missing flags for: ${{ steps.check-tools.outputs.new_tools }}"
+          exit 1

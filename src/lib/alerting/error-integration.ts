@@ -82,7 +82,7 @@ export class ErrorAlertingIntegration {
    * Track an error and potentially trigger alerts
    */
   trackError(error: Error | AppError | string): void {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
     const errorStack = error instanceof Error ? error.stack : undefined;
 
     logger.debug('Error tracked for alerting', { component: 'error-alerting' }, {
@@ -103,7 +103,7 @@ export class ErrorAlertingIntegration {
    * Track a critical system error
    */
   trackCriticalError(error: Error | AppError | string, component: string): void {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
     
     logger.error('Critical error tracked', { component: 'error-alerting' }, {
       component,

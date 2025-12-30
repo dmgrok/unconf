@@ -1,0 +1,188 @@
+{
+  "$schema": "./schemas/functionality-manifest.schema.json",
+  "version": "1.0.0",
+  "lastUpdated": "2025-12-30",
+  "project": {
+    "name": "Event Tools Lab",
+    "purpose": "Community-driven micro-tools for professional events",
+    "philosophy": "One tool = one problem. No feature creep."
+  },
+  "tools": {
+    "shuffler": {
+      "name": "Team Shuffler",
+      "status": "standard",
+      "route": "/events/[eventId]/tools/shuffler",
+      "description": "Randomly assign participants to diverse groups",
+      "capabilities": [
+        "Excel/CSV paste input",
+        "Configurable group size",
+        "Diversity criteria (up to 2 columns)",
+        "Export results",
+        "Save and reload configurations"
+      ],
+      "limitations": [
+        "Max 2 diversity criteria",
+        "No persistent group history",
+        "No integration with external calendars"
+      ],
+      "valueFor": {
+        "organizers": ["Save time on manual group creation", "Ensure diverse teams automatically"],
+        "participants": ["Fair random assignment", "Meet new people"]
+      },
+      "relatedTypes": ["ShufflerActivityData", "DistributionGroup", "DistributionPerson"]
+    },
+    "timer": {
+      "name": "Session Timer",
+      "status": "standard",
+      "route": "/events/[eventId]/tools/timer",
+      "description": "Full-screen countdown timer for sessions",
+      "capabilities": [
+        "Full-screen display",
+        "Shareable URL",
+        "Pause/resume/reset",
+        "Sound alerts",
+        "Custom labels"
+      ],
+      "limitations": [
+        "Single timer per view",
+        "No scheduled timers",
+        "No multi-session sequences"
+      ],
+      "valueFor": {
+        "organizers": ["Keep sessions on time", "Visual countdown for speakers"],
+        "participants": ["Know remaining time", "Prepare for transitions"]
+      },
+      "relatedTypes": ["TimerActivityData", "TimerSession", "TimerStatus"]
+    },
+    "poll": {
+      "name": "Quick Poll",
+      "status": "standard",
+      "route": "/events/[eventId]/tools/poll",
+      "description": "Live single-question voting",
+      "capabilities": [
+        "Real-time vote updates via WebSocket",
+        "Multiple choice options",
+        "Open/close voting",
+        "Live results display"
+      ],
+      "limitations": [
+        "Single question only (use Survey for multi-question)",
+        "No weighted voting",
+        "No ranked choice"
+      ],
+      "valueFor": {
+        "organizers": ["Quick audience feedback", "Decision making"],
+        "participants": ["Voice their opinion", "See live results"]
+      },
+      "relatedTypes": ["PollActivityData", "Poll", "PollVote", "PollStatus"]
+    },
+    "survey": {
+      "name": "Survey Builder",
+      "status": "preview",
+      "route": "/events/[eventId]/tools/survey",
+      "description": "Multi-question forms with various question types",
+      "capabilities": [
+        "Multiple question types (single-choice, multiple-choice, rating, text, yes-no)",
+        "Required/optional questions",
+        "Anonymous responses option",
+        "Shareable link",
+        "Results aggregation"
+      ],
+      "limitations": [
+        "No conditional logic (branching)",
+        "No file upload questions",
+        "No email notifications"
+      ],
+      "valueFor": {
+        "organizers": ["Collect detailed feedback", "Session evaluations"],
+        "participants": ["Provide structured feedback", "Anonymous option"]
+      },
+      "relatedTypes": ["SurveyActivityData", "Survey", "SurveyQuestion", "QuestionType"]
+    },
+    "checkin": {
+      "name": "QR Check-In",
+      "status": "preview",
+      "route": "/events/[eventId]/checkin",
+      "description": "Scan to join events",
+      "capabilities": [
+        "QR code generation",
+        "Scan to join",
+        "Attendance tracking"
+      ],
+      "limitations": [
+        "Requires camera access",
+        "No badge printing",
+        "No waitlist management"
+      ],
+      "valueFor": {
+        "organizers": ["Quick registration", "Attendance tracking"],
+        "participants": ["Easy check-in", "No manual entry"]
+      },
+      "relatedTypes": []
+    }
+  },
+  "infrastructure": {
+    "realtime": {
+      "technology": "Socket.io WebSocket",
+      "capabilities": [
+        "Live vote updates",
+        "Activity state sync",
+        "Timer synchronization",
+        "User presence (join/leave)"
+      ],
+      "events": {
+        "clientToServer": ["join_event", "leave_event", "heartbeat", "submit_vote", "remove_vote", "switch_activity", "update_timer", "topic_create", "topic_update", "topic_delete"],
+        "serverToClient": ["connection_status", "user_count_update", "vote_update", "vote_batch_update", "activity_switched", "timer_updated", "activity_completed", "topic_created", "topic_updated", "topic_deleted"]
+      }
+    },
+    "storage": {
+      "type": "JSON file-based",
+      "location": "data/",
+      "note": "Intentionally simple - no database"
+    },
+    "auth": {
+      "provider": "Auth.js",
+      "methods": ["Guest sessions", "OAuth (GitHub, Google)"],
+      "note": "Guest-first approach for easy participation"
+    }
+  },
+  "outOfScope": {
+    "categories": [
+      {
+        "name": "Commodity Tools",
+        "description": "Features with excellent existing free solutions",
+        "examples": ["calculator", "notepad", "calendar", "scheduling", "email", "chat", "file sharing", "video calls", "password manager", "todo list", "whiteboard"]
+      },
+      {
+        "name": "Enterprise Infrastructure",
+        "description": "Complex features requiring significant infrastructure",
+        "examples": ["database backends", "SSO/SAML", "payment processing", "analytics dashboards", "mobile native apps", "video conferencing", "CRM integration", "blockchain/NFT"]
+      },
+      {
+        "name": "Established Platforms",
+        "description": "Features that would compete with established event platforms",
+        "examples": ["Full event registration (Eventbrite)", "Call for papers (Sessionize)", "Venue management", "Ticketing systems"]
+      }
+    ]
+  },
+  "evaluationCriteria": {
+    "mustHave": [
+      "Value for BOTH organizers AND participants",
+      "Fits on one screen",
+      "Works without complex setup",
+      "Doesn't duplicate free existing tools"
+    ],
+    "niceToHave": [
+      "Real-time collaboration",
+      "Shareable URL",
+      "Works offline",
+      "Mobile-friendly"
+    ],
+    "rejectIf": [
+      "Duplicates free/cheap existing tools",
+      "Requires significant infrastructure",
+      "Complex enterprise features",
+      "Doesn't fit 'simple event tools' scope"
+    ]
+  }
+}

@@ -150,7 +150,7 @@ export class NotificationChannelManager {
       await transporter.sendMail(emailData);
       */
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
       logger.error('Failed to send email notification', { component: 'alerting' }, {
         error: errorMessage,
         alertId: message.alert.id
@@ -189,7 +189,7 @@ export class NotificationChannelManager {
         alertId: message.alert.id
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
       logger.error('Failed to send SMS notification', { component: 'alerting' }, {
         error: errorMessage,
         provider: config.provider,

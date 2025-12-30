@@ -128,7 +128,7 @@ export class EventRepository extends JSONRepository<Event> {
 				data: result.data[0]
 			};
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('REPOSITORY_ERROR', `Failed to find event by slug: ${message}`)
@@ -151,7 +151,7 @@ export class EventRepository extends JSONRepository<Event> {
 				data: result.data[0]
 			};
 			} catch (error) {
-				const message = error instanceof Error ? error.message : String(error);
+				const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 					success: false,
 					error: this.createError('READ_ERROR', `Failed to find event by access code: ${message}`)
@@ -194,7 +194,7 @@ export class EventRepository extends JSONRepository<Event> {
 				data: filteredEvents
 			};
 			} catch (error) {
-				const message = error instanceof Error ? error.message : String(error);
+				const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 					success: false,
 					error: this.createError('READ_ERROR', `Failed to find upcoming events: ${message}`)
@@ -241,7 +241,7 @@ export class EventRepository extends JSONRepository<Event> {
 				}
 			});
 			} catch (error) {
-				const message = error instanceof Error ? error.message : String(error);
+				const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 					success: false,
 					error: this.createError('UPDATE_ERROR', `Failed to increment participant count: ${message}`)
@@ -266,7 +266,7 @@ export class EventRepository extends JSONRepository<Event> {
 				}
 			});
 			} catch (error) {
-				const message = error instanceof Error ? error.message : String(error);
+				const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 					success: false,
 					error: this.createError('UPDATE_ERROR', `Failed to decrement participant count: ${message}`)
@@ -300,7 +300,7 @@ export class EventRepository extends JSONRepository<Event> {
 				data: data
 			};
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('QUERY_ERROR', `Failed to find all events: ${message}`)

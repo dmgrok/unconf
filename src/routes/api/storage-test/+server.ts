@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { initializeStorage, type StorageConfig } from '$lib/storage';
+import { VoteWeight } from '../../../types/enums';
 import path from 'path';
 import os from 'os';
 
@@ -23,6 +24,7 @@ export async function GET() {
 		const testEvent = await storage.events.create({
 			title: 'Test Event',
 			description: 'A test event for storage validation',
+			slug: 'test-event-' + Date.now(),
 			organizerId: 'test-organizer',
 			accessCode: await storage.events.generateUniqueAccessCode(),
 			status: 'draft',
@@ -68,7 +70,7 @@ export async function GET() {
 			testUser.data!.id,
 			testTopic.data!.id,
 			testEvent.data!.id,
-			'first'
+			VoteWeight.FIRST
 		);
 
 		if (!testVote.success) {
@@ -115,7 +117,7 @@ export async function GET() {
 	} catch (error) {
 		return json({
 			success: false,
-			error: error.message,
+			error: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Unknown error',
 			timestamp: new Date().toISOString()
 		}, { status: 500 });
 	}
@@ -147,7 +149,7 @@ export async function POST() {
 	} catch (error) {
 		return json({
 			success: false,
-			error: error.message,
+			error: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Unknown error',
 			timestamp: new Date().toISOString()
 		}, { status: 500 });
 	}

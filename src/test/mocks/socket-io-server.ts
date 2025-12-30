@@ -106,7 +106,7 @@ export class MockSocketIOServer {
 			} catch (error) {
 				callback({
 					success: false,
-					error: error instanceof Error ? error.message : 'Failed to join event'
+					error: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Failed to join event'
 				});
 			}
 		});
@@ -146,7 +146,7 @@ export class MockSocketIOServer {
 			} catch (error) {
 				callback({
 					success: false,
-					error: error instanceof Error ? error.message : 'Failed to submit vote'
+					error: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Failed to submit vote'
 				});
 			}
 		});
@@ -156,12 +156,13 @@ export class MockSocketIOServer {
 			try {
 				const { eventId, newActivity, timerDuration, organizerId } = data;
 
+				const previousActivity = this.currentActivity.get(eventId);
 				this.currentActivity.set(eventId, newActivity);
 
 				const notification: ActivitySwitchNotification = {
 					eventId,
 					newActivity,
-					previousActivity: this.currentActivity.get(eventId),
+					previousActivity,
 					organizer: organizerId,
 					timerDuration,
 					timestamp: new Date().toISOString()
@@ -174,7 +175,7 @@ export class MockSocketIOServer {
 			} catch (error) {
 				callback({
 					success: false,
-					error: error instanceof Error ? error.message : 'Failed to switch activity'
+					error: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Failed to switch activity'
 				});
 			}
 		});

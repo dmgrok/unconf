@@ -31,6 +31,7 @@ const baseEvent = (): Event => ({
   id: 'evt-1',
   title: 'Existing Event',
   description: 'Existing description',
+  slug: 'existing-event',
   status: 'draft',
   organizerId: 'org-1',
   maxParticipants: 80,

@@ -1,6 +1,7 @@
 import { redirect, error } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
 import { authUtils, type UserRole } from './middleware';
+import { UserRole as UserRoleEnum } from '../../types/enums';
 
 // Helper for requiring authentication in load functions
 export function requireAuth(event: RequestEvent, redirectTo: string = '/auth/signin') {
@@ -122,12 +123,12 @@ export function requireOwnership(
   }
 
   // Check admin override
-  if (allowAdmins && user.role === 'admin') {
+  if (allowAdmins && user.role === UserRoleEnum.ADMIN) {
     return user;
   }
 
   // Check organizer override
-  if (allowOrganizers && user.role === 'organizer') {
+  if (allowOrganizers && user.role === UserRoleEnum.ORGANIZER) {
     return user;
   }
 

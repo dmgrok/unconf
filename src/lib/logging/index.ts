@@ -152,7 +152,7 @@ class Logger {
       retryable: error.retryable
     };
 
-    this.log(level, error.category, error.message, enhancedContext, undefined, error);
+    this.log(level, error.category, error instanceof Error ? error.message : String(error), enhancedContext, undefined, error);
   }
 
   /**

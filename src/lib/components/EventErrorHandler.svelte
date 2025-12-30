@@ -39,7 +39,7 @@
 		home: void;
 	}>();
 
-	$: errorConfig = error ? getErrorConfig(error.code) : null;
+	const errorConfig = $derived(error ? getErrorConfig(error.code) : null);
 
 	function getErrorConfig(code: string) {
 		switch (code) {

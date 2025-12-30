@@ -12,7 +12,7 @@ import type {
 	Topic,
 	AssignmentSettings
 } from '../../types/entities';
-import type { VoteWeight } from '../../types/enums';
+import { VoteWeight } from '../../types/enums';
 import { VOTE_WEIGHTS } from '../../types/entities';
 
 export interface ValidationResult {

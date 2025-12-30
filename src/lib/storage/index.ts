@@ -125,7 +125,7 @@ export class StorageManager {
       }
 
     } catch (error) {
-      throw new Error(`Failed to initialize storage system: ${error.message}`);
+      throw new Error(`Failed to initialize storage system: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -186,7 +186,7 @@ export class StorageManager {
         });
 
         if (!success) {
-          console.warn(`Failed to recover ${error.file}: ${error.message}`);
+          console.warn(`Failed to recover ${error.file}: ${error instanceof Error ? error.message : String(error)}`);
         }
       }
     }
@@ -215,7 +215,7 @@ export class StorageManager {
         try {
           await this.migrationManager.applyMigration(migration.version, entityType);
         } catch (error) {
-          console.warn(`Failed to apply migration ${migration.version} to ${entityType}: ${error.message}`);
+          console.warn(`Failed to apply migration ${migration.version} to ${entityType}: ${error instanceof Error ? error.message : String(error)}`);
         }
       }
     }

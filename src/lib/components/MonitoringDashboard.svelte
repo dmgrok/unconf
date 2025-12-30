@@ -32,7 +32,7 @@
   let dashboardData: DashboardData | null = null;
   let loading = true;
   let error = '';
-  let refreshInterval: number;
+  let refreshInterval: ReturnType<typeof setInterval> | undefined;
 
   onMount(() => {
     fetchDashboardData();

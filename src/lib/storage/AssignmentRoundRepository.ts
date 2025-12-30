@@ -93,7 +93,7 @@ export class AssignmentRoundRepository extends JSONRepository<AssignmentRound> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('QUERY_ERROR', `Failed to find current round: ${error.message}`)
+				error: this.createError('QUERY_ERROR', `Failed to find current round: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -118,7 +118,7 @@ export class AssignmentRoundRepository extends JSONRepository<AssignmentRound> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('QUERY_ERROR', `Failed to find latest round: ${error.message}`)
+				error: this.createError('QUERY_ERROR', `Failed to find latest round: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -158,7 +158,7 @@ export class AssignmentRoundRepository extends JSONRepository<AssignmentRound> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('CREATE_ERROR', `Failed to start new round: ${error.message}`)
+				error: this.createError('CREATE_ERROR', `Failed to start new round: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -180,7 +180,7 @@ export class AssignmentRoundRepository extends JSONRepository<AssignmentRound> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to complete round: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to complete round: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -199,7 +199,7 @@ export class AssignmentRoundRepository extends JSONRepository<AssignmentRound> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to mark round as failed: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to mark round as failed: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -215,7 +215,7 @@ export class AssignmentRoundRepository extends JSONRepository<AssignmentRound> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to cancel round: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to cancel round: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -231,7 +231,7 @@ export class AssignmentRoundRepository extends JSONRepository<AssignmentRound> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to update round progress: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to update round progress: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -284,7 +284,7 @@ export class AssignmentRoundRepository extends JSONRepository<AssignmentRound> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('STATS_ERROR', `Failed to get round stats: ${error.message}`)
+				error: this.createError('STATS_ERROR', `Failed to get round stats: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -328,7 +328,7 @@ export class AssignmentRoundRepository extends JSONRepository<AssignmentRound> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('QUERY_ERROR', `Failed to get round history: ${error.message}`)
+				error: this.createError('QUERY_ERROR', `Failed to get round history: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}

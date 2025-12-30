@@ -69,7 +69,7 @@ export async function GET({ url }: RequestEvent) {
     console.error('Resilience API error:', error);
     return json({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Unknown error occurred'
     }, { status: 500 });
   }
 };
@@ -188,7 +188,7 @@ export async function POST({ request, url }: RequestEvent) {
     console.error('Resilience API error:', error);
     return json({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred'
+      error: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Unknown error occurred'
     }, { status: 500 });
   }
 };

@@ -200,7 +200,7 @@ export function setupEventTest(event: MockEvent) {
 export function setupWebSocketTest() {
 	beforeEach(() => {
 		// Ensure WebSocket server is clean
-		testEnv.socketServer.reset();
+		// Note: WebSocket mocks are reset in global setup
 	});
 }
 

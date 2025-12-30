@@ -340,7 +340,7 @@ export class GracefulDegradationManager {
       } catch (error) {
         logger.error('Failed to retry operation', { component: 'degradation' }, {
           operationId: operation.id,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
         });
 
         // Re-queue if retries remaining
@@ -449,7 +449,7 @@ export class GracefulDegradationManager {
         callback(status);
       } catch (error) {
         logger.error('Error in status change callback', { component: 'degradation' }, {
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
         });
       }
     });

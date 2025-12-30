@@ -73,7 +73,7 @@ export class EventTemplatePermissionRepository extends JSONRepository<EventTempl
 				data: result.data[0]
 			};
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('read_ERROR', `Failed to find permission: ${message}`)
@@ -100,7 +100,7 @@ export class EventTemplatePermissionRepository extends JSONRepository<EventTempl
 				data: hasRequiredPermission
 			};
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('read_ERROR', `Failed to check permission: ${message}`)
@@ -136,7 +136,7 @@ export class EventTemplatePermissionRepository extends JSONRepository<EventTempl
 				});
 			}
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('UPDATE_ERROR', `Failed to grant permission: ${message}`)
@@ -157,7 +157,7 @@ export class EventTemplatePermissionRepository extends JSONRepository<EventTempl
 
 			return this.delete(permissionResult.data.id);
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('DELETE_ERROR', `Failed to revoke permission: ${message}`)
@@ -209,7 +209,7 @@ export class EventTemplatePermissionRepository extends JSONRepository<EventTempl
 				data: results
 			};
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('BULK_OPERATION_ERROR', `Failed to bulk grant permissions: ${message}`)
@@ -243,7 +243,7 @@ export class EventTemplatePermissionRepository extends JSONRepository<EventTempl
 				data: true
 			};
 		} catch (error) {
-			const message = error instanceof Error ? error.message : String(error);
+			const message = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 			return {
 				success: false,
 				error: this.createError('BULK_OPERATION_ERROR', `Failed to bulk revoke permissions: ${message}`)

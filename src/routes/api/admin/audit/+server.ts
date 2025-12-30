@@ -24,7 +24,7 @@ export const GET: RequestHandler = apiRoute(async (event) => {
 	const isDevelopment = process.env.NODE_ENV !== 'production';
 
 	if (!isDevelopment) {
-		const userId = event.locals.userId;
+		const userId = event.locals.user?.id;
 		if (!userId) {
 			return json(
 				{

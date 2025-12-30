@@ -360,7 +360,7 @@ export function validateColorContrast(
 	} catch (error) {
 		return {
 			passed: false,
-			message: `Invalid color format: ${error instanceof Error ? error.message : 'Unknown error'}`,
+			message: `Invalid color format: ${error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Unknown error'}`,
 			severity: 'error'
 		};
 	}

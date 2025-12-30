@@ -12,7 +12,7 @@ import { z } from 'zod';
 const SwitchActivitySchema = z.object({
   eventId: z.string(),
   organizerId: z.string(),
-  newActivity: z.nativeEnum(ActivityType),
+  newActivity: z.enum([ActivityType.VOTING, ActivityType.GROUP_INTELLIGENCE, ActivityType.DISCUSSION_GROUPS, ActivityType.TEAM_DISTRIBUTION]),
   timerDuration: z.number().optional(),
   settings: z.record(z.any()).optional()
 });

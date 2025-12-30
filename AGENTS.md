@@ -12,6 +12,61 @@
 
 ---
 
+## 🔍 Understanding Existing Functionality
+
+**CRITICAL:** Before implementing features or triaging issues, AI agents MUST consult the **Functionality Manifest**.
+
+### Functionality Manifest
+
+Location: `.github/FUNCTIONALITY_MANIFEST.json`
+
+This machine-readable document contains:
+- **All existing tools** and their capabilities
+- **Current limitations** (what we intentionally don't support)
+- **Out-of-scope categories** (what we never build)
+- **Evaluation criteria** for new requests
+
+### When to Consult the Manifest
+
+| Scenario | Action |
+|----------|--------|
+| Triaging new issue | Check if request duplicates existing capability |
+| Implementing feature | Understand related tools and types |
+| Suggesting improvement | Know current limitations |
+| Evaluating PR | Verify manifest is updated if capabilities change |
+
+### Reading the Manifest
+
+```javascript
+// In GitHub Actions or scripts
+const manifest = require('./.github/FUNCTIONALITY_MANIFEST.json');
+
+// Check existing capabilities
+const allCapabilities = Object.values(manifest.tools)
+  .flatMap(tool => tool.capabilities);
+
+// Check if something is out of scope
+const outOfScopeExamples = manifest.outOfScope.categories
+  .flatMap(cat => cat.examples);
+
+// Get tool info
+const shufflerInfo = manifest.tools.shuffler;
+console.log(shufflerInfo.capabilities); // What it can do
+console.log(shufflerInfo.limitations);  // What it can't do
+```
+
+### Updating the Manifest
+
+When you add/change functionality:
+1. Update `.github/FUNCTIONALITY_MANIFEST.json`
+2. Add new capabilities or update existing ones
+3. Update limitations if scope changes
+4. Bump `lastUpdated` date
+
+See `docs/FUNCTIONALITY_MANIFEST.md` for detailed guidance.
+
+---
+
 ## Documentation Requirements
 
 ### When to Update Documentation
@@ -30,12 +85,13 @@
 When making code changes, verify these are updated:
 
 ```markdown
-□ CHANGELOG.md        - Add entry for user-facing changes AND CI/CD workflow changes
-□ README.md           - Update if features/tools change
-□ Type definitions    - Update JSDoc comments in .ts files
-□ API docs            - Update if endpoints change
-□ Component docs      - Update if props/events change
-□ Workflow changes    - Document new/modified GitHub Actions in CHANGELOG
+□ CHANGELOG.md              - Add entry for user-facing changes AND CI/CD workflow changes
+□ README.md                 - Update if features/tools change
+□ FUNCTIONALITY_MANIFEST    - Update if tool capabilities change (.github/FUNCTIONALITY_MANIFEST.json)
+□ Type definitions          - Update JSDoc comments in .ts files
+□ API docs                  - Update if endpoints change
+□ Component docs            - Update if props/events change
+□ Workflow changes          - Document new/modified GitHub Actions in CHANGELOG
 ```
 
 ### CHANGELOG.md Format

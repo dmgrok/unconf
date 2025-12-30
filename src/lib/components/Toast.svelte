@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { toastStore, type Toast } from '$lib/stores/toast';
+	import { toast, type Toast } from '$lib/stores/toast';
 	import { fade, fly } from 'svelte/transition';
 	import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-svelte';
 
 	let toasts: Toast[] = [];
-	toastStore.subscribe((value) => (toasts = value));
+	toast.subscribe((value: Toast[]) => (toasts = value));
 
 	function getIcon(type: Toast['type']) {
 		switch (type) {

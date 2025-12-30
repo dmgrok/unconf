@@ -5,9 +5,52 @@ All notable changes to Event Tools Lab will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.0] - 2025-12-30
 
 ### Added
+- **Functionality Manifest for AI-Powered Issue Triage**
+  - `.github/FUNCTIONALITY_MANIFEST.json` - Machine-readable inventory of all tools and capabilities
+  - Documents existing tools, their capabilities, limitations, and value propositions
+  - Includes out-of-scope categories and evaluation criteria
+  - Enables AI agents to detect duplicates and recognize enhancements
+- **Enhanced Issue Triage Workflow**
+  - Loads functionality manifest at triage time
+  - AI-powered duplicate/existing functionality detection using GitHub Models
+  - Distinguishes between duplicate requests, enhancement requests, and new features
+  - Interest scoring (1-10) for new feature evaluation
+  - Automatic labeling for enhancements (`enhancement`, `tool:*`)
+- **Documentation**
+  - `docs/FUNCTIONALITY_MANIFEST.md` - Guide for maintaining the manifest
+  - Updated `AGENTS.md` with manifest consultation requirements
+  - Updated `.github/copilot-instructions.md` with manifest reference
+- **Feature Flags System (GrowthBook Integration)**
+  - Trunk-based development support with feature flags and A/B testing
+  - `src/lib/feature-flags/growthbook.ts` - Core GrowthBook SDK integration
+  - `src/lib/feature-flags/stores.ts` - Svelte 5 reactive stores for feature flags
+  - `src/lib/feature-flags/server.ts` - Server-side feature flag evaluation
+  - `src/lib/feature-flags/defaults.ts` - Default tool configurations and status
+  - Tool status lifecycle: `preview` → `beta` → `standard` → `deprecated`
+  - Automatic graduation criteria (usage, error rate, feedback score)
+  - **Feedback on ALL tools by default** - not just preview tools!
+- **Feature Flag UI Components**
+  - `PreviewBadge.svelte` - Visual indicator for tool status with feedback buttons
+  - `ToolCard.svelte` - Tool card with status badge and feedback integration
+  - `ToolFeedback.svelte` - Standalone feedback widget with persistence
+  - `PreviewToolsToggle.svelte` - User opt-in toggle for preview tools
+- **Tool Metrics API**
+  - `POST /api/tools/track` - Track tool usage events (use, error, like, dislike)
+  - `GET /api/tools/track` - Get metrics for a specific tool (organizers only)
+  - `GET /api/tools/graduation` - Get graduation status for all preview tools
+- **GitHub Workflows for Feature Flags**
+  - `feature-flag-validation.yml` - Enforces feature flags for new tools on PRs
+  - `feature-flag-metrics.yml` - Weekly metrics report on tool status and graduation
+- **Graduated Tools (Standard Status)**
+  - 🎲 Team Shuffler - stable, collecting feedback
+  - ⏱️ Session Timer - stable, collecting feedback
+  - 🗳️ Quick Poll - stable, collecting feedback
+- **Preview Tools (Testing)**
+  - 📱 QR Check-In - preview status
+  - 📋 Survey Builder - preview status
 - Issue templates for bug reports and improvements
 - AGENTS.md for AI agent instructions
 - CHANGELOG.md for version tracking

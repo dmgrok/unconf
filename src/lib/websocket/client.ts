@@ -153,7 +153,7 @@ class WebSocketManager {
       socketStore.update(state => ({
         ...state,
         status: 'disconnected',
-        lastError: error instanceof Error ? error.message : 'Connection failed'
+        lastError: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Connection failed'
       }));
       return false;
     }
@@ -190,7 +190,7 @@ class WebSocketManager {
       socketStore.update(state => ({
         ...state,
         status: 'disconnected',
-        lastError: error.message
+        lastError: error instanceof Error ? error.message : String(error)
       }));
     });
 

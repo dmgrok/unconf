@@ -46,7 +46,7 @@ export const GET: RequestHandler = apiRoute(async (event) => {
 	const isDevelopment = process.env.NODE_ENV !== 'production';
 
 	if (!isDevelopment) {
-		const userId = event.locals.userId;
+		const userId = event.locals.user?.id;
 		if (!userId) {
 			return json(
 				{
@@ -159,7 +159,7 @@ export const POST: RequestHandler = apiRoute(async (event) => {
 	let adminUser = null;
 
 	if (!isDevelopment) {
-		adminUserId = event.locals.userId;
+		adminUserId = event.locals.user?.id;
 		if (!adminUserId) {
 			return json(
 				{

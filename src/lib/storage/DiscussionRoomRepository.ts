@@ -85,7 +85,7 @@ export class DiscussionRoomRepository extends JSONRepository<DiscussionRoom> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('QUERY_ERROR', `Failed to find available rooms: ${error.message}`)
+				error: this.createError('QUERY_ERROR', `Failed to find available rooms: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -132,7 +132,7 @@ export class DiscussionRoomRepository extends JSONRepository<DiscussionRoom> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to update room occupancy: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to update room occupancy: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -152,7 +152,7 @@ export class DiscussionRoomRepository extends JSONRepository<DiscussionRoom> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to increment room occupancy: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to increment room occupancy: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -172,7 +172,7 @@ export class DiscussionRoomRepository extends JSONRepository<DiscussionRoom> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to decrement room occupancy: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to decrement room occupancy: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -222,7 +222,7 @@ export class DiscussionRoomRepository extends JSONRepository<DiscussionRoom> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to add participant to room: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to add participant to room: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -264,7 +264,7 @@ export class DiscussionRoomRepository extends JSONRepository<DiscussionRoom> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to remove participant from room: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to remove participant from room: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -308,7 +308,7 @@ export class DiscussionRoomRepository extends JSONRepository<DiscussionRoom> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('STATS_ERROR', `Failed to get room stats: ${error.message}`)
+				error: this.createError('STATS_ERROR', `Failed to get room stats: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -350,7 +350,7 @@ export class DiscussionRoomRepository extends JSONRepository<DiscussionRoom> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('BULK_CREATE_ERROR', `Failed to create rooms for topics: ${error.message}`)
+				error: this.createError('BULK_CREATE_ERROR', `Failed to create rooms for topics: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}

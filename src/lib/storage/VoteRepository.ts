@@ -59,7 +59,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('READ_ERROR', `Failed to find user vote: ${error.message}`)
+				error: this.createError('READ_ERROR', `Failed to find user vote: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -94,7 +94,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('VALIDATION_ERROR', `Failed to validate weighted voting: ${error.message}`)
+				error: this.createError('VALIDATION_ERROR', `Failed to validate weighted voting: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -125,7 +125,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('VALIDATION_ERROR', `Failed to validate weighted voting for update: ${error.message}`)
+				error: this.createError('VALIDATION_ERROR', `Failed to validate weighted voting for update: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -160,7 +160,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('VOTE_ERROR', `Failed to cast vote: ${error.message}`)
+				error: this.createError('VOTE_ERROR', `Failed to cast vote: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -192,7 +192,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to update vote: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to update vote: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -211,7 +211,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to remove vote: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to remove vote: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -255,7 +255,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('STATS_ERROR', `Failed to get topic vote stats: ${error.message}`)
+				error: this.createError('STATS_ERROR', `Failed to get topic vote stats: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -274,7 +274,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('COUNT_ERROR', `Failed to get user vote count: ${error.message}`)
+				error: this.createError('COUNT_ERROR', `Failed to get user vote count: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -314,7 +314,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('STATUS_ERROR', `Failed to get user vote status: ${error.message}`)
+				error: this.createError('STATUS_ERROR', `Failed to get user vote status: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -358,7 +358,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('STATS_ERROR', `Failed to get event vote stats: ${error.message}`)
+				error: this.createError('STATS_ERROR', `Failed to get event vote stats: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -390,7 +390,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to invalidate event votes: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to invalidate event votes: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -422,7 +422,7 @@ export class VoteRepository extends JSONRepository<Vote> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to invalidate topic votes: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to invalidate topic votes: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}

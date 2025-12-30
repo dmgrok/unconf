@@ -29,7 +29,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 
 	async create(entity: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<RepositoryOperationResult<T>> {
 		try {
-			const validation = this.validate(entity);
+			const validation = this.validate(entity as Partial<T>);
 			if (!validation.isValid) {
 				return {
 					success: false,
@@ -55,7 +55,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('CREATE_ERROR', `Failed to create ${this.entityName}: ${error.message}`)
+				error: this.createError('CREATE_ERROR', `Failed to create ${this.entityName}: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -79,7 +79,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('READ_ERROR', `Failed to find ${this.entityName}: ${error.message}`)
+				error: this.createError('READ_ERROR', `Failed to find ${this.entityName}: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -107,7 +107,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('READ_ERROR', `Failed to read ${this.entityName} data: ${error.message}`)
+				error: this.createError('READ_ERROR', `Failed to read ${this.entityName} data: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -148,7 +148,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('UPDATE_ERROR', `Failed to update ${this.entityName}: ${error.message}`)
+				error: this.createError('UPDATE_ERROR', `Failed to update ${this.entityName}: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -175,7 +175,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('DELETE_ERROR', `Failed to delete ${this.entityName}: ${error.message}`)
+				error: this.createError('DELETE_ERROR', `Failed to delete ${this.entityName}: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -205,7 +205,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('READ_ERROR', `Failed to find ${this.entityName} by criteria: ${error.message}`)
+				error: this.createError('READ_ERROR', `Failed to find ${this.entityName} by criteria: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -229,7 +229,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('READ_ERROR', `Failed to count ${this.entityName}: ${error.message}`)
+				error: this.createError('READ_ERROR', `Failed to count ${this.entityName}: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -246,7 +246,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('READ_ERROR', `Failed to check existence of ${this.entityName}: ${error.message}`)
+				error: this.createError('READ_ERROR', `Failed to check existence of ${this.entityName}: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -277,7 +277,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 
 			await this.atomicWrite(this.filePath, jsonData);
 		} catch (error) {
-			throw this.createError('WRITE_ERROR', `Failed to write data: ${error.message}`);
+			throw this.createError('WRITE_ERROR', `Failed to write data: ${error instanceof Error ? error.message : String(error)}`);
 		}
 	}
 
@@ -306,7 +306,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 				await this.cleanupOldBackups();
 			}
 		} catch (error) {
-			console.warn(`Failed to create backup: ${error.message}`);
+			console.warn(`Failed to create backup: ${error instanceof Error ? error.message : String(error)}`);
 		}
 	}
 
@@ -334,7 +334,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 				}
 			}
 		} catch (error) {
-			console.warn(`Failed to cleanup old backups: ${error.message}`);
+			console.warn(`Failed to cleanup old backups: ${error instanceof Error ? error.message : String(error)}`);
 		}
 	}
 
@@ -391,7 +391,7 @@ export abstract class JSONRepository<T extends BaseEntity> extends Repository<T>
 				await this.ensureBackupDirectory();
 			}
 		} catch (error) {
-			console.warn(`Failed to create directories: ${error.message}`);
+			console.warn(`Failed to create directories: ${error instanceof Error ? error.message : String(error)}`);
 		}
 	}
 

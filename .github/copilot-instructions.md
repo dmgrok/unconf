@@ -46,6 +46,7 @@ src/lib/types/tools.ts    # Core type definitions for all tools
 src/lib/stores/auth.ts    # Authentication state management
 src/lib/security/     # Rate limiting, CSRF, CSP
 src/lib/websocket/    # WebSocket client & server for real-time features
+src/lib/feature-flags/    # GrowthBook feature flags for trunk-based development
 ```
 
 ### User Flow
@@ -59,6 +60,65 @@ All tools are **event-connected** and share participant context via event codes:
 // Tools are ActivityType: 'shuffler' | 'poll' | 'timer'
 // Each tool operates within an event context with shared participants
 ```
+
+## Trunk-Based Development
+
+This project uses **trunk-based development** with feature flags for safe production deployments.
+
+### Tool Status Lifecycle
+```
+preview → beta → standard → deprecated
+```
+
+### Feature Flags (GrowthBook)
+```typescript
+// Check if a feature is enabled
+import { isFeatureEnabled, getToolConfig } from '$lib/feature-flags';
+
+if (isFeatureEnabled('preview_tools_enabled')) {
+  // Show preview tools
+}
+
+// Get tool configuration
+const config = getToolConfig('shuffler');
+// { status: 'standard', enabled: true, rolloutPercentage: 100 }
+```
+
+### Graduation Criteria
+Preview tools graduate to standard when they meet:
+- ✅ 100+ uses
+- ✅ 20+ unique users  
+- ✅ <1% error rate
+- ✅ >70% positive feedback
+- ✅ 7+ days in preview
+
+### Tracking Tool Usage
+```typescript
+import { trackToolUsage, trackToolFeedback } from '$lib/feature-flags';
+
+// Track when tool is opened
+trackToolUsage('tool_open', 'shuffler', userId, eventId);
+
+// Track user feedback
+trackToolFeedback('shuffler', userId, 'like');
+```
+
+### Current Tool Status
+| Tool | Status | Feedback |
+|------|--------|----------|
+| 🎲 Team Shuffler | ✅ Standard | Enabled |
+| ⏱️ Session Timer | ✅ Standard | Enabled |
+| 🗳️ Quick Poll | ✅ Standard | Enabled |
+| 📱 QR Check-In | 🧪 Preview | Enabled |
+| 📋 Survey Builder | 🧪 Preview | Enabled |
+
+### Feedback on ALL Tools
+**Feedback is key!** All tools (including graduated/standard) show feedback buttons by default.
+This helps continuously improve the product based on user sentiment.
+
+### CI/CD Workflows
+- `feature-flag-validation.yml` - Blocks PRs adding tools without feature flags
+- `feature-flag-metrics.yml` - Weekly metrics report on tool graduation status
 
 ## Development Commands
 
@@ -109,6 +169,32 @@ export async function POST({ request, locals }) {
 - **Tool Request** (`.github/ISSUE_TEMPLATE/tool-request.yml`) - For new tool ideas
 - **Bug Report** (`.github/ISSUE_TEMPLATE/bug-report.yml`) - For reporting bugs
 - **Improvement** (`.github/ISSUE_TEMPLATE/improvement.yml`) - For enhancing existing features
+
+### Functionality Manifest
+The project maintains a **machine-readable functionality manifest** at `.github/FUNCTIONALITY_MANIFEST.json` that documents:
+- All existing tools and their capabilities
+- Current limitations of each tool
+- Out-of-scope features and categories
+- Evaluation criteria for new requests
+
+**AI agents MUST consult this manifest** when:
+- Triaging new issues (to detect duplicates/overlaps)
+- Evaluating feature requests (to check against existing capabilities)
+- Implementing new features (to understand current architecture)
+- Suggesting improvements (to know what already exists)
+
+```typescript
+// Example: Reading the manifest in code
+import manifest from '.github/FUNCTIONALITY_MANIFEST.json';
+
+// Check if a capability already exists
+const existingCapabilities = Object.values(manifest.tools)
+  .flatMap(tool => tool.capabilities);
+
+// Check if something is out of scope
+const outOfScope = manifest.outOfScope.categories
+  .flatMap(cat => cat.examples);
+```
 
 ### Request Evaluation Criteria
 **Good requests:**

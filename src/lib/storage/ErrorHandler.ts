@@ -111,7 +111,7 @@ export class ErrorHandler {
 					report.errors.push({
 						file: filename,
 						type: 'invalid_json',
-						message: `Invalid JSON: ${jsonError.message}`,
+						message: `Invalid JSON: ${jsonError instanceof Error ? jsonError.message : String(jsonError)}`,
 						severity: 'critical',
 						recoverable: true
 					});
@@ -155,7 +155,7 @@ export class ErrorHandler {
 				report.errors.push({
 					file: filename,
 					type: 'corruption',
-					message: `Error reading file: ${error.message}`,
+					message: `Error reading file: ${error instanceof Error ? error.message : String(error)}`,
 					severity: 'critical',
 					recoverable: true
 				});
@@ -200,7 +200,7 @@ export class ErrorHandler {
 			return true;
 
 		} catch (error) {
-			await this.log('error', `Recovery failed for ${filename}: ${error.message}`);
+			await this.log('error', `Recovery failed for ${filename}: ${error instanceof Error ? error.message : String(error)}`);
 			return false;
 		}
 	}
@@ -277,7 +277,7 @@ export class ErrorHandler {
 					healthCheck.issues.push({
 						type: 'file_access_error',
 						severity: 'error',
-						message: `Cannot access ${filename}: ${error.message}`,
+						message: `Cannot access ${filename}: ${error instanceof Error ? error.message : String(error)}`,
 						affectedFiles: [filename]
 					});
 				}
@@ -319,7 +319,7 @@ export class ErrorHandler {
 			healthCheck.issues.push({
 				type: 'health_check_error',
 				severity: 'critical',
-				message: `Health check failed: ${error.message}`
+				message: `Health check failed: ${error instanceof Error ? error.message : String(error)}`
 			});
 			healthCheck.overallHealth = 'critical';
 		}
@@ -364,7 +364,7 @@ export class ErrorHandler {
 
 			return true;
 		} catch (error) {
-			report.warnings.push(`Could not verify checksum for ${path.basename(filePath)}: ${error.message}`);
+			report.warnings.push(`Could not verify checksum for ${path.basename(filePath)}: ${error instanceof Error ? error.message : String(error)}`);
 			return true; // Don't fail on checksum verification errors
 		}
 	}
@@ -446,7 +446,7 @@ export class ErrorHandler {
 		await this.log(report.isValid ? 'info' : 'error', summary);
 
 		for (const error of report.errors) {
-			await this.log('error', `${error.file}: ${error.message} (${error.severity})`);
+			await this.log('error', `${error.file}: ${error instanceof Error ? error.message : String(error)} (${error.severity})`);
 		}
 	}
 

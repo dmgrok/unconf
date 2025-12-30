@@ -14,6 +14,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	const userId = session.user.id;
 
+	// Check if userId is defined
+	if (!userId) {
+		throw redirect(303, '/signin?redirect=/dashboard');
+	}
+
 	// Initialize repositories
 	const eventRepo = new EventRepository({ dataDir: './data' });
 	const topicRepo = new TopicRepository({ dataDir: './data' });
@@ -21,7 +26,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 	// Fetch organizer's events
 	const eventsResult = await eventRepo.findByOrganizer(userId);
-	const events = eventsResult.success ? eventsResult.data : [];
+	const events = eventsResult.success && eventsResult.data ? eventsResult.data : [];
 
 	// Calculate statistics
 	const totalEvents = events.length;
@@ -36,13 +41,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 	for (const event of events) {
 		// Count users in this event
 		const usersResult = await userRepo.findByCurrentEvent(event.id);
-		if (usersResult.success) {
+		if (usersResult.success && usersResult.data) {
 			totalParticipants += usersResult.data.length;
 		}
 
 		// Count topics in this event
 		const topicsResult = await topicRepo.findByEvent(event.id);
-		if (topicsResult.success) {
+		if (topicsResult.success && topicsResult.data) {
 			totalTopics += topicsResult.data.length;
 		}
 	}

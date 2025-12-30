@@ -659,7 +659,7 @@ class AlertingManager {
         logger.error('Failed to send alert notification', { component: 'alerting' }, {
           channelType: channel.type,
           alertId: alert.id,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
         });
       }
     }
@@ -687,7 +687,7 @@ class AlertingManager {
           channelType: channel.type,
           alertId: alert.id,
           escalationLevel: escalationRule.level,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
         });
       }
     }

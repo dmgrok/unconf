@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { LayoutData } from './$types';
 	import favicon from '$lib/assets/favicon.svg';
 	import { page } from '$app/stores';
 	import { signIn, signOut } from '@auth/sveltekit/client';
@@ -9,11 +10,20 @@
 	import { onMount } from 'svelte';
 	import { waitLocale } from '$lib/i18n';
 	import { initializeLocale } from '$lib/utils/locale-persistence';
+	import { initGrowthBook, loadFeatures, updateUserAttributes, destroyGrowthBook } from '$lib/feature-flags';
+	import { inject } from '@vercel/analytics';
+	import { injectSpeedInsights } from '@vercel/speed-insights';
 	import '$lib/i18n'; // Initialize i18n
 	import '$lib/styles/app.css'; // Global design system
 	import '$lib/styles/responsive.css'; // Mobile-responsive styles
 	import '$lib/styles/touch.css'; // Touch-optimized interactions
 	import Toast from '$lib/components/ui/Toast.svelte';
+
+	// Initialize Vercel Analytics & Speed Insights (production only)
+	if (browser && !dev) {
+		inject({ mode: 'production' });
+		injectSpeedInsights();
+	}
 
 	// Dynamic imports for non-critical components
 	let SecurityMonitor = $state<any>(null);
@@ -21,7 +31,7 @@
 	let LanguageSwitcher = $state<any>(null);
 	let WebVitalsMonitor = $state<any>(null);
 
-	let { children, data } = $props();
+	let { children, data }: { children: any; data: LayoutData } = $props();
 	let signingIn = $state(false);
 
 	// Initialize auth state when session data changes
@@ -84,27 +94,30 @@
 	}
 
 	// Auto-refresh session monitoring and i18n initialization
-	onMount(async () => {
-		// Initialize locale from saved preference or browser settings
-		initializeLocale();
+	onMount(() => {
+		// Initialize and load components asynchronously
+		(async () => {
+			// Initialize locale from saved preference or browser settings
+			initializeLocale();
 
-		// Wait for locale to be loaded
-		await waitLocale();
+			// Wait for locale to be loaded
+			await waitLocale();
 
-		// Dynamically import non-critical components
-		const [securityMonitorModule, languageSwitcherModule, developerBannerModule, webVitalsModule] = await Promise.all([
-			import('$lib/components/SecurityMonitor.svelte'),
-			import('$lib/components/LanguageSwitcher.svelte'),
-			dev ? import('../components/DeveloperBanner.svelte') : Promise.resolve({ default: null }),
-			import('$lib/components/WebVitalsMonitor.svelte')
-		]);
+			// Dynamically import non-critical components
+			const [securityMonitorModule, languageSwitcherModule, developerBannerModule, webVitalsModule] = await Promise.all([
+				import('$lib/components/SecurityMonitor.svelte'),
+				import('$lib/components/LanguageSwitcher.svelte'),
+				dev ? import('../components/DeveloperBanner.svelte') : Promise.resolve({ default: null }),
+				import('$lib/components/WebVitalsMonitor.svelte')
+			]);
 
-		SecurityMonitor = securityMonitorModule.default;
-		LanguageSwitcher = languageSwitcherModule.default;
-		WebVitalsMonitor = webVitalsModule.default;
-		if (dev) {
-			DeveloperBanner = developerBannerModule.default;
-		}
+			SecurityMonitor = securityMonitorModule.default;
+			LanguageSwitcher = languageSwitcherModule.default;
+			WebVitalsMonitor = webVitalsModule.default;
+			if (dev) {
+				DeveloperBanner = developerBannerModule.default;
+			}
+		})();
 
 		const intervalId = sessionUtils.startSessionMonitoring((session) => {
 			if (!session) {
@@ -114,10 +127,38 @@
 		});
 
 		return () => {
-			if (intervalId) {
+			if (intervalId !== undefined) {
 				sessionUtils.stopSessionMonitoring(intervalId);
 			}
+			// Cleanup GrowthBook
+			destroyGrowthBook();
 		};
+	});
+
+	// Initialize GrowthBook feature flags
+	$effect(() => {
+		if (browser) {
+			// Initialize with current user
+			initGrowthBook({
+				id: $user?.id || 'anonymous',
+				role: $user?.role as 'organizer' | 'participant' | 'guest' || 'guest',
+				isGuest: $isGuest,
+			});
+			
+			// Load features from GrowthBook
+			loadFeatures().catch(console.error);
+		}
+	});
+
+	// Update GrowthBook when user changes
+	$effect(() => {
+		if (browser && $user) {
+			updateUserAttributes({
+				id: $user.id,
+				role: $user.role as 'organizer' | 'participant' | 'guest',
+				isGuest: $isGuest,
+			});
+		}
 	});
 </script>
 

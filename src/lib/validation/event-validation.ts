@@ -387,7 +387,7 @@ export function validateEventJoin(params: {
  * Get user-friendly error message
  */
 export function getErrorMessage(error: ValidationError): string {
-	let message = error.message;
+	let message = error instanceof Error ? error.message : String(error);
 
 	if (error.recoverySuggestion) {
 		message += `\n\n${error.recoverySuggestion}`;

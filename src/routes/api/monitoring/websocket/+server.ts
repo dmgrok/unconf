@@ -62,8 +62,8 @@ export const GET: RequestHandler = apiRoute(async (event) => {
         connectionQuality: websocketMetrics.connectionQuality
       },
       rooms: Array.from(websocketMetrics.roomMetrics.entries()).map(([id, metrics]) => ({
-        roomId: id,
         ...metrics,
+        roomId: id,
         health: calculateRoomHealth(metrics)
       })),
       performance: {

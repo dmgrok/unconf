@@ -1,9 +1,9 @@
 import { render, type RenderOptions } from '@testing-library/svelte';
-import type { ComponentProps, SvelteComponent } from 'svelte';
+import type { Component, ComponentProps } from 'svelte';
 
 // Custom render function with common providers/wrappers
-export function renderWithProviders<T extends SvelteComponent>(
-	component: new (...args: any[]) => T,
+export function renderWithProviders<T extends Component>(
+	component: T,
 	options?: RenderOptions<ComponentProps<T>>
 ) {
 	return render(component, options);

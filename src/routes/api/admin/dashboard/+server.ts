@@ -22,7 +22,7 @@ export const GET: RequestHandler = apiRoute(async (event) => {
 
 	if (!isDevelopment) {
 		// In production, check for admin role
-		const userId = event.locals.userId;
+		const userId = event.locals.user?.id;
 		if (!userId) {
 			return json(
 				{

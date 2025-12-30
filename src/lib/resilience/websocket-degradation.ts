@@ -69,7 +69,7 @@ export class WebSocketGracefulDegradation extends GracefulDegradationManager {
       this.setupWebSocketEventHandlers();
     } catch (error) {
       logger.error('Failed to create WebSocket', { component: 'websocket-degradation' }, {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
       });
       this.onConnectionFailed(error instanceof Error ? error : new Error(String(error)));
     }
@@ -155,7 +155,7 @@ export class WebSocketGracefulDegradation extends GracefulDegradationManager {
     } catch (error) {
       logger.error('Failed to parse WebSocket message', { component: 'websocket-degradation' }, {
         data,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
       });
     }
   }
@@ -182,7 +182,7 @@ export class WebSocketGracefulDegradation extends GracefulDegradationManager {
         return true;
       } catch (error) {
         logger.error('Failed to send WebSocket message', { component: 'websocket-degradation' }, {
-          error: error instanceof Error ? error.message : String(error),
+          error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error),
           messageType: message.type
         });
         this.queueMessage(message);
@@ -314,7 +314,7 @@ export class WebSocketGracefulDegradation extends GracefulDegradationManager {
 
     } catch (error) {
       logger.error('Failed to send heartbeat', { component: 'websocket-degradation' }, {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
       });
       this.onConnectionFailed(error instanceof Error ? error : new Error('Heartbeat send failed'));
     }

@@ -104,7 +104,7 @@ export class ErrorRecoveryManager {
           return status.state === 'connected' ? RecoveryResult.SUCCESS : RecoveryResult.FAILED;
         } catch (error) {
           logger.error('WebSocket reconnection failed', { component: 'error-recovery' }, {
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
           });
           return RecoveryResult.FAILED;
         }
@@ -127,7 +127,7 @@ export class ErrorRecoveryManager {
           return RecoveryResult.SUCCESS;
         } catch (error) {
           logger.error('Failed to clear operation queue', { component: 'error-recovery' }, {
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
           });
           return RecoveryResult.FAILED;
         }
@@ -157,7 +157,7 @@ export class ErrorRecoveryManager {
           return RecoveryResult.SUCCESS;
         } catch (error) {
           logger.error('System refresh failed', { component: 'error-recovery' }, {
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
           });
           return RecoveryResult.FAILED;
         }
@@ -184,7 +184,7 @@ export class ErrorRecoveryManager {
           return RecoveryResult.SKIPPED;
         } catch (error) {
           logger.error('Page reload failed', { component: 'error-recovery' }, {
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
           });
           return RecoveryResult.FAILED;
         }
@@ -297,7 +297,7 @@ export class ErrorRecoveryManager {
    * Handle an error and attempt recovery
    */
   async handleError(error: Error | string, context?: Record<string, unknown>): Promise<RecoveryResult> {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
     
     logger.error('Error reported to recovery manager', { component: 'error-recovery' }, {
       error: errorMessage,
@@ -501,7 +501,7 @@ export class ErrorRecoveryManager {
 
     } catch (error) {
       const duration = Date.now() - startTime;
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error);
 
       // Record failed attempt
       const attempt: RecoveryAttempt = {
@@ -603,7 +603,7 @@ export class ErrorRecoveryManager {
 
     } catch (error) {
       logger.error('Failed to escalate to alerting', { component: 'error-recovery' }, {
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error instanceof Error ? error.message : String(error) : String(error)
       });
     }
   }

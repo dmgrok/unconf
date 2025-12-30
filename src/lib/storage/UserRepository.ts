@@ -70,7 +70,7 @@ export class UserRepository extends JSONRepository<User> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('READ_ERROR', `Failed to find user by email: ${error.message}`)
+				error: this.createError('READ_ERROR', `Failed to find user by email: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -116,7 +116,7 @@ export class UserRepository extends JSONRepository<User> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('READ_ERROR', `Failed to find active users: ${error.message}`)
+				error: this.createError('READ_ERROR', `Failed to find active users: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -165,7 +165,7 @@ export class UserRepository extends JSONRepository<User> {
 	async createRegisteredUser(
 		name: string,
 		email: string,
-		role: UserRole = 'participant'
+		role: UserRole = UserRole.PARTICIPANT
 	): Promise<RepositoryOperationResult<User>> {
 		// Check if email already exists
 		const existingUser = await this.findByEmail(email);
@@ -213,17 +213,19 @@ export class UserRepository extends JSONRepository<User> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('read_ERROR', `Failed to count active users in event: ${error.message}`)
+				error: this.createError('read_ERROR', `Failed to count active users in event: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
 
+	// Promote a user to organizer role
 	async promoteToOrganizer(id: string): Promise<RepositoryOperationResult<User>> {
-		return this.updateRole(id, 'organizer');
+		return this.updateRole(id, UserRole.ORGANIZER);
 	}
 
+	// Demote a user to participant role
 	async demoteToParticipant(id: string): Promise<RepositoryOperationResult<User>> {
-		return this.updateRole(id, 'participant');
+		return this.updateRole(id, UserRole.PARTICIPANT);
 	}
 
 	protected serializeEntity(entity: User): any {

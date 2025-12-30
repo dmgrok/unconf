@@ -295,6 +295,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Load Functionality Manifest
+        id: manifest
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = '.github/FUNCTIONALITY_MANIFEST.json';
+            
+            try {
+              const content = fs.readFileSync(path, 'utf8');
+              const manifest = JSON.parse(content);
+              core.setOutput('manifest', JSON.stringify(manifest));
+              core.setOutput('loaded', 'true');
+              console.log('✅ Loaded functionality manifest');
+              console.log(`   Tools: ${Object.keys(manifest.tools).join(', ')}`);
+            } catch (error) {
+              console.log('⚠️ Could not load manifest:', error.message);
+              core.setOutput('loaded', 'false');
+              core.setOutput('manifest', '{}');
+            }
+
       - name: Triage Issue
         uses: actions/github-script@v7
         with:
@@ -308,6 +329,30 @@ jobs:
             const bodyLower = body.toLowerCase();
             const fullText = `${title} ${body}`;
             const fullTextLower = fullText.toLowerCase();
+            
+            // Load functionality manifest for context-aware triage
+            let manifest = {};
+            try {
+              manifest = JSON.parse('${{ steps.manifest.outputs.manifest }}'.replace(/'/g, "\\'"));
+            } catch (e) {
+              console.log('Using fallback - manifest not loaded');
+            }
+            
+            // Extract existing capabilities for duplicate detection
+            const existingCapabilities = [];
+            const existingTools = [];
+            if (manifest.tools) {
+              for (const [toolId, tool] of Object.entries(manifest.tools)) {
+                existingTools.push({ id: toolId, ...tool });
+                if (tool.capabilities) {
+                  existingCapabilities.push(...tool.capabilities.map(c => ({ 
+                    capability: c.toLowerCase(), 
+                    tool: tool.name,
+                    toolId 
+                  })));
+                }
+              }
+            }
             const MIN_BODY_LENGTH = 100;
             const MIN_TITLE_LENGTH = 10;
             
@@ -448,6 +493,160 @@ jobs:
               
               console.log(`Issue #${issue.number} closed - out of scope`);
               return;
+            }
+            
+            // ============================================
+            // STEP 2.5: AI-POWERED DUPLICATE/EXISTING FUNCTIONALITY CHECK
+            // ============================================
+            // Check if the request duplicates or overlaps with existing functionality
+            let existingFunctionalityMatch = null;
+            let aiAnalysis = null;
+            
+            // Build context from manifest for AI evaluation
+            const toolsSummary = existingTools.map(t => 
+              `- ${t.name} (${t.status}): ${t.description}. Capabilities: ${(t.capabilities || []).join(', ')}`
+            ).join('\n');
+            
+            const capabilitiesFlat = existingCapabilities.map(c => c.capability);
+            
+            // Quick keyword check first (fast path)
+            for (const cap of existingCapabilities) {
+              const capWords = cap.capability.split(/\s+/);
+              const matchCount = capWords.filter(w => fullTextLower.includes(w.toLowerCase())).length;
+              if (matchCount >= Math.min(3, capWords.length * 0.6)) {
+                existingFunctionalityMatch = cap;
+                break;
+              }
+            }
+            
+            // If quick check found a match OR if it's a tool request, use AI for deeper analysis
+            if (existingFunctionalityMatch || labels.includes('tool-request') || titleLower.includes('[tool]')) {
+              try {
+                // Build out-of-scope summary
+                const outOfScopeSummary = manifest.outOfScope?.categories?.map(c => 
+                  `- ${c.name}: ${(c.examples || []).slice(0, 5).join(', ')}`
+                ).join('\n') || 'Not specified';
+                
+                // Build evaluation criteria
+                const evalCriteria = manifest.evaluationCriteria?.mustHave?.map(c => `- ${c}`).join('\n') 
+                  || 'Value for both organizers AND participants';
+                
+                // Build prompt parts
+                const promptParts = [
+                  'You are evaluating a GitHub issue for an event tools platform.',
+                  '',
+                  'EXISTING TOOLS AND CAPABILITIES:',
+                  toolsSummary,
+                  '',
+                  'OUT OF SCOPE (from manifest):',
+                  outOfScopeSummary,
+                  '',
+                  'EVALUATION CRITERIA:',
+                  evalCriteria,
+                  '',
+                  'NEW ISSUE TO EVALUATE:',
+                  `Title: ${title}`,
+                  `Body: ${body}`,
+                  '',
+                  'ANALYZE and respond in this EXACT JSON format:',
+                  '{',
+                  '  "duplicatesExisting": true/false,',
+                  '  "matchedTool": "tool name or null",',
+                  '  "matchedCapability": "capability description or null",',
+                  '  "isEnhancement": true/false,',
+                  '  "enhancementOf": "tool name or null",',
+                  '  "reasoning": "brief explanation",',
+                  '  "recommendation": "accept|enhance|duplicate|reject",',
+                  '  "interestScore": 1-10',
+                  '}',
+                  '',
+                  'Rules:',
+                  '- duplicatesExisting=true if this ALREADY exists in our tools',
+                  '- isEnhancement=true if this IMPROVES an existing tool (not duplicates)',
+                  '- interestScore: 10=highly valuable unique feature, 1=spam/irrelevant',
+                  '- Be strict about duplicates but generous about enhancements'
+                ];
+                
+                const analysisPrompt = promptParts.join('\n');
+
+                const response = await fetch('https://models.github.ai/inference/chat/completions', {
+                  method: 'POST',
+                  headers: {
+                    'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: [
+                      { role: 'system', content: 'You are an issue triage assistant. Respond ONLY with valid JSON.' },
+                      { role: 'user', content: analysisPrompt }
+                    ],
+                    max_tokens: 300,
+                    temperature: 0.1
+                  })
+                });
+
+                if (response.ok) {
+                  const data = await response.json();
+                  const content = data.choices[0]?.message?.content || '';
+                  // Extract JSON from response
+                  const jsonMatch = content.match(/\{[\s\S]*\}/);
+                  if (jsonMatch) {
+                    aiAnalysis = JSON.parse(jsonMatch[0]);
+                    console.log('AI Analysis:', JSON.stringify(aiAnalysis));
+                  }
+                }
+              } catch (e) {
+                console.log('AI analysis failed, continuing with heuristics:', e.message);
+              }
+            }
+            
+            // Handle duplicates
+            if (aiAnalysis?.duplicatesExisting && aiAnalysis?.matchedTool) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['duplicate-functionality', 'auto-triaged']
+              });
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `ℹ️ **This Functionality Already Exists**\n\nThis request appears to be covered by our existing **${aiAnalysis.matchedTool}** tool.\n\n${aiAnalysis.matchedCapability ? `**Existing capability:** ${aiAnalysis.matchedCapability}` : ''}\n\n${aiAnalysis.reasoning || ''}\n\n**What you can do:**\n- Try the existing tool and let us know if it doesn't meet your needs\n- If you want to **improve** this feature, please resubmit as an improvement request\n- Use our [improvement template](../../issues/new?template=improvement.yml)\n\n---\n*Automated triage - found existing functionality*`
+              });
+              
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+                state_reason: 'not_planned'
+              });
+              
+              console.log(`Issue #${issue.number} closed - duplicates ${aiAnalysis.matchedTool}`);
+              return;
+            }
+            
+            // Handle enhancements (keep open, relabel)
+            if (aiAnalysis?.isEnhancement && aiAnalysis?.enhancementOf) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['enhancement', `tool:${aiAnalysis.enhancementOf.toLowerCase().replace(/\s+/g, '-')}`, 'auto-triaged']
+              });
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `💡 **Enhancement Request Identified**\n\nThis looks like an enhancement to our existing **${aiAnalysis.enhancementOf}** tool.\n\n${aiAnalysis.reasoning || ''}\n\n**Interest Score:** ${'⭐'.repeat(Math.min(aiAnalysis.interestScore || 5, 10))}\n\nA maintainer will evaluate this enhancement request.\n\n---\n*Automated triage*`
+              });
+              
+              console.log(`Issue #${issue.number} identified as enhancement to ${aiAnalysis.enhancementOf}`);
+              // Continue to value assessment for enhancements
             }
             
             // ============================================

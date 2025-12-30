@@ -109,7 +109,7 @@ export class RoomAssignmentRepository extends JSONRepository<RoomAssignment> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('QUERY_ERROR', `Failed to find user assignment: ${error.message}`)
+				error: this.createError('QUERY_ERROR', `Failed to find user assignment: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -149,7 +149,7 @@ export class RoomAssignmentRepository extends JSONRepository<RoomAssignment> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('ASSIGNMENT_ERROR', `Failed to assign user to room: ${error.message}`)
+				error: this.createError('ASSIGNMENT_ERROR', `Failed to assign user to room: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -202,7 +202,7 @@ export class RoomAssignmentRepository extends JSONRepository<RoomAssignment> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('MOVE_ERROR', `Failed to move user to new room: ${error.message}`)
+				error: this.createError('MOVE_ERROR', `Failed to move user to new room: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -242,7 +242,7 @@ export class RoomAssignmentRepository extends JSONRepository<RoomAssignment> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('BULK_ASSIGN_ERROR', `Failed to perform bulk assignment: ${error.message}`)
+				error: this.createError('BULK_ASSIGN_ERROR', `Failed to perform bulk assignment: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -313,7 +313,7 @@ export class RoomAssignmentRepository extends JSONRepository<RoomAssignment> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('STATS_ERROR', `Failed to get assignment stats: ${error.message}`)
+				error: this.createError('STATS_ERROR', `Failed to get assignment stats: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}
@@ -349,7 +349,7 @@ export class RoomAssignmentRepository extends JSONRepository<RoomAssignment> {
 		} catch (error) {
 			return {
 				success: false,
-				error: this.createError('VALIDATION_ERROR', `Failed to validate assignment capacity: ${error.message}`)
+				error: this.createError('VALIDATION_ERROR', `Failed to validate assignment capacity: ${error instanceof Error ? error.message : String(error)}`)
 			};
 		}
 	}

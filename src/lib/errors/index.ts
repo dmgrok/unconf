@@ -259,7 +259,7 @@ export function createErrorFromUnknown(
 
   if (error instanceof Error) {
     return new AppError(
-      error.message,
+      error instanceof Error ? error.message : String(error),
       'UNKNOWN_ERROR',
       category,
       ErrorSeverity.MEDIUM,

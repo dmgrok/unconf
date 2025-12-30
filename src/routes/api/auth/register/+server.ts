@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import bcrypt from 'bcryptjs';
 import { UserRepository } from '$lib/storage/UserRepository';
+import { UserRole } from '../../../../types/enums';
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
@@ -77,7 +78,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			name: name.trim(),
 			email: email.toLowerCase().trim(),
 			password: hashedPassword,
-			role: 'organizer' as const, // New registrations are organizers
+			role: UserRole.ORGANIZER, // New registrations are organizers
 			isGuest: false,
 			lastActiveAt: new Date(),
 			preferences: {
@@ -102,7 +103,14 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		// Return success (without password)
-		const { password: _, ...userWithoutPassword } = result.data;
+		if (result.data && 'password' in result.data) {
+			const { password: _, ...userWithoutPassword } = result.data;
+			return json({
+				success: true,
+				message: 'Account created successfully',
+				user: userWithoutPassword
+			});
+		}
 
 		return json({
 			success: true,

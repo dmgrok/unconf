@@ -68,7 +68,7 @@ export class MigrationManager {
 				timestamp: new Date(entry.timestamp)
 			}));
 		} catch (error) {
-			console.warn(`Failed to read migration history: ${error.message}`);
+			console.warn(`Failed to read migration history: ${error instanceof Error ? error.message : String(error)}`);
 			return [];
 		}
 	}
@@ -151,7 +151,7 @@ export class MigrationManager {
 					await fs.copyFile(backupPath, filePath);
 				}
 			} catch (restoreError) {
-				console.error(`Failed to restore backup: ${restoreError.message}`);
+				console.error(`Failed to restore backup: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
 			}
 			throw error;
 		}
@@ -204,7 +204,7 @@ export class MigrationManager {
 					await fs.copyFile(backupPath, filePath);
 				}
 			} catch (restoreError) {
-				console.error(`Failed to restore backup: ${restoreError.message}`);
+				console.error(`Failed to restore backup: ${restoreError instanceof Error ? restoreError.message : String(restoreError)}`);
 			}
 			throw error;
 		}
@@ -247,7 +247,7 @@ export class MigrationManager {
 					exportData.metadata.totalRecords += data.length;
 				}
 			} catch (error) {
-				console.warn(`Failed to export ${entityType}: ${error.message}`);
+				console.warn(`Failed to export ${entityType}: ${error instanceof Error ? error.message : String(error)}`);
 			}
 		}
 

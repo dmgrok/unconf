@@ -33,7 +33,7 @@ export function handleValidationError(
 	if (config.logToConsole && import.meta.env.DEV) {
 		console.error('Validation Error:', {
 			code: error.code,
-			message: error.message,
+			message: error instanceof Error ? error.message : String(error),
 			details: error.details,
 			recovery: error.recoverySuggestion
 		});
@@ -59,7 +59,7 @@ function trackErrorEvent(error: ValidationError): void {
 	if (typeof window !== 'undefined' && (window as any).gtag) {
 		(window as any).gtag('event', 'validation_error', {
 			error_code: error.code,
-			error_message: error.message
+			error_message: error instanceof Error ? error.message : String(error)
 		});
 	}
 }
@@ -143,7 +143,7 @@ export function formatErrorForDisplay(error: ValidationError): {
 } {
 	return {
 		title: getErrorTitle(error.code),
-		message: error.message,
+		message: error instanceof Error ? error.message : String(error),
 		suggestion: error.recoverySuggestion
 	};
 }
