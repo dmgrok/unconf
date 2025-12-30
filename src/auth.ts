@@ -4,11 +4,11 @@ import Google from '@auth/sveltekit/providers/google';
 import bcrypt from 'bcryptjs';
 import { UserRepository } from '$lib/storage/UserRepository';
 import { createGuestToken } from '$lib/auth/guest';
-import {
-	GOOGLE_CLIENT_ID,
-	GOOGLE_CLIENT_SECRET,
-	AUTH_SECRET
-} from '$env/static/private';
+
+// Get environment variables at runtime to avoid build-time errors
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+const AUTH_SECRET = process.env.AUTH_SECRET || '';
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	providers: [
