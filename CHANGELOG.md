@@ -5,6 +5,30 @@ All notable changes to Event Tools Lab will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- **Refactored GitHub Actions Workflows for Maintainability**
+  - Extracted JavaScript logic from YAML into separate `.mjs` modules
+  - `issue-triage.yml`: Reduced from 1114 lines → 256 lines (77% reduction)
+  - `agent-pr-validation.yml`: Reduced from 400+ lines → 266 lines (33% reduction)
+  - Created reusable script modules:
+    - `.github/scripts/triage-issue.mjs` - Core triage logic
+    - `.github/scripts/validate-pr-tests.mjs` - PR validation and notifications
+    - `.github/scripts/security-scan.mjs` - Security screening (Lakera + AI)
+  - Benefits: Better IDE support, easier testing, improved readability, code reuse
+  - Old workflows backed up as `.bak` files for reference
+- **AI-Powered Technology vs Functionality Detection**
+  - Replaced 150+ keyword list with AI-powered analysis using GitHub Models API
+  - More accurate detection of technology-focused vs functionality-focused issues
+  - Provides reasoning and detected terms in feedback to users
+  - Reduces false positives from keyword matching
+
+- **AI-Powered Scope Detection**
+  - Replaced commodity tools and out-of-scope keyword lists with AI analysis
+  - AI evaluates if requests are commodity tools, out-of-scope enterprise features, or event-specific
+  - More nuanced understanding of context (e.g., "video call for breakout rooms" = in-scope)
+  - Provides explanations in feedback instead of simple keyword matches
 ## [0.2.0] - 2025-12-30
 
 ### Added
