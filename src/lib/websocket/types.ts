@@ -133,7 +133,7 @@ export interface TimerUpdateData {
   eventId: string;
   organizerId: string;
   duration: number; // seconds
-  action: 'start' | 'pause' | 'reset' | 'extend';
+  action: 'start' | 'pause' | 'resume' | 'stop' | 'reset' | 'extend';
 }
 
 export interface ManualAssignmentData {

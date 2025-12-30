@@ -6,7 +6,7 @@
 
 import type { Server as SocketIOServer } from 'socket.io';
 import type { RoomAssignment, DiscussionRoom, AssignmentRound } from '../../types/entities';
-import type { AssignmentRoundStatus } from '../../types/enums';
+import { AssignmentRoundStatus } from '../../types/enums';
 
 export interface DiscussionGroupNotification {
 	type: 'assignment' | 'room_update' | 'round_start' | 'round_complete' | 'assignment_change';

@@ -5,7 +5,50 @@ All notable changes to Event Tools Lab will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-12-30
+
+### Added
+- **Agent PR Validation Workflow** (`.github/workflows/agent-pr-validation.yml`)
+  - Validates that agent implementations include proper tests
+  - Requires unit tests for all source file changes
+  - Requires E2E tests for changes to critical paths (WebSocket, Storage, Auth, API)
+  - Blocks PRs that don't meet testing requirements with helpful guidance
+  - Coverage threshold validation (80% minimum)
+
+- **Issue Creator Notifications**
+  - Automatic notification when implementation PR is created
+  - Notification includes PR link, checklist, and what to expect
+  - Completion notification when PR is merged and feature is live
+  - Guidance on how to report issues or request improvements
+
+- **Functionality-Based Issue Enforcement for Community**
+  - Non-core team issues must focus on user problems, not technology
+  - Technology-focused issues from community are closed with helpful guidance
+  - Clear explanation of what makes a good functionality-based request
+  - Core team can still submit technology-focused issues when needed
+
+- **New Issue Labels for Agent Workflow**
+  - `agent-implementation` - PRs from coding agent
+  - `implementation-in-progress` - PR is being worked on
+  - `implemented` - Feature has been implemented
+  - `deployed` - Feature is live in production
+  - `needs-tests` - Implementation requires tests
+  - `tests-passing` - All tests are passing
+  - `community` - Submitted by community member
+  - `core-team` - Submitted by core team member
+  - `functionality-based` - Properly scoped user-focused request
+  - `technology-request` - Technology-focused request (needs clarification)
+
 ## [0.1.0] - 2025-12-30
+
+### Changed
+- **Issue Triage Messages Now Have Personality** 🎭
+  - Decline messages are now humorous but respectful
+  - "Insufficient info" → "Hmm, We Need a Bit More to Go On" (crystal ball joke)
+  - "Not a differentiator" → "Thanks, But the World Already Rocks at This" (wheel reinvention)
+  - "Out of scope" → "Whoa There, Astronaut!" (space station metaphor)
+  - "Duplicate" → "Great Minds Think Alike!" (positive spin)
+  - "Needs value prop" → "We're Not Quite Feeling the Love (Yet)" (encouraging resubmit)
 
 ### Added
 - **Functionality Manifest for AI-Powered Issue Triage**

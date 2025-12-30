@@ -398,7 +398,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: `❌ **Issue Discarded - Insufficient Information**\n\nWe couldn't evaluate this request due to missing information.\n\n**Missing:**\n${missingInfo.map(m => `- ${m}`).join('\n')}\n\n**Please resubmit with:**\n1. A clear description of the problem or feature\n2. Your role (event organizer, participant, etc.)\n3. A specific use case or scenario\n4. Why this would be valuable for events\n\nUse our [issue templates](../../issues/new/choose) for guidance.\n\n---\n*Automated triage*`
+                body: `🤔 **Closed: Need More Details** (But We're Rooting For You!)\n\nWe tried reading between the lines, but our crystal ball is in the shop. ✨\n\n**What we're missing:**\n${missingInfo.map(m => `- ${m}`).join('\n')}\n\n**Give it another shot with:**\n1. A clear description of the problem or feature\n2. Your role (event organizer, participant, etc.)\n3. A specific use case or scenario\n4. Why this would be valuable for events\n\nWe promise we're not trying to be difficult - we just want to understand your awesome idea! Use our [issue templates](../../issues/new/choose) for guidance.\n\n---\n*🤖 Automated triage - resubmit anytime!*`
               });
               
               await github.rest.issues.update({
@@ -411,6 +411,181 @@ jobs:
               
               console.log(`Issue #${issue.number} closed - insufficient information (score: ${infoScore})`);
               return;
+            }
+            
+            // ============================================
+            // STEP 1.5: COMMUNITY VS CORE TEAM CHECK
+            // Enforce functionality-based issues from non-core team
+            // ============================================
+            
+            // Define core team members (maintainers who can submit technology-focused issues)
+            const CORE_TEAM = [
+              context.payload.repository.owner.login,
+              // Add other core team members here
+            ];
+            
+            const author = issue.user.login;
+            const isCoreTeam = CORE_TEAM.includes(author);
+            
+            // Technology-focused keywords that suggest implementation details over user needs
+            const TECHNOLOGY_KEYWORDS = [
+              // Frameworks/libraries
+              'react', 'vue', 'angular', 'svelte', 'nextjs', 'nuxt',
+              'express', 'fastify', 'nest', 'django', 'flask', 'rails',
+              'webpack', 'vite', 'rollup', 'esbuild', 'parcel',
+              
+              // Languages (when not describing a problem)
+              'typescript', 'javascript', 'python', 'rust', 'go',
+              
+              // Infrastructure terms
+              'docker', 'kubernetes', 'k8s', 'terraform', 'ansible',
+              'aws', 'gcp', 'azure', 'cloudflare', 'vercel',
+              'nginx', 'apache', 'caddy',
+              
+              // Database/storage
+              'sql', 'nosql', 'graphql', 'rest api', 'grpc',
+              'cache', 'cdn', 'redis', 'memcached',
+              
+              // Dev tools
+              'eslint', 'prettier', 'husky', 'lint-staged',
+              'jest', 'mocha', 'cypress', 'playwright',
+              'git hook', 'ci/cd', 'github actions', 'workflow',
+              
+              // Architecture terms
+              'microservice', 'monolith', 'serverless', 'lambda',
+              'architecture', 'refactor', 'migrate', 'upgrade',
+              
+              // Code-level terms
+              'dependency', 'package', 'module', 'import', 'export',
+              'class', 'interface', 'type definition', 'schema',
+              'endpoint', 'middleware', 'hook', 'plugin'
+            ];
+            
+            // Phrases that indicate technology focus
+            const TECH_FOCUS_PHRASES = [
+              /add\s+(support\s+for\s+)?(?:typescript|react|vue|svelte)/i,
+              /use\s+(?:graphql|rest|grpc|websocket)/i,
+              /implement\s+(?:with|using|in)\s+\w+/i,
+              /migrate\s+(?:to|from)\s+\w+/i,
+              /upgrade\s+(?:to\s+)?\w+\s+(?:version|\d)/i,
+              /refactor\s+(?:the|our|this)/i,
+              /rewrite\s+(?:in|using|with)/i,
+              /add\s+(?:a\s+)?(?:new\s+)?(?:dependency|package|library)/i,
+              /change\s+(?:the\s+)?(?:framework|stack|architecture)/i,
+              /switch\s+(?:to|from)\s+\w+/i
+            ];
+            
+            // Check for technology-focused content
+            const techKeywordMatches = TECHNOLOGY_KEYWORDS.filter(t => fullTextLower.includes(t));
+            const hasTechFocusPhrases = TECH_FOCUS_PHRASES.some(p => p.test(fullText));
+            
+            // Functionality keywords that indicate user-focused requests
+            const FUNCTIONALITY_KEYWORDS = [
+              'organizer', 'participant', 'attendee', 'speaker', 'host',
+              'event', 'session', 'workshop', 'conference', 'meetup',
+              'want to', 'need to', 'would like', 'should be able to',
+              'as a', 'when i', 'so that', 'in order to',
+              'problem', 'pain point', 'frustrating', 'difficult',
+              'easier', 'faster', 'simpler', 'better',
+              'share', 'collaborate', 'engage', 'interact',
+              'vote', 'poll', 'timer', 'shuffle', 'check-in', 'survey'
+            ];
+            
+            const funcKeywordMatches = FUNCTIONALITY_KEYWORDS.filter(t => fullTextLower.includes(t));
+            
+            // Calculate focus scores
+            const techScore = techKeywordMatches.length + (hasTechFocusPhrases ? 3 : 0);
+            const funcScore = funcKeywordMatches.length;
+            
+            const isTechnologyFocused = techScore > funcScore && techScore >= 2;
+            const isFunctionalityFocused = funcScore > techScore || funcScore >= 3;
+            
+            console.log(`Author: ${author}, Core team: ${isCoreTeam}`);
+            console.log(`Tech score: ${techScore} (keywords: ${techKeywordMatches.slice(0, 5).join(', ')})`);
+            console.log(`Func score: ${funcScore} (keywords: ${funcKeywordMatches.slice(0, 5).join(', ')})`);
+            console.log(`Technology focused: ${isTechnologyFocused}, Functionality focused: ${isFunctionalityFocused}`);
+            
+            // Apply appropriate labels
+            if (isCoreTeam) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['core-team']
+              });
+            } else {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['community']
+              });
+            }
+            
+            // If non-core team member submits technology-focused issue, guide them
+            if (!isCoreTeam && isTechnologyFocused && !isFunctionalityFocused) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['technology-request', 'auto-triaged']
+              });
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `🔧 **Paused: Technology-Focused Request**
+
+Hey @${author}! Thanks for your interest in improving Event Tools Lab! 
+
+We noticed your request focuses on **implementation details** rather than **user problems**. As a community-driven project, we prioritize requests that describe:
+
+**What we need from you:**
+- 🎯 **The problem** - What's frustrating or missing for event organizers/participants?
+- 👤 **Your role** - Are you an organizer? Participant? What type of events?
+- 📖 **A scenario** - "When I'm running a workshop, I need to..."
+- ✨ **The value** - How would this make events better?
+
+**Detected technology terms:** ${techKeywordMatches.slice(0, 5).join(', ')}${techKeywordMatches.length > 5 ? '...' : ''}
+
+**Why this matters:**
+We make implementation decisions based on user needs, not technology preferences. The same user problem might be solved many different ways - we want to pick the best one!
+
+**Example of a great request:**
+> "As an event organizer, I need to quickly shuffle 50+ participants into random teams. Currently I use a spreadsheet which takes 10 minutes. I'd love a tool that does this in one click."
+
+**Please resubmit** with a focus on:
+1. The problem you're trying to solve
+2. Who benefits (organizers, participants, or both)
+3. A specific use case or scenario
+
+Use our [Tool Request](../../issues/new?template=tool-request.yml) or [Improvement](../../issues/new?template=improvement.yml) templates for guidance!
+
+---
+*🤖 Automated triage - we want to understand your needs, not just the tech!*`
+              });
+              
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+                state_reason: 'not_planned'
+              });
+              
+              console.log(`Issue #${issue.number} closed - technology-focused (non-core team)`);
+              return;
+            }
+            
+            // Mark functionality-focused issues positively
+            if (isFunctionalityFocused) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['functionality-based']
+              });
             }
             
             // ============================================
@@ -453,7 +628,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: `❌ **Issue Discarded - Not a Differentiator**\n\nThis request is for functionality that already has excellent existing solutions: **${commodityMatches.join(', ')}**\n\nWe focus on tools that are:\n- 🎯 **Unique** to event management needs\n- ✨ **Differentiating** for organizers AND participants\n- 🔧 **Not well-served** by existing tools\n\n**Our tools:** Team Shuffler, Session Timer, Quick Poll, QR Check-In\n\nIf you believe this IS a differentiator for events, please resubmit explaining what makes it unique for event scenarios.\n\n---\n*Automated triage*`
+                body: `🎸 **Closed: Already Solved Elsewhere** (We'd Be Reinventing the Wheel!)\n\nYou're asking for: **${commodityMatches.join(', ')}**\n\nThere are already fantastic tools for this! We'd rather focus on *weird and wonderful* event-specific stuff. 🛞\n\nWhat we build instead:\n- 🎲 **Team Shuffler** - random groups = magic\n- ⏱️ **Session Timer** - keeping speakers honest since 2024\n- 🗳️ **Quick Poll** - democracy at the speed of WiFi\n- 📱 **QR Check-In** - no clipboard, no cry\n\nIf there's an event-specific twist we're missing, we're all ears! Resubmit with your unique angle.\n\n---\n*🤖 Automated triage - standing on the shoulders of existing giants*`
               });
               
               await github.rest.issues.update({
@@ -480,7 +655,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: `❌ **Issue Discarded - Out of Scope**\n\nThis request involves infrastructure or features outside our project scope: **${outOfScopeMatches.join(', ')}**\n\n**Our philosophy:**\n- ✅ Simple, single-purpose event tools\n- ✅ Works without complex setup\n- ❌ No enterprise features before validation\n- ❌ No complex infrastructure\n\n---\n*Automated triage*`
+                body: `🚀 **Closed: Out of Scope** (Too Big For Our Little Spaceship!)\n\nYou're asking about: **${outOfScopeMatches.join(', ')}**\n\nThat's beyond our humble event tools orbit! We're more "cozy workshop helper" than "enterprise space station." 🛸\n\n**Our philosophy:**\n- ✅ Simple, single-purpose event tools\n- ✅ Works without complex setup\n- ✅ Small team, realistic scope\n- ❌ No enterprise features until proven necessary\n- ❌ No complex infrastructure (we like sleep)\n\nWe appreciate you thinking big though! Maybe that's a great startup idea? 💡\n\n---\n*🤖 Automated triage - keeping our feet on the ground*`
               });
               
               await github.rest.issues.update({
@@ -614,7 +789,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: `ℹ️ **This Functionality Already Exists**\n\nThis request appears to be covered by our existing **${aiAnalysis.matchedTool}** tool.\n\n${aiAnalysis.matchedCapability ? `**Existing capability:** ${aiAnalysis.matchedCapability}` : ''}\n\n${aiAnalysis.reasoning || ''}\n\n**What you can do:**\n- Try the existing tool and let us know if it doesn't meet your needs\n- If you want to **improve** this feature, please resubmit as an improvement request\n- Use our [improvement template](../../issues/new?template=improvement.yml)\n\n---\n*Automated triage - found existing functionality*`
+                body: `🎉 **Closed: Already Exists!** (Great Minds Think Alike)\n\nPlot twist: we already built this! Check out our **${aiAnalysis.matchedTool}** tool. 🛠️\n\n${aiAnalysis.matchedCapability ? `**What it does:** ${aiAnalysis.matchedCapability}` : ''}\n\n${aiAnalysis.reasoning || ''}\n\n**Next steps:**\n- 👀 Give the existing tool a spin - it might be exactly what you need!\n- 🔧 If it's *close but not quite*, tell us how to make it better\n- 📝 Use our [improvement template](../../issues/new?template=improvement.yml) to suggest tweaks\n\nWe love that you're thinking along the same lines!\n\n---\n*🤖 Automated triage - same wavelength!*`
               });
               
               await github.rest.issues.update({
@@ -773,7 +948,7 @@ jobs:
               if (!hasOrganizerValue) missing.push('value for event organizers');
               if (!hasParticipantValue) missing.push('value for participants');
               
-              comment = `❌ **Issue Needs Stronger Value Proposition**\n\nWe build tools that are valuable for BOTH organizers AND participants.\n\n**Missing:** ${missing.join(' and ')}\n\nPlease explain:\n1. How does this help **event organizers** run better events?\n2. How does this improve the **participant experience**?\n3. What makes this a **differentiator** vs existing solutions?\n\n---\n*Automated triage*`;
+              comment = `🤷 **Closed: Missing Value Proposition** (Convince Us!)\n\nWe build tools for the whole event crew - organizers AND participants need to benefit!\n\n**Currently missing:** ${missing.join(' and ')}\n\nHelp us see the magic! Resubmit explaining:\n1. 📋 How does this help **event organizers** run smoother events?\n2. 🎭 How does this improve the **participant experience**?\n3. ✨ What makes this special vs. existing solutions?\n\nWe're not saying no forever - just "tell us more!" The best tools come from compelling stories.\n\n---\n*🤖 Automated triage - we dare you to convince us!*`;
               
               await github.rest.issues.update({
                 owner: context.repo.owner,

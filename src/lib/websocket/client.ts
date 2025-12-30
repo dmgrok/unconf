@@ -5,7 +5,8 @@
 
 import { writable, derived, get } from 'svelte/store';
 import { io, type Socket } from 'socket.io-client';
-import type { UserRole, ActivityType } from '../../types/enums.js';
+import type { ActivityType } from '../../types/enums.js';
+import { UserRole, VoteWeight } from '../../types/enums.js';
 import type {
   ServerToClientEvents,
   ClientToServerEvents,
@@ -288,7 +289,7 @@ class WebSocketManager {
     });
   }
 
-  async submitVote(topicId: string, weight: 'first' | 'second' | 'third'): Promise<boolean> {
+  async submitVote(topicId: string, weight: VoteWeight): Promise<boolean> {
     return new Promise((resolve) => {
       const state = get(socketStore);
       if (!this.socket || !state.eventId || !state.userId) {

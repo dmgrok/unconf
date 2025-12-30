@@ -214,7 +214,7 @@ export const sessionUtils = {
   },
 
   // Stop session monitoring
-  stopSessionMonitoring: (intervalId: number) => {
+  stopSessionMonitoring: (intervalId: ReturnType<typeof setInterval>) => {
     clearInterval(intervalId);
   }
 };

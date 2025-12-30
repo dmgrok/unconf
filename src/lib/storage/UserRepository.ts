@@ -1,5 +1,5 @@
-import type { User, UserRole } from '../../types/entities';
-import { isValidUserRole } from '../../types/entities';
+import type { User } from '../../types/entities';
+import { UserRole, isValidUserRole } from '../../types/enums';
 import { JSONRepository, type JSONRepositoryConfig } from './JSONRepository';
 import type { RepositoryOperationResult, QueryOptions, ValidationResult } from './Repository';
 

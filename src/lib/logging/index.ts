@@ -60,13 +60,13 @@ class Logger {
 
   constructor(config: LoggerConfig) {
     this.config = {
-      level: LogLevel.INFO,
-      enableConsole: true,
-      enableFile: false,
-      enableStructured: true,
-      maxFileSize: 10 * 1024 * 1024, // 10MB
-      maxFiles: 5,
-      ...config
+      ...config,
+      level: config.level ?? LogLevel.INFO,
+      enableConsole: config.enableConsole ?? true,
+      enableFile: config.enableFile ?? false,
+      enableStructured: config.enableStructured ?? true,
+      maxFileSize: config.maxFileSize ?? 10 * 1024 * 1024, // 10MB
+      maxFiles: config.maxFiles ?? 5
     };
 
     if (this.config.enableFile) {
@@ -452,6 +452,6 @@ const defaultConfig: LoggerConfig = {
 
 export const logger = new Logger(defaultConfig);
 
-// Export types and logger
-export { Logger, type LoggerConfig };
+// Export Logger class
+export { Logger };
 export default logger;

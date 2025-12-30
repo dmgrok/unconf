@@ -6,6 +6,7 @@
  */
 
 import { GrowthBook } from '@growthbook/growthbook';
+import type { FeatureDefinition } from '@growthbook/growthbook';
 import type { RequestEvent } from '@sveltejs/kit';
 
 // =============================================================================
@@ -39,7 +40,7 @@ export function createServerGrowthBook(event: RequestEvent): GrowthBook {
  * Load features for server-side GrowthBook instance
  * Uses caching to avoid repeated API calls
  */
-const featureCache = new Map<string, { data: unknown; timestamp: number }>();
+const featureCache = new Map<string, { data: Record<string, FeatureDefinition<any>>; timestamp: number }>();
 const CACHE_TTL = 60 * 1000; // 1 minute cache
 
 export async function loadServerFeatures(gb: GrowthBook): Promise<void> {
@@ -48,7 +49,7 @@ export async function loadServerFeatures(gb: GrowthBook): Promise<void> {
 	
 	// Use cached features if fresh
 	if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-		gb.setFeatures(cached.data as Record<string, unknown>);
+		gb.setFeatures(cached.data);
 		return;
 	}
 	

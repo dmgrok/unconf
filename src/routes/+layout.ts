@@ -1,6 +1,6 @@
 import type { LayoutLoad } from './$types';
 
-export const load: LayoutLoad = async ({ url }) => {
+export const load: LayoutLoad = async ({ url, data }) => {
 	// Preload route-specific resources based on current path
 	if (url.pathname.startsWith('/admin')) {
 		// Preload admin-specific modules
@@ -13,7 +13,8 @@ export const load: LayoutLoad = async ({ url }) => {
 		const eventModules = import.meta.glob('./events/**/*.svelte');
 	}
 
-	return {};
+	// Pass through the server data (session, demoEvent)
+	return data;
 };
 
 // Enable prerendering for static pages

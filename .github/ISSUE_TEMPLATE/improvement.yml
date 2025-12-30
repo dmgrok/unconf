@@ -10,6 +10,11 @@ body:
         
         Have an idea to make an existing tool better? We'd love to hear it!
         
+        **Important:** Focus on **what problem this solves** for users, not implementation details.
+        
+        ✅ Good: "The timer should show a visual warning when 1 minute remains"
+        ❌ Bad: "Add a useEffect hook to change the CSS class at 60 seconds"
+        
         **Note:** For entirely new tools, use the [Tool Request](./tool-request.yml) template instead.
 
   - type: dropdown

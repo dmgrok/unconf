@@ -2,13 +2,21 @@
  * Core entity interfaces for the UnConf platform
  */
 
-import type {
+import {
 	DiscussionRoomStatus,
 	AssignmentMethod,
 	AssignmentStatus,
 	AssignmentRoundStatus,
-	TemplatePermissionType
+	TemplatePermissionType,
+	UserRole,
+	ActivityType,
+	VoteWeight,
+	EventStatus,
+	TopicStatus
 } from './enums';
+
+// Re-export the enums for backward compatibility
+export { UserRole, ActivityType, VoteWeight, EventStatus, TopicStatus };
 
 // Base interface for all entities
 export interface BaseEntity {
@@ -22,7 +30,7 @@ export interface Event extends BaseEntity {
 	title: string;
 	description: string;
 	slug: string; // URL-friendly identifier (e.g., 'demo-2024', 'tech-unconference')
-	status: 'draft' | 'active' | 'paused' | 'completed';
+	status: EventStatus;
 	organizerId: string;
 	maxParticipants?: number;
 	accessCode: string;
@@ -74,7 +82,7 @@ export interface Topic extends BaseEntity {
 	description?: string;
 	eventId: string;
 	submittedBy: string; // User ID
-	status: 'draft' | 'active' | 'frozen' | 'archived';
+	status: TopicStatus;
 	tags?: string[];
 	voteCount: number;
 	totalVoteWeight: number;
@@ -92,21 +100,6 @@ export interface Vote extends BaseEntity {
 	timestamp: Date;
 	isActive: boolean;
 	metadata?: Record<string, unknown>;
-}
-
-// Enums for type safety
-export enum UserRole {
-	GUEST = 'guest',
-	PARTICIPANT = 'participant',
-	ORGANIZER = 'organizer',
-	ADMIN = 'admin'
-}
-
-export enum ActivityType {
-	VOTING = 'voting',
-	GROUP_INTELLIGENCE = 'intelligence',
-	DISCUSSION_GROUPS = 'discussion',
-	TEAM_DISTRIBUTION = 'teams'
 }
 
 // Discussion Group interfaces
@@ -179,54 +172,6 @@ export interface AssignmentResults {
 		assigned: number;
 		utilizationRate: number;
 	}[];
-}
-
-export enum VoteWeight {
-	FIRST = 'first',
-	SECOND = 'second',
-	THIRD = 'third'
-}
-
-export enum EventStatus {
-	DRAFT = 'draft',
-	ACTIVE = 'active',
-	PAUSED = 'paused',
-	COMPLETED = 'completed'
-}
-
-export enum TopicStatus {
-	DRAFT = 'draft',
-	ACTIVE = 'active',
-	FROZEN = 'frozen',
-	ARCHIVED = 'archived'
-}
-
-// Weight values for vote calculations
-export const VOTE_WEIGHTS: Record<VoteWeight, number> = {
-	[VoteWeight.FIRST]: 3,
-	[VoteWeight.SECOND]: 2,
-	[VoteWeight.THIRD]: 1
-};
-
-// Type guards for runtime type checking
-export function isValidUserRole(role: string): role is UserRole {
-	return Object.values(UserRole).includes(role as UserRole);
-}
-
-export function isValidActivityType(activity: string): activity is ActivityType {
-	return Object.values(ActivityType).includes(activity as ActivityType);
-}
-
-export function isValidVoteWeight(weight: string): weight is VoteWeight {
-	return Object.values(VoteWeight).includes(weight as VoteWeight);
-}
-
-export function isValidEventStatus(status: string): status is EventStatus {
-	return Object.values(EventStatus).includes(status as EventStatus);
-}
-
-export function isValidTopicStatus(status: string): status is TopicStatus {
-	return Object.values(TopicStatus).includes(status as TopicStatus);
 }
 
 // Event Template interfaces

@@ -1,5 +1,5 @@
-import type { Vote, VoteWeight } from '../../types/entities';
-import { isValidVoteWeight, VOTE_WEIGHTS } from '../../types/entities';
+import type { Vote } from '../../types/entities';
+import { VoteWeight, isValidVoteWeight, VOTE_WEIGHTS } from '../../types/enums';
 import { JSONRepository, type JSONRepositoryConfig } from './JSONRepository';
 import type { RepositoryOperationResult, QueryOptions, ValidationResult } from './Repository';
 
@@ -207,7 +207,12 @@ export class VoteRepository extends JSONRepository<Vote> {
 				};
 			}
 
-			return this.update(existingVoteResult.data.id, { isActive: false });
+			const updateResult = await this.update(existingVoteResult.data.id, { isActive: false });
+			return {
+				success: updateResult.success,
+				data: updateResult.success,
+				error: updateResult.error
+			};
 		} catch (error) {
 			return {
 				success: false,

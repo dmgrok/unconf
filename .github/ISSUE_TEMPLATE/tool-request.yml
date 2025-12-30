@@ -10,8 +10,14 @@ body:
         
         This project is built entirely from community requests. We build what you need!
         
+        **Important:** Focus on the **problem you're solving**, not the technology. We make implementation decisions based on user needs.
+        
+        ✅ Good: "I need to quickly shuffle 50 participants into random teams"
+        ❌ Bad: "Add a React component for team randomization using Fisher-Yates"
+        
         **Note:** Requests are evaluated and may be rejected with explanation if they:
         - Duplicate free tools that already exist
+        - Focus on technology instead of user problems
         - Require significant infrastructure
         - Don't fit the "simple event tools" scope
 

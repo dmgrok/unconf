@@ -15,13 +15,13 @@ import type {
 	AssignmentResults,
 	VoteWeight
 } from '../../types/entities';
-import type {
+import {
 	DiscussionRoomStatus,
 	AssignmentMethod,
 	AssignmentStatus,
-	AssignmentRoundStatus
+	AssignmentRoundStatus,
+	VOTE_WEIGHTS
 } from '../../types/enums';
-import { VOTE_WEIGHTS } from '../../types/entities';
 
 export interface ParticipantPreference {
 	userId: string;

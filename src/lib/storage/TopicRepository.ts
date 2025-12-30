@@ -1,5 +1,5 @@
-import type { Topic, TopicStatus } from '../../types/entities';
-import { isValidTopicStatus } from '../../types/entities';
+import type { Topic } from '../../types/entities';
+import { TopicStatus, isValidTopicStatus } from '../../types/enums';
 import { JSONRepository, type JSONRepositoryConfig } from './JSONRepository';
 import type { RepositoryOperationResult, QueryOptions, ValidationResult } from './Repository';
 

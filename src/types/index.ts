@@ -2,6 +2,21 @@
  * Centralized type exports and validation utilities for the UnConf platform
  */
 
+// Import types for local use within this file
+import type { Event as EventType, User as UserType, Topic as TopicType, Vote as VoteType } from './entities';
+import {
+	UserRole as _UserRole,
+	EventStatus as _EventStatus,
+	WebSocketEventType as _WebSocketEventType,
+	ROLE_HIERARCHY as _ROLE_HIERARCHY
+} from './enums';
+import {
+	validateUser as _validateUser,
+	validateEvent as _validateEvent,
+	validateTopic as _validateTopic,
+	validateVote as _validateVote
+} from './schemas';
+
 // Re-export all core entity types
 export type {
 	BaseEntity,
@@ -13,7 +28,7 @@ export type {
 	Vote
 } from './entities';
 
-// Re-export all enums
+// Re-export all enums from enums.ts (canonical source)
 export {
 	UserRole,
 	ActivityType,
@@ -190,7 +205,7 @@ export interface PaginatedResponse<T = unknown> extends ApiResponse<T[]> {
 
 // WebSocket message types
 export interface WebSocketMessage<T = unknown> {
-	type: WebSocketEventType;
+	type: _WebSocketEventType;
 	eventId: string;
 	userId?: string;
 	timestamp: string;
@@ -220,7 +235,7 @@ export interface Permission {
 }
 
 export interface RolePermissions {
-	role: UserRole;
+	role: _UserRole;
 	permissions: Permission[];
 }
 
@@ -268,31 +283,31 @@ export function isRecord(obj: unknown): obj is Record<string, unknown> {
 }
 
 // Type assertion helpers
-export function assertIsUser(obj: unknown): asserts obj is User {
-	const result = validateUser(obj);
+export function assertIsUser(obj: unknown): asserts obj is UserType {
+	const result = _validateUser(obj);
 	if (!result.success) {
-		throw new Error(`Invalid user object: ${result.error?.errors.join(', ')}`);
+		throw new Error(`Invalid user object: ${result.error?.issues.map(i => i.message).join(', ')}`);
 	}
 }
 
-export function assertIsEvent(obj: unknown): asserts obj is Event {
-	const result = validateEvent(obj);
+export function assertIsEvent(obj: unknown): asserts obj is EventType {
+	const result = _validateEvent(obj);
 	if (!result.success) {
-		throw new Error(`Invalid event object: ${result.error?.errors.join(', ')}`);
+		throw new Error(`Invalid event object: ${result.error?.issues.map(i => i.message).join(', ')}`);
 	}
 }
 
-export function assertIsTopic(obj: unknown): asserts obj is Topic {
-	const result = validateTopic(obj);
+export function assertIsTopic(obj: unknown): asserts obj is TopicType {
+	const result = _validateTopic(obj);
 	if (!result.success) {
-		throw new Error(`Invalid topic object: ${result.error?.errors.join(', ')}`);
+		throw new Error(`Invalid topic object: ${result.error?.issues.map(i => i.message).join(', ')}`);
 	}
 }
 
-export function assertIsVote(obj: unknown): asserts obj is Vote {
-	const result = validateVote(obj);
+export function assertIsVote(obj: unknown): asserts obj is VoteType {
+	const result = _validateVote(obj);
 	if (!result.success) {
-		throw new Error(`Invalid vote object: ${result.error?.errors.join(', ')}`);
+		throw new Error(`Invalid vote object: ${result.error?.issues.map(i => i.message).join(', ')}`);
 	}
 }
 
@@ -314,50 +329,50 @@ export function safeStringify(obj: unknown): string | null {
 }
 
 // Role-based access control utilities
-export function canUserAccessEvent(userRole: UserRole, eventStatus: EventStatus): boolean {
+export function canUserAccessEvent(userRole: _UserRole, eventStatus: _EventStatus): boolean {
 	// Admins can access any event
-	if (userRole === UserRole.ADMIN) return true;
+	if (userRole === _UserRole.ADMIN) return true;
 
 	// Organizers can access their events in any status
-	if (userRole === UserRole.ORGANIZER) return true;
+	if (userRole === _UserRole.ORGANIZER) return true;
 
 	// Participants and guests can only access active events
-	return eventStatus === EventStatus.ACTIVE;
+	return eventStatus === _EventStatus.ACTIVE;
 }
 
 export function canUserPerformAction(
-	userRole: UserRole,
+	userRole: _UserRole,
 	action: string,
 	resource: string,
 	context?: Record<string, unknown>
 ): boolean {
 	// Basic role hierarchy check
-	const roleLevel = ROLE_HIERARCHY[userRole];
+	const roleLevel = _ROLE_HIERARCHY[userRole];
 
 	// Define action requirements
 	const actionRequirements: Record<string, number> = {
-		'create_event': ROLE_HIERARCHY[UserRole.ORGANIZER],
-		'delete_event': ROLE_HIERARCHY[UserRole.ADMIN],
-		'manage_users': ROLE_HIERARCHY[UserRole.ADMIN],
-		'create_topic': ROLE_HIERARCHY[UserRole.PARTICIPANT],
-		'vote': ROLE_HIERARCHY[UserRole.PARTICIPANT],
-		'join_event': ROLE_HIERARCHY[UserRole.GUEST]
+		'create_event': _ROLE_HIERARCHY[_UserRole.ORGANIZER],
+		'delete_event': _ROLE_HIERARCHY[_UserRole.ADMIN],
+		'manage_users': _ROLE_HIERARCHY[_UserRole.ADMIN],
+		'create_topic': _ROLE_HIERARCHY[_UserRole.PARTICIPANT],
+		'vote': _ROLE_HIERARCHY[_UserRole.PARTICIPANT],
+		'join_event': _ROLE_HIERARCHY[_UserRole.GUEST]
 	};
 
 	const requiredLevel = actionRequirements[`${action}_${resource}`] ??
 		actionRequirements[action] ??
-		ROLE_HIERARCHY[UserRole.ADMIN];
+		_ROLE_HIERARCHY[_UserRole.ADMIN];
 
 	return roleLevel >= requiredLevel;
 }
 
 // Data transformation utilities
-export function sanitizeUserForPublic(user: User): Omit<User, 'email' | 'metadata'> {
+export function sanitizeUserForPublic(user: UserType): Omit<UserType, 'email' | 'metadata'> {
 	const { email, metadata, ...publicUser } = user;
 	return publicUser;
 }
 
-export function sanitizeEventForPublic(event: Event): Omit<Event, 'metadata'> {
+export function sanitizeEventForPublic(event: EventType): Omit<EventType, 'metadata'> {
 	const { metadata, ...publicEvent } = event;
 	return publicEvent;
 }

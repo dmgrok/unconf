@@ -1,5 +1,5 @@
 import type { Event } from '../../types/entities';
-import { EventStatus, isValidEventStatus } from '../../types/entities';
+import { EventStatus, isValidEventStatus } from '../../types/enums';
 import { EVENT_RULE_LIMITS } from '../validation/eventRules';
 import { JSONRepository, type JSONRepositoryConfig } from './JSONRepository';
 import type { RepositoryOperationResult, QueryOptions, ValidationResult } from './Repository';

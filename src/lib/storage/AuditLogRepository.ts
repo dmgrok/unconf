@@ -1,7 +1,7 @@
 import type { AuditLog } from '../../types/analytics';
-import type { AuditAction, EntityType } from '../../types/enums';
+import { AuditAction, EntityType } from '../../types/enums';
 import { JSONRepository, type JSONRepositoryConfig } from './JSONRepository';
-import type { RepositoryOperationResult, QueryOptions, ValidationResult } from './Repository';
+import type { RepositoryOperationResult, ValidationResult } from './Repository';
 
 export class AuditLogRepository extends JSONRepository<AuditLog> {
 	constructor(config: Omit<JSONRepositoryConfig, 'filename'>) {
@@ -44,7 +44,7 @@ export class AuditLogRepository extends JSONRepository<AuditLog> {
 	 * Find audit logs by action type
 	 */
 	async findByAction(action: AuditAction): Promise<RepositoryOperationResult<AuditLog[]>> {
-		return this.findMany({ action } as QueryOptions<AuditLog>);
+		return this.findBy({ action } as Partial<AuditLog>);
 	}
 
 	/**
@@ -53,14 +53,14 @@ export class AuditLogRepository extends JSONRepository<AuditLog> {
 	async findByEntityType(
 		entityType: EntityType
 	): Promise<RepositoryOperationResult<AuditLog[]>> {
-		return this.findMany({ entityType } as QueryOptions<AuditLog>);
+		return this.findBy({ entityType } as Partial<AuditLog>);
 	}
 
 	/**
 	 * Find audit logs by user ID
 	 */
 	async findByUserId(userId: string): Promise<RepositoryOperationResult<AuditLog[]>> {
-		return this.findMany({ userId } as QueryOptions<AuditLog>);
+		return this.findBy({ userId } as Partial<AuditLog>);
 	}
 
 	/**
@@ -90,7 +90,7 @@ export class AuditLogRepository extends JSONRepository<AuditLog> {
 	 * Find audit logs by event ID
 	 */
 	async findByEventId(eventId: string): Promise<RepositoryOperationResult<AuditLog[]>> {
-		return this.findMany({ eventId } as QueryOptions<AuditLog>);
+		return this.findBy({ eventId } as Partial<AuditLog>);
 	}
 
 	/**

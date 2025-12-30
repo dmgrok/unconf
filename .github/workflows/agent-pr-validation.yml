@@ -1,0 +1,498 @@
+name: Agent PR Validation & Notification
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  # ============================================
+  # JOB 1: VALIDATE IMPLEMENTATION HAS PROPER TESTS
+  # ============================================
+  test-validation:
+    name: Validate Tests Exist
+    runs-on: ubuntu-latest
+    outputs:
+      has_unit_tests: ${{ steps.check.outputs.has_unit_tests }}
+      has_e2e_tests: ${{ steps.check.outputs.has_e2e_tests }}
+      test_coverage_ok: ${{ steps.coverage.outputs.ok }}
+      linked_issue: ${{ steps.issue.outputs.number }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history to check changed files
+
+      - name: Get linked issue number
+        id: issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            const title = pr.title || '';
+            const branch = pr.head.ref || '';
+            
+            // Look for issue references in PR body, title, or branch name
+            const patterns = [
+              /(?:closes?|fixes?|resolves?)\s*#(\d+)/gi,
+              /(?:closes?|fixes?|resolves?)\s+(?:issue\s+)?#?(\d+)/gi,
+              /issue[- ](\d+)/gi,
+              /#(\d+)/g
+            ];
+            
+            let issueNumber = null;
+            
+            // Check branch name first (most reliable for agent PRs)
+            const branchMatch = branch.match(/issue[- ]?(\d+)/i);
+            if (branchMatch) {
+              issueNumber = branchMatch[1];
+            }
+            
+            // Check body and title
+            if (!issueNumber) {
+              for (const pattern of patterns) {
+                const match = pattern.exec(body + ' ' + title);
+                if (match) {
+                  issueNumber = match[1];
+                  break;
+                }
+              }
+            }
+            
+            console.log(`Linked issue: ${issueNumber || 'none found'}`);
+            core.setOutput('number', issueNumber || '');
+            core.setOutput('found', issueNumber ? 'true' : 'false');
+
+      - name: Get changed files
+        id: changed
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 300
+            });
+            
+            const srcFiles = files.filter(f => 
+              f.filename.startsWith('src/') && 
+              !f.filename.includes('.test.') &&
+              !f.filename.includes('.spec.') &&
+              (f.filename.endsWith('.ts') || f.filename.endsWith('.svelte'))
+            );
+            
+            const testFiles = files.filter(f => 
+              f.filename.includes('.test.') || 
+              f.filename.includes('.spec.')
+            );
+            
+            const e2eTestFiles = testFiles.filter(f => 
+              f.filename.startsWith('tests/') ||
+              f.filename.includes('e2e') ||
+              f.filename.includes('a11y')
+            );
+            
+            const unitTestFiles = testFiles.filter(f => 
+              f.filename.startsWith('src/') ||
+              f.filename.includes('.unit.')
+            );
+            
+            console.log(`Source files changed: ${srcFiles.length}`);
+            console.log(`Unit test files changed: ${unitTestFiles.length}`);
+            console.log(`E2E test files changed: ${e2eTestFiles.length}`);
+            
+            core.setOutput('src_files', srcFiles.map(f => f.filename).join('\n'));
+            core.setOutput('src_count', srcFiles.length.toString());
+            core.setOutput('unit_tests', unitTestFiles.map(f => f.filename).join('\n'));
+            core.setOutput('e2e_tests', e2eTestFiles.map(f => f.filename).join('\n'));
+            core.setOutput('unit_count', unitTestFiles.length.toString());
+            core.setOutput('e2e_count', e2eTestFiles.length.toString());
+
+      - name: Check for required tests
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const srcCount = parseInt('${{ steps.changed.outputs.src_count }}');
+            const unitCount = parseInt('${{ steps.changed.outputs.unit_count }}');
+            const e2eCount = parseInt('${{ steps.changed.outputs.e2e_count }}');
+            
+            const pr = context.payload.pull_request;
+            const labels = pr.labels?.map(l => l.name) || [];
+            
+            // Check if this is an agent implementation PR
+            const isAgentPR = labels.includes('agent-implementation') || 
+                             labels.includes('implementation') ||
+                             pr.head.ref.startsWith('issue-');
+            
+            // Check if this modifies critical paths (require both unit + e2e)
+            const srcFiles = '${{ steps.changed.outputs.src_files }}'.split('\n').filter(f => f);
+            const criticalPaths = ['src/lib/websocket/', 'src/lib/storage/', 'src/lib/auth/', 'src/routes/api/'];
+            const touchesCritical = srcFiles.some(f => criticalPaths.some(p => f.startsWith(p)));
+            
+            // Determine test requirements
+            let hasUnitTests = unitCount > 0;
+            let hasE2ETests = e2eCount > 0;
+            let requiresUnitTests = srcCount > 0;
+            let requiresE2ETests = srcCount > 2 || touchesCritical;
+            
+            // For small documentation-only PRs, tests are optional
+            const isDocsOnly = srcCount === 0;
+            if (isDocsOnly) {
+              requiresUnitTests = false;
+              requiresE2ETests = false;
+            }
+            
+            console.log(`Agent PR: ${isAgentPR}`);
+            console.log(`Touches critical: ${touchesCritical}`);
+            console.log(`Requires unit tests: ${requiresUnitTests}`);
+            console.log(`Requires E2E tests: ${requiresE2ETests}`);
+            console.log(`Has unit tests: ${hasUnitTests}`);
+            console.log(`Has E2E tests: ${hasE2ETests}`);
+            
+            core.setOutput('has_unit_tests', hasUnitTests ? 'true' : 'false');
+            core.setOutput('has_e2e_tests', hasE2ETests ? 'true' : 'false');
+            core.setOutput('requires_unit', requiresUnitTests ? 'true' : 'false');
+            core.setOutput('requires_e2e', requiresE2ETests ? 'true' : 'false');
+            core.setOutput('is_agent_pr', isAgentPR ? 'true' : 'false');
+            core.setOutput('touches_critical', touchesCritical ? 'true' : 'false');
+            
+            // Validation result
+            const unitOk = !requiresUnitTests || hasUnitTests;
+            const e2eOk = !requiresE2ETests || hasE2ETests;
+            const valid = unitOk && e2eOk;
+            
+            core.setOutput('valid', valid ? 'true' : 'false');
+            core.setOutput('unit_ok', unitOk ? 'true' : 'false');
+            core.setOutput('e2e_ok', e2eOk ? 'true' : 'false');
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests and check coverage
+        id: coverage
+        continue-on-error: true
+        run: |
+          npm run test:unit -- --coverage --reporter=json --outputFile=coverage-report.json || true
+          
+          # Check if coverage meets thresholds
+          if [ -f "coverage/coverage-summary.json" ]; then
+            LINES=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+            FUNCTIONS=$(jq '.total.functions.pct' coverage/coverage-summary.json)
+            BRANCHES=$(jq '.total.branches.pct' coverage/coverage-summary.json)
+            
+            echo "Coverage: lines=$LINES%, functions=$FUNCTIONS%, branches=$BRANCHES%"
+            
+            # Check thresholds (80% minimum)
+            if (( $(echo "$LINES >= 80" | bc -l) )) && \
+               (( $(echo "$FUNCTIONS >= 80" | bc -l) )) && \
+               (( $(echo "$BRANCHES >= 80" | bc -l) )); then
+              echo "ok=true" >> $GITHUB_OUTPUT
+              echo "✅ Coverage thresholds met"
+            else
+              echo "ok=false" >> $GITHUB_OUTPUT
+              echo "❌ Coverage thresholds not met"
+            fi
+          else
+            echo "ok=false" >> $GITHUB_OUTPUT
+            echo "⚠️ Coverage report not found"
+          fi
+
+      - name: Post validation comment on PR
+        if: steps.check.outputs.valid == 'false'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const requiresUnit = '${{ steps.check.outputs.requires_unit }}' === 'true';
+            const requiresE2E = '${{ steps.check.outputs.requires_e2e }}' === 'true';
+            const hasUnit = '${{ steps.check.outputs.has_unit_tests }}' === 'true';
+            const hasE2E = '${{ steps.check.outputs.has_e2e_tests }}' === 'true';
+            const touchesCritical = '${{ steps.check.outputs.touches_critical }}' === 'true';
+            
+            const missingTests = [];
+            if (requiresUnit && !hasUnit) missingTests.push('Unit tests');
+            if (requiresE2E && !hasE2E) missingTests.push('E2E tests');
+            
+            const criticalNote = touchesCritical 
+              ? '\n\n⚠️ **This PR modifies critical paths** (WebSocket, Storage, Auth, or API). Both unit tests AND E2E tests are required.'
+              : '';
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: `## 🧪 Test Validation Failed
+
+**Missing:** ${missingTests.join(', ')}
+${criticalNote}
+
+### Requirements for Agent Implementations
+
+All implementations must include proper tests to ensure correctness:
+
+| Requirement | Status |
+|-------------|--------|
+| Unit tests for new/modified code | ${hasUnit ? '✅' : '❌'} |
+| E2E tests for user-facing features | ${hasE2E ? '✅' : '❌'} |
+| Coverage threshold (80%+) | ${'${{ steps.coverage.outputs.ok }}' === 'true' ? '✅' : '⚠️'} |
+
+### How to Fix
+
+1. **Add unit tests** in \`src/\` alongside your code (e.g., \`Component.test.ts\`)
+2. **Add E2E tests** in \`tests/e2e/\` for user flows
+3. Run \`npm run test:unit\` to verify unit tests pass
+4. Run \`npm run test\` to verify E2E tests pass
+5. Run \`npm run test:coverage\` to check coverage
+
+### Test Examples
+
+See \`TESTING.md\` for detailed examples and guidelines.
+
+---
+*Automated validation - tests are required for all implementations*`
+            });
+
+      - name: Fail if tests missing
+        if: steps.check.outputs.valid == 'false'
+        run: |
+          echo "❌ Implementation is missing required tests"
+          echo "Unit tests required: ${{ steps.check.outputs.requires_unit }}"
+          echo "Unit tests present: ${{ steps.check.outputs.has_unit_tests }}"
+          echo "E2E tests required: ${{ steps.check.outputs.requires_e2e }}"
+          echo "E2E tests present: ${{ steps.check.outputs.has_e2e_tests }}"
+          exit 1
+
+  # ============================================
+  # JOB 2: NOTIFY ISSUE CREATOR WHEN PR IS READY
+  # ============================================
+  notify-issue-creator:
+    name: Notify Issue Creator
+    runs-on: ubuntu-latest
+    needs: test-validation
+    if: needs.test-validation.outputs.linked_issue != ''
+    steps:
+      - name: Get issue details and notify creator
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const issueNumber = parseInt('${{ needs.test-validation.outputs.linked_issue }}');
+            
+            if (!issueNumber) {
+              console.log('No linked issue found, skipping notification');
+              return;
+            }
+            
+            // Get issue details
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+            
+            const issueCreator = issue.user.login;
+            const prAuthor = pr.user.login;
+            
+            // Check if PR just opened (not synchronize)
+            const isNewPR = context.payload.action === 'opened';
+            
+            // Check if this is the first time we're notifying
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              per_page: 100
+            });
+            
+            const alreadyNotified = comments.some(c => 
+              c.body.includes('Implementation Started') &&
+              c.body.includes(`#${pr.number}`)
+            );
+            
+            if (alreadyNotified) {
+              console.log('Already notified about this PR, skipping');
+              return;
+            }
+            
+            // Only notify on new PR or when ready for review
+            if (!isNewPR && !pr.draft === false) {
+              console.log('Not a new PR or ready for review, skipping notification');
+              return;
+            }
+            
+            const hasTests = '${{ needs.test-validation.outputs.has_unit_tests }}' === 'true' ||
+                            '${{ needs.test-validation.outputs.has_e2e_tests }}' === 'true';
+            const coverageOk = '${{ needs.test-validation.outputs.test_coverage_ok }}' === 'true';
+            
+            // Post notification on the original issue
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `## 🚀 Implementation Started!
+
+Hey @${issueCreator}! Great news - your request is being worked on!
+
+**Pull Request:** #${pr.number}
+**Status:** ${pr.draft ? '📝 Draft' : '👀 Ready for Review'}
+
+### Implementation Checklist
+
+| Check | Status |
+|-------|--------|
+| Tests included | ${hasTests ? '✅' : '⏳ Pending'} |
+| Coverage passing | ${coverageOk ? '✅' : '⏳ Pending'} |
+| CI checks | ⏳ Running |
+
+### What happens next?
+
+1. The implementation will be reviewed
+2. Tests will verify everything works correctly
+3. Once approved, it will be merged and deployed
+4. You'll be notified when it's live! 🎉
+
+Feel free to:
+- 👀 Review the [PR changes](${pr.html_url})
+- 💬 Leave feedback or suggestions
+- ✅ Confirm the implementation matches your request
+
+---
+*Automated notification - we'll keep you posted!*`
+            });
+            
+            // Also update the issue labels
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              labels: ['implementation-in-progress']
+            });
+            
+            console.log(`✅ Notified @${issueCreator} about PR #${pr.number}`);
+
+  # ============================================
+  # JOB 3: NOTIFY ON PR MERGE (Implementation Complete)
+  # ============================================
+  notify-on-merge:
+    name: Notify on Merge
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Notify issue creator of completion
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            const branch = pr.head.ref || '';
+            
+            // Extract issue number
+            let issueNumber = null;
+            const branchMatch = branch.match(/issue[- ]?(\d+)/i);
+            if (branchMatch) {
+              issueNumber = parseInt(branchMatch[1]);
+            }
+            
+            if (!branchMatch) {
+              const bodyMatch = body.match(/(?:closes?|fixes?|resolves?)\s*#(\d+)/i);
+              if (bodyMatch) {
+                issueNumber = parseInt(bodyMatch[1]);
+              }
+            }
+            
+            if (!issueNumber) {
+              console.log('No linked issue found');
+              return;
+            }
+            
+            // Get issue details
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+            
+            const issueCreator = issue.user.login;
+            
+            // Post completion notification
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: `## 🎉 Your Feature is Live!
+
+Hey @${issueCreator}! Your request has been implemented and deployed!
+
+**Merged PR:** #${pr.number}
+**Branch:** \`${branch}\`
+
+### What was delivered
+
+The implementation included:
+- ✅ Feature code
+- ✅ Unit tests
+- ✅ E2E tests (if applicable)
+- ✅ All CI checks passed
+
+### Try it out!
+
+The changes are now live on the platform. Give it a spin and let us know if it works as expected!
+
+**Found an issue?** Open a new [bug report](../../issues/new?template=bug-report.yml).
+**Want improvements?** Open an [improvement request](../../issues/new?template=improvement.yml).
+
+Thanks for contributing to Event Tools Lab! 🙏
+
+---
+*Automated notification - enjoy your new feature!*`
+            });
+            
+            // Update issue labels
+            try {
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                name: 'implementation-in-progress'
+              });
+            } catch (e) {
+              // Label might not exist
+            }
+            
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              labels: ['implemented', 'deployed']
+            });
+            
+            // Close the issue if not already closed
+            if (issue.state === 'open') {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                state: 'closed',
+                state_reason: 'completed'
+              });
+            }
+            
+            console.log(`✅ Notified @${issueCreator} that issue #${issueNumber} is complete`);

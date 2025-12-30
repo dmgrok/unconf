@@ -11,9 +11,9 @@
 		// User & People
 		User, Users, UserPlus, UserMinus, Crown, Shield,
 		// Time & Calendar
-		Clock, Calendar, CalendarDays, Timer, Stopwatch,
+		Clock, Calendar, CalendarDays, Timer, Watch,
 		// Media
-		Play, Pause, Stop, Volume2, VolumeX, Music, Video,
+		Play, Pause, CircleStop, Volume2, VolumeX, Music, Video,
 		// Files & Documents
 		File, FileText, Folder, FolderOpen, Image, Download as DownloadIcon,
 		// Status & Feedback
@@ -21,7 +21,7 @@
 		// Theme & Display
 		Sun, Moon, Monitor, Contrast, Palette,
 		// Actions
-		Refresh, RotateCcw, Save, Heart, Star, Bookmark, Flag,
+		RefreshCw, RotateCcw, Save, Heart, Star, Bookmark, Flag,
 		// Social & Engagement
 		ThumbsUp, ThumbsDown, Share2, MessageCircle, Zap,
 		// Location & Maps
@@ -108,12 +108,12 @@
 		calendar: Calendar,
 		'calendar-days': CalendarDays,
 		timer: Timer,
-		stopwatch: Stopwatch,
+		stopwatch: Watch,
 
 		// Media
 		play: Play,
 		pause: Pause,
-		stop: Stop,
+		stop: CircleStop,
 		volume: Volume2,
 		sound: Volume2,
 		mute: VolumeX,
@@ -158,8 +158,8 @@
 		theme: Palette,
 
 		// Actions
-		refresh: Refresh,
-		reload: Refresh,
+		refresh: RefreshCw,
+		reload: RefreshCw,
 		'rotate-ccw': RotateCcw,
 		reset: RotateCcw,
 		save: Save,

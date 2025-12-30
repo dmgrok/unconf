@@ -202,12 +202,50 @@ const outOfScope = manifest.outOfScope.categories
 - ✅ Doesn't duplicate free existing tools
 - ✅ Can fit on one screen
 - ✅ Works without complex setup
+- ✅ **Functionality-based** - focuses on user problems, not technology
 
 **Will likely reject:**
 - ❌ Duplicates free/cheap existing tools
 - ❌ Requires significant infrastructure
 - ❌ Complex enterprise features
 - ❌ Doesn't fit "simple event tools" scope
+- ❌ **Technology-focused** - specifies implementation over user need (from non-core team)
+
+## Agent Implementation Requirements
+
+When implementing features from issues, coding agents **MUST**:
+
+### 1. Include Proper Tests
+- **Unit tests** for all new/modified source code (`*.test.ts` files)
+- **E2E tests** for user-facing features (`tests/e2e/`)
+- **Coverage threshold**: 80% minimum (90% for critical paths)
+
+### 2. Critical Paths Require Both Unit + E2E Tests
+```
+src/lib/websocket/   # Real-time functionality
+src/lib/storage/     # Data persistence  
+src/lib/auth/        # Authentication
+src/routes/api/      # API endpoints
+```
+
+### 3. Link PRs to Issues
+- Use branch naming: `issue-{number}-{description}`
+- Include in PR body: `Closes #123` or `Fixes #123`
+
+### 4. Notification Flow
+The workflow automatically:
+1. Notifies issue creator when PR is opened
+2. Validates tests are included
+3. Blocks merge if tests are missing
+4. Notifies issue creator when merged and deployed
+
+### 5. Test Commands
+```bash
+npm run test:unit        # Unit tests
+npm run test             # E2E tests
+npm run test:coverage    # Coverage report
+npm run test:a11y        # Accessibility tests
+```
 
 ## WebSocket Real-time System
 

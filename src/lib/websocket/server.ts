@@ -35,12 +35,12 @@ export class UnConfWebSocketServer {
   private io: SocketIOServer<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>;
   private rooms: Map<string, Room> = new Map();
   private connectionPool: ConnectionPool = {};
-  private heartbeatInterval: NodeJS.Timer | null = null;
+  private heartbeatInterval: ReturnType<typeof setInterval> | null = null;
   private config: WebSocketConfig;
 
   // Vote update throttling (2 updates per second maximum)
   private voteUpdateQueue: Map<string, any[]> = new Map(); // eventId -> pending vote updates
-  private voteUpdateTimers: Map<string, NodeJS.Timer> = new Map(); // eventId -> timer
+  private voteUpdateTimers: Map<string, ReturnType<typeof setTimeout>> = new Map(); // eventId -> timer
   private readonly VOTE_UPDATE_THROTTLE_MS = 500; // 500ms = 2 updates per second
 
   constructor(httpServer: HTTPServer, config: Partial<WebSocketConfig> = {}) {
@@ -157,7 +157,7 @@ export class UnConfWebSocketServer {
   }
 
   private async handleJoinEvent(
-    socket: SocketIOServer['socket'], 
+    socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>, 
     data: JoinEventData, 
     callback: (response: AckResponse) => void
   ): Promise<void> {
@@ -197,7 +197,7 @@ export class UnConfWebSocketServer {
         this.rooms.set(eventId, {
           eventId,
           participants: new Set(),
-          activity: 'voting', // Default activity
+          activity: 'voting' as ActivityType, // Default activity
           createdAt: new Date(),
           lastActivity: new Date()
         });
@@ -255,7 +255,7 @@ export class UnConfWebSocketServer {
   }
 
   private async handleLeaveEvent(
-    socket: SocketIOServer['socket'],
+    socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     data: LeaveEventData,
     callback: (response: AckResponse) => void
   ): Promise<void> {
@@ -304,7 +304,7 @@ export class UnConfWebSocketServer {
   }
 
   private handleHeartbeat(
-    socket: SocketIOServer['socket'],
+    socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     callback: (response: any) => void
   ): void {
     const eventId = socket.data?.eventId;
@@ -327,7 +327,7 @@ export class UnConfWebSocketServer {
   }
 
   private async handleSubmitVote(
-    socket: SocketIOServer['socket'],
+    socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     data: VoteData,
     callback: (response: AckResponse) => void
   ): Promise<void> {
@@ -410,7 +410,7 @@ export class UnConfWebSocketServer {
   }
 
   private async handleRemoveVote(
-    socket: SocketIOServer['socket'],
+    socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     data: { eventId: string; userId: string; topicId: string },
     callback: (response: AckResponse) => void
   ): Promise<void> {
@@ -483,7 +483,7 @@ export class UnConfWebSocketServer {
   }
 
   private async handleSubmitWord(
-    socket: SocketIOServer['socket'],
+    socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     data: any,
     callback: (response: AckResponse) => void
   ): Promise<void> {
@@ -492,7 +492,7 @@ export class UnConfWebSocketServer {
   }
 
   private async handleJoinDiscussionRoom(
-    socket: SocketIOServer['socket'],
+    socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     data: any,
     callback: (response: AckResponse) => void
   ): Promise<void> {
@@ -501,7 +501,7 @@ export class UnConfWebSocketServer {
   }
 
   private async handleSwitchActivity(
-    socket: SocketIOServer['socket'],
+    socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     data: ActivitySwitchData,
     callback: (response: AckResponse) => void
   ): Promise<void> {
@@ -572,7 +572,7 @@ export class UnConfWebSocketServer {
   }
 
   private async handleUpdateTimer(
-    socket: SocketIOServer['socket'],
+    socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     data: TimerUpdateData,
     callback: (response: AckResponse) => void
   ): Promise<void> {
@@ -655,7 +655,7 @@ export class UnConfWebSocketServer {
   }
 
   private async handleManualAssignment(
-    socket: SocketIOServer['socket'],
+    socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>,
     data: any,
     callback: (response: AckResponse) => void
   ): Promise<void> {
@@ -663,7 +663,7 @@ export class UnConfWebSocketServer {
     callback({ success: false, error: 'Manual assignment not implemented yet' });
   }
 
-  private handleDisconnect(socket: SocketIOServer['socket'], reason: string): void {
+  private handleDisconnect(socket: Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>, reason: string): void {
     const { eventId, userId } = socket.data || {};
     
     if (eventId && userId) {

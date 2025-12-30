@@ -43,7 +43,30 @@ jobs:
               
               // Agent workflow
               { name: 'agent-ready', color: '0052cc', description: 'Ready for coding agent implementation' },
-              { name: 'agent-in-progress', color: '1d76db', description: 'Being worked on by coding agent' }
+              { name: 'agent-in-progress', color: '1d76db', description: 'Being worked on by coding agent' },
+              { name: 'agent-implementation', color: '1d76db', description: 'PR from coding agent implementation' },
+              
+              // Implementation lifecycle
+              { name: 'implementation', color: '0e8a16', description: 'Implementation approved and started' },
+              { name: 'implementation-in-progress', color: 'fbca04', description: 'Implementation PR is in progress' },
+              { name: 'implemented', color: '0e8a16', description: 'Feature has been implemented' },
+              { name: 'deployed', color: '0e8a16', description: 'Feature has been deployed to production' },
+              
+              // Test validation
+              { name: 'needs-tests', color: 'd93f0b', description: 'Implementation requires tests' },
+              { name: 'tests-passing', color: '0e8a16', description: 'All tests are passing' },
+              
+              // Duplicate detection
+              { name: 'duplicate-functionality', color: 'cfd3d7', description: 'Request duplicates existing functionality' },
+              
+              // Enhancement
+              { name: 'enhancement', color: 'a2eeef', description: 'Enhancement to existing feature' },
+              
+              // Community labels
+              { name: 'community', color: '7057ff', description: 'Submitted by community member' },
+              { name: 'core-team', color: '006b75', description: 'Submitted by core team member' },
+              { name: 'functionality-based', color: '0e8a16', description: 'Properly scoped functionality request' },
+              { name: 'technology-request', color: 'd93f0b', description: 'Technology-focused request (needs clarification)' }
             ];
             
             for (const label of labels) {
