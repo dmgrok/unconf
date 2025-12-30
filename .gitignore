@@ -13,6 +13,7 @@ node_modules
 Thumbs.db
 
 .playwright-mcp
+stats.html
 
 # Env
 .env

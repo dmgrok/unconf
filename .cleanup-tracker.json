@@ -1,5 +1,20 @@
 {
-  "temporaryFiles": {},
+  "temporaryFiles": {
+    ".github/workflows/issue-triage-old.yml.bak": {
+      "created": "2024-12-30",
+      "purpose": "Backup of original workflow before refactoring",
+      "task": "Workflow refactoring - extract JS to modules",
+      "status": "completed",
+      "keepUntil": "2025-01-13"
+    },
+    ".github/workflows/agent-pr-validation-old.yml.bak": {
+      "created": "2024-12-30",
+      "purpose": "Backup of original workflow before refactoring",
+      "task": "Workflow refactoring - extract JS to modules",
+      "status": "completed",
+      "keepUntil": "2025-01-13"
+    }
+  },
   "permanentFiles": [
     "README.md",
     "CHANGELOG.md",
