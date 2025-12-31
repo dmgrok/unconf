@@ -12,8 +12,8 @@ const config = {
 		adapter: adapter({
 			// Enable Edge Runtime for API routes that support it
 			runtime: 'nodejs22.x',
-			// Configure regions for optimal performance
-			regions: ['iad1', 'sfo1', 'fra1'],
+			// Single region for Hobby plan (multiple regions require Pro)
+			regions: ['iad1'],
 			// Memory allocation for serverless functions
 			memory: 1024,
 			// Enable ISR for static generation with dynamic fallback
