@@ -91,18 +91,42 @@ class WebSocketManager {
   private socket: Socket<ServerToClientEvents, ClientToServerEvents> | null = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private reconnectTimeout: NodeJS.Timeout | null = null;
+  private pollingInterval: NodeJS.Timeout | null = null;
+  private usePollingFallback = false;
   private config = {
-    url: 'http://localhost:3001',
+    // Use environment variable for WebSocket URL, fallback to localhost for development
+    url: typeof window !== 'undefined' 
+      ? (window as any).__WEBSOCKET_URL__ || import.meta.env?.VITE_WEBSOCKET_URL || 'http://localhost:3001'
+      : 'http://localhost:3001',
     heartbeatInterval: 30000,
     reconnectDelay: 1000,
     maxReconnectDelay: 30000,
-    acknowledgmentTimeout: 5000
+    acknowledgmentTimeout: 5000,
+    pollingInterval: 3000 // Fallback polling interval
   };
 
   async connect(eventId: string, userId: string, role: string, isGuest: boolean, sessionId: string): Promise<boolean> {
     try {
       // Update status
       socketStore.update(state => ({ ...state, status: 'connecting', lastError: null }));
+
+      // Check if WebSocket URL is configured (not localhost in production)
+      const isProduction = typeof window !== 'undefined' && !window.location.hostname.includes('localhost');
+      const wsUrlConfigured = this.config.url && !this.config.url.includes('localhost:3001');
+      
+      if (isProduction && !wsUrlConfigured) {
+        console.warn('WebSocket server not configured for production, using polling fallback');
+        this.usePollingFallback = true;
+        this.startPollingFallback(eventId, userId);
+        socketStore.update(state => ({
+          ...state,
+          status: 'connected',
+          eventId,
+          userId,
+          lastError: 'Using polling fallback (WebSocket not configured)'
+        }));
+        return true;
+      }
 
       // Create socket connection
       this.socket = io(this.config.url, {
@@ -150,13 +174,68 @@ class WebSocketManager {
 
       return true;
     } catch (error) {
-      console.error('WebSocket connection failed:', error);
+      console.error('WebSocket connection failed, falling back to polling:', error);
+      
+      // Fallback to polling when WebSocket fails
+      this.usePollingFallback = true;
+      this.startPollingFallback(eventId, userId);
+      
       socketStore.update(state => ({
         ...state,
-        status: 'disconnected',
-        lastError: error instanceof Error ? error instanceof Error ? error.message : String(error) : 'Connection failed'
+        status: 'connected',
+        eventId,
+        userId,
+        lastError: 'WebSocket unavailable, using polling fallback'
       }));
-      return false;
+      return true;
+    }
+  }
+
+  private startPollingFallback(eventId: string, userId: string): void {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+    }
+    
+    console.log('Starting polling fallback for real-time updates');
+    
+    // Initial poll
+    this.pollForUpdates(eventId);
+    
+    // Set up regular polling
+    this.pollingInterval = setInterval(() => {
+      this.pollForUpdates(eventId);
+    }, this.config.pollingInterval);
+  }
+
+  private async pollForUpdates(eventId: string): Promise<void> {
+    try {
+      // Poll for event updates
+      const response = await fetch(`/api/tools/events/${eventId}`);
+      if (response.ok) {
+        const data = await response.json();
+        // Update stores with polled data
+        if (data.event) {
+          socketStore.update(state => ({
+            ...state,
+            userCount: data.event.participants?.length || 0
+          }));
+        }
+      }
+      
+      // Poll for poll updates
+      const pollResponse = await fetch(`/api/tools/events/${eventId}/poll`);
+      if (pollResponse.ok) {
+        const pollData = await pollResponse.json();
+        if (pollData.poll) {
+          // Emit a synthetic vote update for compatibility
+          voteStore.update(state => ({
+            ...state,
+            votes: new Map(Object.entries(pollData.poll.votes || {}))
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Polling error:', error);
     }
   }
 
@@ -356,6 +435,14 @@ class WebSocketManager {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
     }
+
+    // Clear polling interval
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
+    
+    this.usePollingFallback = false;
 
     // Disconnect socket
     if (this.socket) {

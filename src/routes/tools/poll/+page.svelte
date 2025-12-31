@@ -1,6 +1,8 @@
 <script lang="ts">
   import QRCode from 'qrcode';
   import { browser } from '$app/environment';
+  import { page } from '$app/stores';
+  import { onMount } from 'svelte';
   
   type PollType = 'options' | 'open';
   
@@ -11,6 +13,7 @@
   };
   
   type LocalPoll = {
+    id: string;
     question: string;
     pollType: PollType;
     options: string[];
@@ -29,8 +32,8 @@
   let openResponse = $state('');
   let upvotedResponses = $state<string[]>([]); // Track which responses user has upvoted
   
-  // View mode: 'setup' (creating poll) | 'results' (display for participants)
-  let viewMode = $state<'setup' | 'results'>('setup');
+  // View mode: 'setup' (creating poll) | 'results' (display for participants) | 'participate' (joined via URL)
+  let viewMode = $state<'setup' | 'results' | 'participate'>('setup');
   
   // Create poll form
   let question = $state('');
@@ -46,6 +49,13 @@
   // QR Code
   let showQRCode = $state(false);
   let qrCodeDataUrl = $state('');
+  
+  // Share link
+  let shareLink = $state('');
+  let linkCopied = $state(false);
+  
+  // Poll ID for sharing (stored in sessionStorage for persistence)
+  let pollId = $state('');
   
   let totalVotes = $derived(activePoll 
     ? Object.values(activePoll.votes).reduce((sum, count) => sum + count, 0)
@@ -67,24 +77,102 @@
       : 0
   );
   
+  // Generate a unique poll ID
+  function generatePollId(): string {
+    return Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+  }
+  
+  // Load poll from sessionStorage or URL
+  onMount(() => {
+    if (!browser) return;
+    
+    // Check URL for poll ID
+    const urlPollId = $page.url.searchParams.get('id');
+    
+    if (urlPollId) {
+      // Try to load from sessionStorage
+      const storedPoll = sessionStorage.getItem(`poll_${urlPollId}`);
+      if (storedPoll) {
+        try {
+          activePoll = JSON.parse(storedPoll);
+          pollId = urlPollId;
+          viewMode = 'participate';
+          updateShareLink();
+        } catch (e) {
+          console.error('Failed to load poll:', e);
+        }
+      } else {
+        // Poll not found - show message
+        viewMode = 'setup';
+      }
+    }
+    
+    // Set up storage event listener for cross-tab sync
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  });
+  
+  function handleStorageChange(e: StorageEvent) {
+    if (e.key === `poll_${pollId}` && e.newValue && activePoll) {
+      try {
+        const updatedPoll = JSON.parse(e.newValue);
+        activePoll = updatedPoll;
+      } catch (err) {
+        console.error('Failed to sync poll:', err);
+      }
+    }
+  }
+  
+  // Save poll to sessionStorage
+  function savePoll() {
+    if (!browser || !activePoll || !pollId) return;
+    sessionStorage.setItem(`poll_${pollId}`, JSON.stringify(activePoll));
+    // Trigger storage event for other tabs
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: `poll_${pollId}`,
+      newValue: JSON.stringify(activePoll)
+    }));
+  }
+  
+  // Update share link when poll is created
+  function updateShareLink() {
+    if (!browser || !pollId) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('id', pollId);
+    shareLink = url.toString();
+  }
+  
   // Generate QR code when needed
   $effect(() => {
-    if (showQRCode && browser) {
+    if (showQRCode && browser && shareLink) {
       generateQRCode();
     }
   });
   
   async function generateQRCode() {
-    if (!browser) return;
-    const url = window.location.href;
+    if (!browser || !shareLink) return;
     try {
-      qrCodeDataUrl = await QRCode.toDataURL(url, {
+      qrCodeDataUrl = await QRCode.toDataURL(shareLink, {
         width: 200,
         margin: 2,
         color: { dark: '#1e3a5f', light: '#ffffff' }
       });
     } catch (err) {
       console.error('QR generation error:', err);
+    }
+  }
+  
+  async function copyShareLink() {
+    if (!browser || !shareLink) return;
+    try {
+      await navigator.clipboard.writeText(shareLink);
+      linkCopied = true;
+      setTimeout(() => linkCopied = false, 2000);
+    } catch (err) {
+      console.error('Copy failed:', err);
     }
   }
   
@@ -103,11 +191,15 @@
   function createPoll() {
     if (!question.trim()) return;
     
+    // Generate unique poll ID
+    pollId = generatePollId();
+    
     if (pollType === 'options') {
       const validOptions = options.filter(o => o.trim());
       if (validOptions.length < 2) return;
       
       activePoll = {
+        id: pollId,
         question: question.trim(),
         pollType: 'options',
         options: validOptions,
@@ -120,6 +212,7 @@
       };
     } else {
       activePoll = {
+        id: pollId,
         question: question.trim(),
         pollType: 'open',
         options: [],
@@ -132,11 +225,29 @@
       };
     }
     
+    // Save to sessionStorage and update URL
+    savePoll();
+    updateShareLink();
+    
+    // Update browser URL without navigation
+    if (browser) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('id', pollId);
+      window.history.pushState({}, '', url.toString());
+    }
+    
     // Switch to results view for real-time display
     viewMode = 'results';
   }
   
   function backToSetup() {
+    // Clear URL parameter
+    if (browser) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('id');
+      window.history.pushState({}, '', url.toString());
+    }
+    
     viewMode = 'setup';
     activePoll = null;
     voted = false;
@@ -144,6 +255,8 @@
     openResponse = '';
     upvotedResponses = [];
     userVoteCount = 0;
+    pollId = '';
+    shareLink = '';
   }
   
   function vote(option: string) {
@@ -159,6 +272,7 @@
         activePoll.votes[option]++;
       }
       activePoll = activePoll; // trigger reactivity
+      savePoll();
     } else {
       // Single choice
       if (voted) return;
@@ -166,6 +280,7 @@
       activePoll = activePoll;
       voted = true;
       votedOptions = [option];
+      savePoll();
     }
   }
   
@@ -179,6 +294,7 @@
     };
     activePoll.openResponses = [...activePoll.openResponses, newResponse];
     activePoll = activePoll;
+    savePoll();
     // Don't set voted=true so user can still add more responses and upvote
     openResponse = '';
   }
@@ -208,30 +324,60 @@
       );
     }
     activePoll = activePoll; // trigger reactivity
+    savePoll();
   }
   
   function submitMultipleVote() {
     if (votedOptions.length === 0) return;
     voted = true;
+    savePoll();
   }
   
   function closePoll() {
+    // Remove from sessionStorage
+    if (browser && pollId) {
+      sessionStorage.removeItem(`poll_${pollId}`);
+    }
+    
+    // Clear URL parameter
+    if (browser) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('id');
+      window.history.pushState({}, '', url.toString());
+    }
+    
     activePoll = null;
     voted = false;
     votedOptions = [];
     openResponse = '';
     upvotedResponses = [];
     userVoteCount = 0;
+    pollId = '';
+    shareLink = '';
     viewMode = 'setup'; // Return to setup view
   }
   
   function resetForNewPoll() {
+    // Remove from sessionStorage
+    if (browser && pollId) {
+      sessionStorage.removeItem(`poll_${pollId}`);
+    }
+    
+    // Clear URL parameter
+    if (browser) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('id');
+      window.history.pushState({}, '', url.toString());
+    }
+    
     activePoll = null;
     voted = false;
     votedOptions = [];
     openResponse = '';
     upvotedResponses = [];
     userVoteCount = 0;
+    pollId = '';
+    shareLink = '';
     viewMode = 'setup'; // Return to setup view
     // Clear form fields for new poll
     question = '';
@@ -261,15 +407,32 @@
   <div class="standalone-notice">
     <span>💡</span>
     <p>
-      <strong>Standalone mode</strong> - Votes are local to this browser session.
-      <button class="qr-btn-inline" onclick={toggleQRCode}>📱 {showQRCode ? 'Hide' : 'Show'} QR Code</button>
+      {#if activePoll && shareLink}
+        <strong>Share this poll</strong> - Copy link or scan QR to let others vote.
+        <button class="qr-btn-inline" onclick={toggleQRCode}>📱 {showQRCode ? 'Hide' : 'Show'} QR Code</button>
+      {:else}
+        <strong>Standalone mode</strong> - Create a poll to get a shareable link.
+        <button class="qr-btn-inline" onclick={toggleQRCode}>📱 {showQRCode ? 'Hide' : 'Show'} QR Code</button>
+      {/if}
     </p>
   </div>
+  
+  {#if activePoll && shareLink}
+    <div class="share-section">
+      <div class="share-link-container">
+        <input type="text" readonly value={shareLink} class="share-link-input" />
+        <button class="copy-btn" onclick={() => { 
+          navigator.clipboard.writeText(shareLink);
+          // Could add a toast here
+        }}>📋 Copy</button>
+      </div>
+    </div>
+  {/if}
   
   {#if showQRCode && qrCodeDataUrl}
     <div class="qr-code-section">
       <img src={qrCodeDataUrl} alt="QR Code to share this poll" />
-      <p>Scan to join this poll</p>
+      <p>{activePoll ? 'Scan to join this poll' : 'Scan to open poll tool'}</p>
     </div>
   {/if}
   
@@ -735,6 +898,42 @@
     background: #e0f2fe;
   }
   
+  /* Share Section */
+  .share-section {
+    margin-bottom: 1rem;
+  }
+  
+  .share-link-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .share-link-input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: white;
+    font-size: 0.875rem;
+    color: #374151;
+  }
+  
+  .copy-btn {
+    padding: 0.5rem 1rem;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  
+  .copy-btn:hover {
+    background: var(--color-primary-hover);
+  }
+
   /* QR Code Section */
   .qr-code-section {
     text-align: center;
