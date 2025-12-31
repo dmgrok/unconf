@@ -25,13 +25,18 @@
     maxVotesPerPerson: number;
   };
   
-  // Poll state (local only in standalone mode)
+  // Poll state (now server-synced!)
   let activePoll = $state<LocalPoll | null>(null);
   let voted = $state(false);
   let votedOptions = $state<string[]>([]);
   let openResponse = $state('');
   let upvotedResponses = $state<string[]>([]); // Track which responses user has upvoted
+  let isLoading = $state(false);
+  let errorMessage = $state('');
   
+  // Voter ID for tracking votes (persisted in localStorage)
+  let voterId = $state('');
+
   // View mode: 'setup' (creating poll) | 'results' (display for participants) | 'participate' (joined via URL) | 'not-found' (poll link not found)
   let viewMode = $state<'setup' | 'results' | 'participate' | 'not-found'>('setup');
   
@@ -57,8 +62,11 @@
   let shareLink = $state('');
   let linkCopied = $state(false);
   
-  // Poll ID for sharing (stored in sessionStorage for persistence)
+  // Poll ID for sharing
   let pollId = $state('');
+  
+  // Polling interval for real-time updates
+  let pollInterval: ReturnType<typeof setInterval> | null = null;
   
   let totalVotes = $derived(activePoll 
     ? Object.values(activePoll.votes).reduce((sum, count) => sum + count, 0)
@@ -85,61 +93,98 @@
     return Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
   }
   
-  // Load poll from sessionStorage or URL
+  // Get or create voter ID
+  function getVoterId(): string {
+    if (!browser) return 'server';
+    let id = localStorage.getItem('poll_voter_id');
+    if (!id) {
+      id = 'voter_' + generatePollId();
+      localStorage.setItem('poll_voter_id', id);
+    }
+    return id;
+  }
+  
+  // Load poll from server
+  async function loadPoll(id: string): Promise<LocalPoll | null> {
+    try {
+      const response = await fetch(`/api/tools/poll?id=${id}`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          return null;
+        }
+        throw new Error('Failed to load poll');
+      }
+      const data = await response.json();
+      return data.poll;
+    } catch (error) {
+      console.error('Error loading poll:', error);
+      return null;
+    }
+  }
+  
+  // Start polling for updates
+  function startPolling() {
+    if (pollInterval) clearInterval(pollInterval);
+    pollInterval = setInterval(async () => {
+      if (pollId && activePoll) {
+        const updated = await loadPoll(pollId);
+        if (updated) {
+          activePoll = updated;
+        }
+      }
+    }, 2000); // Poll every 2 seconds
+  }
+  
+  // Stop polling
+  function stopPolling() {
+    if (pollInterval) {
+      clearInterval(pollInterval);
+      pollInterval = null;
+    }
+  }
+  
+  // Load poll from URL on mount
   onMount(() => {
     if (!browser) return;
+    
+    // Get or create voter ID
+    voterId = getVoterId();
+    
+    // Load voted state from localStorage
+    const votedPolls = JSON.parse(localStorage.getItem('voted_polls') || '{}');
     
     // Check URL for poll ID
     const urlPollId = $page.url.searchParams.get('id');
     
     if (urlPollId) {
-      // Try to load from sessionStorage
-      const storedPoll = sessionStorage.getItem(`poll_${urlPollId}`);
-      if (storedPoll) {
-        try {
-          activePoll = JSON.parse(storedPoll);
+      isLoading = true;
+      loadPoll(urlPollId).then(poll => {
+        isLoading = false;
+        if (poll) {
+          activePoll = poll;
           pollId = urlPollId;
           viewMode = 'participate';
           updateShareLink();
-        } catch (e) {
-          console.error('Failed to load poll:', e);
+          startPolling();
+          
+          // Restore voted state
+          if (votedPolls[urlPollId]) {
+            voted = true;
+            votedOptions = votedPolls[urlPollId].options || [];
+            upvotedResponses = votedPolls[urlPollId].upvoted || [];
+            userVoteCount = upvotedResponses.length;
+          }
+        } else {
+          sharedPollId = urlPollId;
+          viewMode = 'not-found';
         }
-      } else {
-        // Poll not found - show helpful message
-        sharedPollId = urlPollId;
-        viewMode = 'not-found';
-      }
+      });
     }
-    
-    // Set up storage event listener for cross-tab sync
-    window.addEventListener('storage', handleStorageChange);
     
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      stopPolling();
     };
   });
-  
-  function handleStorageChange(e: StorageEvent) {
-    if (e.key === `poll_${pollId}` && e.newValue && activePoll) {
-      try {
-        const updatedPoll = JSON.parse(e.newValue);
-        activePoll = updatedPoll;
-      } catch (err) {
-        console.error('Failed to sync poll:', err);
-      }
-    }
-  }
-  
-  // Save poll to sessionStorage
-  function savePoll() {
-    if (!browser || !activePoll || !pollId) return;
-    sessionStorage.setItem(`poll_${pollId}`, JSON.stringify(activePoll));
-    // Trigger storage event for other tabs
-    window.dispatchEvent(new StorageEvent('storage', {
-      key: `poll_${pollId}`,
-      newValue: JSON.stringify(activePoll)
-    }));
-  }
   
   // Update share link when poll is created
   function updateShareLink() {
@@ -192,17 +237,30 @@
     }
   }
   
-  function createPoll() {
+  // Save voted state to localStorage
+  function saveVotedState() {
+    if (!browser || !pollId) return;
+    const votedPolls = JSON.parse(localStorage.getItem('voted_polls') || '{}');
+    votedPolls[pollId] = {
+      options: votedOptions,
+      upvoted: upvotedResponses
+    };
+    localStorage.setItem('voted_polls', JSON.stringify(votedPolls));
+  }
+  
+  async function createPoll() {
     if (!question.trim()) return;
     
     // Generate unique poll ID
     pollId = generatePollId();
     
+    let newPoll: LocalPoll;
+    
     if (pollType === 'options') {
       const validOptions = options.filter(o => o.trim());
       if (validOptions.length < 2) return;
       
-      activePoll = {
+      newPoll = {
         id: pollId,
         question: question.trim(),
         pollType: 'options',
@@ -212,10 +270,10 @@
         maxWords: 10,
         status: 'open',
         allowMultiple,
-        maxVotesPerPerson: 1, // One vote per person for fixed options
+        maxVotesPerPerson: 1,
       };
     } else {
-      activePoll = {
+      newPoll = {
         id: pollId,
         question: question.trim(),
         pollType: 'open',
@@ -225,26 +283,51 @@
         maxWords,
         status: 'open',
         allowMultiple: false,
-        maxVotesPerPerson, // Use configurable limit for open responses
+        maxVotesPerPerson,
       };
     }
     
-    // Save to sessionStorage and update URL
-    savePoll();
-    updateShareLink();
-    
-    // Update browser URL without navigation
-    if (browser) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('id', pollId);
-      window.history.pushState({}, '', url.toString());
+    // Save to server
+    isLoading = true;
+    errorMessage = '';
+    try {
+      const response = await fetch('/api/tools/poll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newPoll)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create poll');
+      }
+      
+      const data = await response.json();
+      activePoll = data.poll;
+      
+      // Update URL and share link
+      updateShareLink();
+      if (browser) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('id', pollId);
+        window.history.pushState({}, '', url.toString());
+      }
+      
+      // Start polling for updates
+      startPolling();
+      
+      // Switch to results view
+      viewMode = 'results';
+    } catch (error) {
+      console.error('Error creating poll:', error);
+      errorMessage = 'Failed to create poll. Please try again.';
+    } finally {
+      isLoading = false;
     }
-    
-    // Switch to results view for real-time display
-    viewMode = 'results';
   }
   
   function backToSetup() {
+    stopPolling();
+    
     // Clear URL parameter
     if (browser) {
       const url = new URL(window.location.href);
@@ -263,84 +346,152 @@
     shareLink = '';
   }
   
-  function vote(option: string) {
+  async function vote(option: string) {
     if (!activePoll || activePoll.pollType !== 'options') return;
     
     if (activePoll.allowMultiple) {
-      // Toggle selection for multiple choice
+      // Toggle selection for multiple choice (local only until submit)
       if (votedOptions.includes(option)) {
         votedOptions = votedOptions.filter(o => o !== option);
-        activePoll.votes[option]--;
       } else {
         votedOptions = [...votedOptions, option];
-        activePoll.votes[option]++;
       }
-      activePoll = activePoll; // trigger reactivity
-      savePoll();
     } else {
-      // Single choice
+      // Single choice - vote immediately
       if (voted) return;
-      activePoll.votes[option]++;
-      activePoll = activePoll;
-      voted = true;
-      votedOptions = [option];
-      savePoll();
+      
+      try {
+        const response = await fetch(`/api/tools/poll?id=${pollId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'vote', option, voterId })
+        });
+        
+        if (!response.ok) {
+          const data = await response.json();
+          if (data.error === 'Already voted') {
+            voted = true;
+            return;
+          }
+          throw new Error('Failed to vote');
+        }
+        
+        const data = await response.json();
+        activePoll = data.poll;
+        voted = true;
+        votedOptions = [option];
+        saveVotedState();
+      } catch (error) {
+        console.error('Error voting:', error);
+        errorMessage = 'Failed to submit vote. Please try again.';
+      }
     }
   }
   
-  function submitOpenResponse() {
+  async function submitOpenResponse() {
     if (!activePoll || !openResponse.trim() || isOverWordLimit) return;
     
-    const newResponse: OpenResponse = {
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      text: openResponse.trim(),
-      votes: 0,
-    };
-    activePoll.openResponses = [...activePoll.openResponses, newResponse];
-    activePoll = activePoll;
-    savePoll();
-    // Don't set voted=true so user can still add more responses and upvote
-    openResponse = '';
+    try {
+      const response = await fetch(`/api/tools/poll?id=${pollId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'addResponse', text: openResponse.trim() })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit response');
+      }
+      
+      const data = await response.json();
+      activePoll = data.poll;
+      openResponse = '';
+    } catch (error) {
+      console.error('Error submitting response:', error);
+      errorMessage = 'Failed to submit response. Please try again.';
+    }
   }
   
-  function upvoteResponse(responseId: string) {
+  async function upvoteResponse(responseId: string) {
     if (!activePoll) return;
     
     const hasUpvoted = upvotedResponses.includes(responseId);
     
     if (hasUpvoted) {
-      // Remove upvote
+      // Remove upvote (local only - server doesn't track individual upvotes)
       upvotedResponses = upvotedResponses.filter(id => id !== responseId);
       userVoteCount--;
-      activePoll.openResponses = activePoll.openResponses.map(r => 
-        r.id === responseId ? { ...r, votes: r.votes - 1 } : r
-      );
+      saveVotedState();
     } else {
       // Check vote limit
       if (userVoteCount >= activePoll.maxVotesPerPerson) {
         return; // Max votes reached
       }
+      
       // Add upvote
-      upvotedResponses = [...upvotedResponses, responseId];
-      userVoteCount++;
-      activePoll.openResponses = activePoll.openResponses.map(r => 
-        r.id === responseId ? { ...r, votes: r.votes + 1 } : r
-      );
+      try {
+        const response = await fetch(`/api/tools/poll?id=${pollId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'upvoteResponse', responseId })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to upvote');
+        }
+        
+        const data = await response.json();
+        activePoll = data.poll;
+        upvotedResponses = [...upvotedResponses, responseId];
+        userVoteCount++;
+        saveVotedState();
+      } catch (error) {
+        console.error('Error upvoting:', error);
+        errorMessage = 'Failed to upvote. Please try again.';
+      }
     }
-    activePoll = activePoll; // trigger reactivity
-    savePoll();
   }
   
-  function submitMultipleVote() {
+  async function submitMultipleVote() {
     if (votedOptions.length === 0) return;
-    voted = true;
-    savePoll();
+    
+    // Submit all selected options
+    try {
+      for (const option of votedOptions) {
+        await fetch(`/api/tools/poll?id=${pollId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'vote', option, voterId })
+        });
+      }
+      
+      // Reload poll to get updated counts
+      const updated = await loadPoll(pollId);
+      if (updated) {
+        activePoll = updated;
+      }
+      
+      voted = true;
+      saveVotedState();
+    } catch (error) {
+      console.error('Error voting:', error);
+      errorMessage = 'Failed to submit votes. Please try again.';
+    }
   }
   
-  function closePoll() {
-    // Remove from sessionStorage
-    if (browser && pollId) {
-      sessionStorage.removeItem(`poll_${pollId}`);
+  async function closePoll() {
+    stopPolling();
+    
+    // Close poll on server
+    if (pollId) {
+      try {
+        await fetch(`/api/tools/poll?id=${pollId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'close' })
+        });
+      } catch (error) {
+        console.error('Error closing poll:', error);
+      }
     }
     
     // Clear URL parameter
@@ -358,14 +509,11 @@
     userVoteCount = 0;
     pollId = '';
     shareLink = '';
-    viewMode = 'setup'; // Return to setup view
+    viewMode = 'setup';
   }
   
   function resetForNewPoll() {
-    // Remove from sessionStorage
-    if (browser && pollId) {
-      sessionStorage.removeItem(`poll_${pollId}`);
-    }
+    stopPolling();
     
     // Clear URL parameter
     if (browser) {
@@ -382,7 +530,8 @@
     userVoteCount = 0;
     pollId = '';
     shareLink = '';
-    viewMode = 'setup'; // Return to setup view
+    viewMode = 'setup';
+    
     // Clear form fields for new poll
     question = '';
     options = ['', ''];
@@ -408,14 +557,28 @@
     <p class="subtitle">Create instant polls with live results</p>
   </header>
   
+  {#if isLoading}
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading poll...</p>
+    </div>
+  {/if}
+  
+  {#if errorMessage}
+    <div class="error-message">
+      <span>⚠️</span> {errorMessage}
+      <button onclick={() => errorMessage = ''}>×</button>
+    </div>
+  {/if}
+  
   <div class="standalone-notice">
-    <span>💡</span>
+    <span>🌐</span>
     <p>
       {#if activePoll && shareLink}
-        <strong>Share this poll</strong> - Copy link or scan QR to let others vote.
+        <strong>Share this poll</strong> - Anyone with the link can vote!
         <button class="qr-btn-inline" onclick={toggleQRCode}>📱 {showQRCode ? 'Hide' : 'Show'} QR Code</button>
       {:else}
-        <strong>Standalone mode</strong> - Create a poll to get a shareable link.
+        <strong>Cross-device voting</strong> - Create a poll and share the link with participants.
         <button class="qr-btn-inline" onclick={toggleQRCode}>📱 {showQRCode ? 'Hide' : 'Show'} QR Code</button>
       {/if}
     </p>
@@ -427,8 +590,9 @@
         <input type="text" readonly value={shareLink} class="share-link-input" />
         <button class="copy-btn" onclick={() => { 
           navigator.clipboard.writeText(shareLink);
-          // Could add a toast here
-        }}>📋 Copy</button>
+          linkCopied = true;
+          setTimeout(() => linkCopied = false, 2000);
+        }}>{linkCopied ? '✓ Copied!' : '📋 Copy'}</button>
       </div>
     </div>
   {/if}
@@ -441,7 +605,7 @@
   {/if}
   
   <!-- View Mode Selector (shown when poll is active) -->
-  {#if activePoll && viewMode === 'results'}
+  {#if activePoll && (viewMode === 'results' || viewMode === 'participate')}
     <div class="view-mode-controls">
       <button class="back-to-setup-btn" onclick={backToSetup}>
         ← Back to Setup
@@ -458,19 +622,14 @@
       <div class="not-found-icon">🔍</div>
       <h2>Poll Not Found</h2>
       <p class="not-found-message">
-        This poll link (<code>{sharedPollId}</code>) doesn't exist on this device.
+        This poll (<code>{sharedPollId}</code>) doesn't exist or has been closed.
       </p>
       <div class="not-found-explanation">
-        <h3>Why?</h3>
-        <p>
-          The standalone Quick Poll stores data <strong>locally in your browser</strong>. 
-          This means polls can only be accessed from the same device/browser that created them.
-        </p>
-        <h3>Solutions:</h3>
+        <h3>What happened?</h3>
         <ul>
-          <li>📺 <strong>Share your screen</strong> - The poll creator can display results for everyone</li>
-          <li>🎫 <strong>Use Event Mode</strong> - <a href="/create">Create an event</a> for cross-device polling with real-time sync</li>
-          <li>➕ <strong>Create your own poll</strong> below</li>
+          <li>The poll may have been closed by its creator</li>
+          <li>The poll link may have expired</li>
+          <li>The poll ID might be incorrect</li>
         </ul>
       </div>
       <button class="create-new-btn" onclick={() => { viewMode = 'setup'; sharedPollId = null; }}>
@@ -592,8 +751,8 @@
         </button>
       </form>
     </section>
-  {:else if viewMode === 'results' && activePoll}
-    <!-- Results View - Real-time Display -->
+  {:else if (viewMode === 'results' || viewMode === 'participate') && activePoll}
+    <!-- Results View - Real-time Display (also used for participate mode) -->
     <section class="results-display">
       <div class="poll-header">
         <div class="live-status">
@@ -979,6 +1138,61 @@
   .subtitle {
     color: #6b7280;
     margin: 0;
+  }
+  
+  /* Loading and Error States */
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #6366f1;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .loading-state p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+  
+  .error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    color: #dc2626;
+    font-size: 0.875rem;
+  }
+  
+  .error-message button {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #dc2626;
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 0;
+    line-height: 1;
   }
   
   .standalone-notice {
