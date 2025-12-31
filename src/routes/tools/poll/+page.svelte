@@ -62,7 +62,8 @@
   let shareLink = $state('');
   let linkCopied = $state(false);
   
-  // Poll ID for sharing
+  // Poll config (encoded in URL)
+  let pollConfig = $state('');
   let pollId = $state('');
   
   // Polling interval for real-time updates
@@ -104,12 +105,12 @@
     return id;
   }
   
-  // Load poll from server
-  async function loadPoll(id: string): Promise<LocalPoll | null> {
+  // Load poll from server using config
+  async function loadPoll(config: string): Promise<LocalPoll | null> {
     try {
-      const response = await fetch(`/api/tools/poll?id=${id}`);
+      const response = await fetch(`/api/tools/poll?c=${encodeURIComponent(config)}&id=${pollId}`);
       if (!response.ok) {
-        if (response.status === 404) {
+        if (response.status === 400 || response.status === 404) {
           return null;
         }
         throw new Error('Failed to load poll');
@@ -126,8 +127,8 @@
   function startPolling() {
     if (pollInterval) clearInterval(pollInterval);
     pollInterval = setInterval(async () => {
-      if (pollId && activePoll) {
-        const updated = await loadPoll(pollId);
+      if (pollConfig && activePoll) {
+        const updated = await loadPoll(pollConfig);
         if (updated) {
           activePoll = updated;
         }
@@ -153,29 +154,33 @@
     // Load voted state from localStorage
     const votedPolls = JSON.parse(localStorage.getItem('voted_polls') || '{}');
     
-    // Check URL for poll ID
+    // Check URL for poll config (new format)
+    const urlConfig = $page.url.searchParams.get('c');
     const urlPollId = $page.url.searchParams.get('id');
     
-    if (urlPollId) {
+    if (urlConfig) {
       isLoading = true;
-      loadPoll(urlPollId).then(poll => {
+      pollConfig = urlConfig;
+      pollId = urlPollId || urlConfig.substring(0, 16);
+      
+      loadPoll(urlConfig).then(poll => {
         isLoading = false;
         if (poll) {
           activePoll = poll;
-          pollId = urlPollId;
           viewMode = 'participate';
           updateShareLink();
           startPolling();
           
           // Restore voted state
-          if (votedPolls[urlPollId]) {
+          const stateKey = `${pollConfig}_${pollId}`;
+          if (votedPolls[stateKey]) {
             voted = true;
-            votedOptions = votedPolls[urlPollId].options || [];
-            upvotedResponses = votedPolls[urlPollId].upvoted || [];
+            votedOptions = votedPolls[stateKey].options || [];
+            upvotedResponses = votedPolls[stateKey].upvoted || [];
             userVoteCount = upvotedResponses.length;
           }
         } else {
-          sharedPollId = urlPollId;
+          sharedPollId = pollId;
           viewMode = 'not-found';
         }
       });
@@ -188,8 +193,9 @@
   
   // Update share link when poll is created
   function updateShareLink() {
-    if (!browser || !pollId) return;
+    if (!browser || !pollConfig) return;
     const url = new URL(window.location.href);
+    url.searchParams.set('c', pollConfig);
     url.searchParams.set('id', pollId);
     shareLink = url.toString();
   }
@@ -239,9 +245,10 @@
   
   // Save voted state to localStorage
   function saveVotedState() {
-    if (!browser || !pollId) return;
+    if (!browser || !pollConfig) return;
     const votedPolls = JSON.parse(localStorage.getItem('voted_polls') || '{}');
-    votedPolls[pollId] = {
+    const stateKey = `${pollConfig}_${pollId}`;
+    votedPolls[stateKey] = {
       options: votedOptions,
       upvoted: upvotedResponses
     };
@@ -287,7 +294,7 @@
       };
     }
     
-    // Save to server
+    // Save to server (returns encoded config)
     isLoading = true;
     errorMessage = '';
     try {
@@ -303,11 +310,13 @@
       
       const data = await response.json();
       activePoll = data.poll;
+      pollConfig = data.config; // Store the encoded config
       
       // Update URL and share link
       updateShareLink();
       if (browser) {
         const url = new URL(window.location.href);
+        url.searchParams.set('c', pollConfig);
         url.searchParams.set('id', pollId);
         window.history.pushState({}, '', url.toString());
       }
@@ -328,9 +337,10 @@
   function backToSetup() {
     stopPolling();
     
-    // Clear URL parameter
+    // Clear URL parameters
     if (browser) {
       const url = new URL(window.location.href);
+      url.searchParams.delete('c');
       url.searchParams.delete('id');
       window.history.pushState({}, '', url.toString());
     }
@@ -343,6 +353,7 @@
     upvotedResponses = [];
     userVoteCount = 0;
     pollId = '';
+    pollConfig = '';
     shareLink = '';
   }
   
@@ -361,7 +372,7 @@
       if (voted) return;
       
       try {
-        const response = await fetch(`/api/tools/poll?id=${pollId}`, {
+        const response = await fetch(`/api/tools/poll?c=${encodeURIComponent(pollConfig)}&id=${pollId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'vote', option, voterId })
@@ -392,7 +403,7 @@
     if (!activePoll || !openResponse.trim() || isOverWordLimit) return;
     
     try {
-      const response = await fetch(`/api/tools/poll?id=${pollId}`, {
+      const response = await fetch(`/api/tools/poll?c=${encodeURIComponent(pollConfig)}&id=${pollId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'addResponse', text: openResponse.trim() })
@@ -429,7 +440,7 @@
       
       // Add upvote
       try {
-        const response = await fetch(`/api/tools/poll?id=${pollId}`, {
+        const response = await fetch(`/api/tools/poll?c=${encodeURIComponent(pollConfig)}&id=${pollId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'upvoteResponse', responseId })
@@ -457,7 +468,7 @@
     // Submit all selected options
     try {
       for (const option of votedOptions) {
-        await fetch(`/api/tools/poll?id=${pollId}`, {
+        await fetch(`/api/tools/poll?c=${encodeURIComponent(pollConfig)}&id=${pollId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'vote', option, voterId })
@@ -465,7 +476,7 @@
       }
       
       // Reload poll to get updated counts
-      const updated = await loadPoll(pollId);
+      const updated = await loadPoll(pollConfig);
       if (updated) {
         activePoll = updated;
       }
@@ -482,9 +493,9 @@
     stopPolling();
     
     // Close poll on server
-    if (pollId) {
+    if (pollConfig) {
       try {
-        await fetch(`/api/tools/poll?id=${pollId}`, {
+        await fetch(`/api/tools/poll?c=${encodeURIComponent(pollConfig)}&id=${pollId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'close' })
@@ -494,9 +505,10 @@
       }
     }
     
-    // Clear URL parameter
+    // Clear URL parameters
     if (browser) {
       const url = new URL(window.location.href);
+      url.searchParams.delete('c');
       url.searchParams.delete('id');
       window.history.pushState({}, '', url.toString());
     }
@@ -508,6 +520,7 @@
     upvotedResponses = [];
     userVoteCount = 0;
     pollId = '';
+    pollConfig = '';
     shareLink = '';
     viewMode = 'setup';
   }
@@ -515,9 +528,10 @@
   function resetForNewPoll() {
     stopPolling();
     
-    // Clear URL parameter
+    // Clear URL parameters
     if (browser) {
       const url = new URL(window.location.href);
+      url.searchParams.delete('c');
       url.searchParams.delete('id');
       window.history.pushState({}, '', url.toString());
     }
@@ -529,6 +543,7 @@
     upvotedResponses = [];
     userVoteCount = 0;
     pollId = '';
+    pollConfig = '';
     shareLink = '';
     viewMode = 'setup';
     

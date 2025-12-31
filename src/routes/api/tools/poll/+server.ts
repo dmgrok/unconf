@@ -3,136 +3,223 @@
  * 
  * Allows creating and managing polls without an event.
  * 
- * STORAGE: Uses in-memory storage for serverless compatibility.
- * Polls persist while the serverless function is warm (typically ~5-15 min).
- * For persistent cross-device polls, users should use Event Mode.
+ * STORAGE STRATEGY:
+ * - Poll CONFIGURATION (question, options, type) is encoded in the URL itself
+ *   using base64, making it truly stateless and shareable across any device
+ * - Poll VOTES are stored in-memory and will reset when serverless function
+ *   restarts (this is acceptable for quick, ephemeral polls)
  * 
- * Note: This is intentionally simple. If persistence is needed, 
- * consider Vercel KV, Redis, or a database.
+ * The URL contains everything needed to reconstruct the poll, so even if
+ * votes are lost, participants can still see and vote on the poll.
+ * 
+ * For persistent polls with vote history, users should use Event Mode.
  */
 
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-// Type for standalone poll
-interface StandalonePoll {
-  id: string;
-  question: string;
-  pollType: 'options' | 'open';
-  options: string[];
-  votes: Record<string, number>; // option -> count (anonymous voting)
+// Type for poll configuration (encoded in URL)
+interface PollConfig {
+  q: string;        // question
+  t: 'o' | 'r';     // type: 'o' = options, 'r' = open responses
+  opts?: string[];  // options (for fixed options type)
+  m?: boolean;      // allowMultiple
+  mw?: number;      // maxWords (for open type)
+  mv?: number;      // maxVotesPerPerson
+}
+
+// Type for runtime poll state (in-memory only)
+interface PollState {
+  votes: Record<string, number>; // option -> count
   openResponses: Array<{ id: string; text: string; votes: number }>;
-  allowMultiple: boolean;
-  maxWords: number;
-  maxVotesPerPerson: number;
+  voterIds: string[];
   status: 'open' | 'closed';
   createdAt: string;
-  closedAt?: string;
-  voterIds: string[]; // Track who voted (by anonymous session ID)
 }
 
-// In-memory storage - works across requests while serverless function is warm
-// This is a module-level variable that persists between requests
-const pollsStore = new Map<string, StandalonePoll>();
+// In-memory storage for votes only - will be lost on cold start
+// This is acceptable for quick polls; the poll config is always in the URL
+const pollStates = new Map<string, PollState>();
 
-// Clean up old polls (older than 1 hour) to prevent memory leaks
-function cleanupOldPolls() {
-  const oneHourAgo = Date.now() - 60 * 60 * 1000;
-  for (const [id, poll] of pollsStore.entries()) {
-    const createdAt = new Date(poll.createdAt).getTime();
-    if (createdAt < oneHourAgo) {
-      pollsStore.delete(id);
+// Clean up old poll states (older than 2 hours) to prevent memory leaks
+function cleanupOldStates() {
+  const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000;
+  for (const [id, state] of pollStates.entries()) {
+    const createdAt = new Date(state.createdAt).getTime();
+    if (createdAt < twoHoursAgo) {
+      pollStates.delete(id);
     }
   }
 }
 
-function getPolls(): StandalonePoll[] {
-  cleanupOldPolls();
-  return Array.from(pollsStore.values());
+// Encode poll config to URL-safe base64
+function encodePollConfig(config: PollConfig): string {
+  const jsonStr = JSON.stringify(config);
+  // Use base64url encoding (URL-safe)
+  return Buffer.from(jsonStr).toString('base64url');
 }
 
-function getPoll(id: string): StandalonePoll | undefined {
-  cleanupOldPolls();
-  return pollsStore.get(id);
+// Decode poll config from base64
+function decodePollConfig(encoded: string): PollConfig | null {
+  try {
+    const jsonStr = Buffer.from(encoded, 'base64url').toString('utf-8');
+    return JSON.parse(jsonStr);
+  } catch {
+    return null;
+  }
 }
 
-function savePoll(poll: StandalonePoll): void {
-  pollsStore.set(poll.id, poll);
+// Get or create poll state for a given poll ID
+function getPollState(pollId: string): PollState {
+  cleanupOldStates();
+  let state = pollStates.get(pollId);
+  if (!state) {
+    state = {
+      votes: {},
+      openResponses: [],
+      voterIds: [],
+      status: 'open',
+      createdAt: new Date().toISOString()
+    };
+    pollStates.set(pollId, state);
+  }
+  return state;
 }
 
-// GET /api/tools/poll?id=xxx - Get a poll by ID
+function savePollState(pollId: string, state: PollState): void {
+  pollStates.set(pollId, state);
+}
+
+// GET /api/tools/poll?c=xxx - Get poll from config in URL
+// The 'c' param contains the base64-encoded poll configuration
 export const GET: RequestHandler = async ({ url }) => {
+  const configEncoded = url.searchParams.get('c');
   const pollId = url.searchParams.get('id');
   
-  if (!pollId) {
-    return json({ error: 'Poll ID required' }, { status: 400 });
+  if (!configEncoded) {
+    return json({ error: 'Poll config required. Use ?c=<encoded_config>' }, { status: 400 });
   }
   
-  try {
-    const poll = getPoll(pollId);
-    
-    if (!poll) {
-      return json({ error: 'Poll not found', pollId }, { status: 404 });
-    }
-    
-    // Return poll without voterIds for privacy
-    const { voterIds, ...publicPoll } = poll;
-    return json({ poll: publicPoll });
-  } catch (error) {
-    console.error('Error getting poll:', error);
-    return json({ error: 'Failed to get poll' }, { status: 500 });
+  const config = decodePollConfig(configEncoded);
+  if (!config) {
+    return json({ error: 'Invalid poll configuration' }, { status: 400 });
   }
+  
+  // Generate a poll ID from the config hash if not provided
+  const effectivePollId = pollId || configEncoded.substring(0, 16);
+  
+  // Get or create state for this poll
+  const state = getPollState(effectivePollId);
+  
+  // Initialize vote counts for options if needed
+  if (config.t === 'o' && config.opts) {
+    for (const opt of config.opts) {
+      if (state.votes[opt] === undefined) {
+        state.votes[opt] = 0;
+      }
+    }
+  }
+  
+  // Reconstruct full poll object from config + state
+  const poll = {
+    id: effectivePollId,
+    question: config.q,
+    pollType: config.t === 'o' ? 'options' : 'open',
+    options: config.opts || [],
+    votes: state.votes,
+    openResponses: state.openResponses,
+    allowMultiple: config.m || false,
+    maxWords: config.mw || 10,
+    maxVotesPerPerson: config.mv || 3,
+    status: state.status
+  };
+  
+  return json({ poll, config: configEncoded });
 };
 
-// POST /api/tools/poll - Create a new poll
+// POST /api/tools/poll - Create a new poll (returns encoded config)
 export const POST: RequestHandler = async ({ request }) => {
   try {
     const body = await request.json();
     
-    const poll: StandalonePoll = {
-      id: body.id || generateId(),
-      question: body.question,
-      pollType: body.pollType || 'options',
-      options: body.options || [],
-      votes: {},
-      openResponses: [],
-      allowMultiple: body.allowMultiple || false,
-      maxWords: body.maxWords || 10,
-      maxVotesPerPerson: body.maxVotesPerPerson || 3,
-      status: 'open',
-      createdAt: new Date().toISOString(),
-      voterIds: []
+    // Create compact config for URL encoding
+    const config: PollConfig = {
+      q: body.question,
+      t: body.pollType === 'options' ? 'o' : 'r'
     };
     
-    // Initialize vote counts
-    for (const option of poll.options) {
-      poll.votes[option] = 0;
+    if (body.pollType === 'options' && body.options?.length) {
+      config.opts = body.options.filter((o: string) => o.trim());
     }
     
-    savePoll(poll);
+    if (body.allowMultiple) config.m = true;
+    if (body.maxWords && body.maxWords !== 10) config.mw = body.maxWords;
+    if (body.maxVotesPerPerson && body.maxVotesPerPerson !== 3) config.mv = body.maxVotesPerPerson;
     
-    const { voterIds, ...publicPoll } = poll;
-    return json({ poll: publicPoll });
+    // Encode config
+    const configEncoded = encodePollConfig(config);
+    const pollId = body.id || configEncoded.substring(0, 16);
+    
+    // Initialize state
+    const state = getPollState(pollId);
+    
+    // Initialize vote counts for options
+    if (config.opts) {
+      for (const opt of config.opts) {
+        state.votes[opt] = 0;
+      }
+    }
+    
+    savePollState(pollId, state);
+    
+    // Return full poll object
+    const poll = {
+      id: pollId,
+      question: config.q,
+      pollType: config.t === 'o' ? 'options' : 'open',
+      options: config.opts || [],
+      votes: state.votes,
+      openResponses: state.openResponses,
+      allowMultiple: config.m || false,
+      maxWords: config.mw || 10,
+      maxVotesPerPerson: config.mv || 3,
+      status: state.status
+    };
+    
+    return json({ poll, config: configEncoded });
   } catch (error) {
     console.error('Error creating poll:', error);
     return json({ error: 'Failed to create poll' }, { status: 500 });
   }
 };
 
-// PATCH /api/tools/poll - Update poll (vote, add response, close)
+// PATCH /api/tools/poll?c=xxx - Update poll state (vote, add response, close)
 export const PATCH: RequestHandler = async ({ request, url }) => {
+  const configEncoded = url.searchParams.get('c');
   const pollId = url.searchParams.get('id');
   
-  if (!pollId) {
-    return json({ error: 'Poll ID required' }, { status: 400 });
+  if (!configEncoded) {
+    return json({ error: 'Poll config required' }, { status: 400 });
   }
+  
+  const config = decodePollConfig(configEncoded);
+  if (!config) {
+    return json({ error: 'Invalid poll configuration' }, { status: 400 });
+  }
+  
+  const effectivePollId = pollId || configEncoded.substring(0, 16);
   
   try {
     const body = await request.json();
-    const poll = getPoll(pollId);
+    const state = getPollState(effectivePollId);
     
-    if (!poll) {
-      return json({ error: 'Poll not found' }, { status: 404 });
+    // Initialize vote counts for options if needed
+    if (config.t === 'o' && config.opts) {
+      for (const opt of config.opts) {
+        if (state.votes[opt] === undefined) {
+          state.votes[opt] = 0;
+        }
+      }
     }
     
     // Handle vote
@@ -140,14 +227,15 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
       const voterId = body.voterId || 'anonymous';
       
       // Check if already voted (for single-choice)
-      if (!poll.allowMultiple && poll.voterIds.includes(voterId)) {
+      const allowMultiple = config.m || false;
+      if (!allowMultiple && state.voterIds.includes(voterId)) {
         return json({ error: 'Already voted' }, { status: 400 });
       }
       
-      if (poll.votes[body.option] !== undefined) {
-        poll.votes[body.option]++;
-        if (!poll.voterIds.includes(voterId)) {
-          poll.voterIds.push(voterId);
+      if (state.votes[body.option] !== undefined) {
+        state.votes[body.option]++;
+        if (!state.voterIds.includes(voterId)) {
+          state.voterIds.push(voterId);
         }
       }
     }
@@ -155,7 +243,7 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
     // Handle open response submission
     if (body.action === 'addResponse' && body.text) {
       const responseId = generateId();
-      poll.openResponses.push({
+      state.openResponses.push({
         id: responseId,
         text: body.text,
         votes: 0
@@ -164,7 +252,7 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
     
     // Handle upvote on open response
     if (body.action === 'upvoteResponse' && body.responseId) {
-      const response = poll.openResponses.find(r => r.id === body.responseId);
+      const response = state.openResponses.find(r => r.id === body.responseId);
       if (response) {
         response.votes++;
       }
@@ -172,14 +260,26 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
     
     // Handle close poll
     if (body.action === 'close') {
-      poll.status = 'closed';
-      poll.closedAt = new Date().toISOString();
+      state.status = 'closed';
     }
     
-    savePoll(poll);
+    savePollState(effectivePollId, state);
     
-    const { voterIds, ...publicPoll } = poll;
-    return json({ poll: publicPoll });
+    // Reconstruct full poll object
+    const poll = {
+      id: effectivePollId,
+      question: config.q,
+      pollType: config.t === 'o' ? 'options' : 'open',
+      options: config.opts || [],
+      votes: state.votes,
+      openResponses: state.openResponses,
+      allowMultiple: config.m || false,
+      maxWords: config.mw || 10,
+      maxVotesPerPerson: config.mv || 3,
+      status: state.status
+    };
+    
+    return json({ poll, config: configEncoded });
   } catch (error) {
     console.error('Error updating poll:', error);
     return json({ error: 'Failed to update poll' }, { status: 500 });
