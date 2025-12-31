@@ -21,8 +21,8 @@ const config = {
 				// Cache static pages for 1 hour, then regenerate
 				expiration: 3600
 			},
-			// Configure function splitting
-			split: true
+			// Disable function splitting for Hobby plan (max 12 functions)
+			split: false
 		}),
 
 		// Security configuration
