@@ -32,8 +32,11 @@
   let openResponse = $state('');
   let upvotedResponses = $state<string[]>([]); // Track which responses user has upvoted
   
-  // View mode: 'setup' (creating poll) | 'results' (display for participants) | 'participate' (joined via URL)
-  let viewMode = $state<'setup' | 'results' | 'participate'>('setup');
+  // View mode: 'setup' (creating poll) | 'results' (display for participants) | 'participate' (joined via URL) | 'not-found' (poll link not found)
+  let viewMode = $state<'setup' | 'results' | 'participate' | 'not-found'>('setup');
+  
+  // Track if we came from a shared link
+  let sharedPollId = $state<string | null>(null);
   
   // Create poll form
   let question = $state('');
@@ -102,8 +105,9 @@
           console.error('Failed to load poll:', e);
         }
       } else {
-        // Poll not found - show message
-        viewMode = 'setup';
+        // Poll not found - show helpful message
+        sharedPollId = urlPollId;
+        viewMode = 'not-found';
       }
     }
     
@@ -449,6 +453,32 @@
     </div>
   {/if}
   
+  {#if viewMode === 'not-found'}
+    <section class="poll-not-found">
+      <div class="not-found-icon">🔍</div>
+      <h2>Poll Not Found</h2>
+      <p class="not-found-message">
+        This poll link (<code>{sharedPollId}</code>) doesn't exist on this device.
+      </p>
+      <div class="not-found-explanation">
+        <h3>Why?</h3>
+        <p>
+          The standalone Quick Poll stores data <strong>locally in your browser</strong>. 
+          This means polls can only be accessed from the same device/browser that created them.
+        </p>
+        <h3>Solutions:</h3>
+        <ul>
+          <li>📺 <strong>Share your screen</strong> - The poll creator can display results for everyone</li>
+          <li>🎫 <strong>Use Event Mode</strong> - <a href="/create">Create an event</a> for cross-device polling with real-time sync</li>
+          <li>➕ <strong>Create your own poll</strong> below</li>
+        </ul>
+      </div>
+      <button class="create-new-btn" onclick={() => { viewMode = 'setup'; sharedPollId = null; }}>
+        ➕ Create New Poll
+      </button>
+    </section>
+  {/if}
+  
   {#if viewMode === 'setup' && !activePoll}
     <section class="create-poll">
       <h2>Create a Poll</h2>
@@ -716,6 +746,95 @@
     font-family: system-ui, -apple-system, sans-serif;
   }
   
+  /* Poll Not Found Section */
+  .poll-not-found {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 2rem;
+    background: var(--color-surface-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+  }
+  
+  .not-found-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .poll-not-found h2 {
+    margin: 0 0 0.75rem;
+    color: var(--color-text-primary);
+  }
+  
+  .not-found-message {
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+  }
+  
+  .not-found-message code {
+    background: var(--color-surface);
+    padding: 0.125rem 0.375rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: var(--color-primary);
+  }
+  
+  .not-found-explanation {
+    text-align: left;
+    background: var(--color-surface);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .not-found-explanation h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .not-found-explanation p {
+    margin: 0 0 1rem;
+    color: var(--color-text-primary);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  
+  .not-found-explanation ul {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+  }
+  
+  .not-found-explanation li {
+    margin-bottom: 0.5rem;
+    color: var(--color-text-primary);
+    font-size: 0.9375rem;
+  }
+  
+  .not-found-explanation a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+  
+  .create-new-btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .create-new-btn:hover {
+    background: var(--color-primary-hover);
+  }
+
   /* Setup view narrower */
   .create-poll {
     max-width: 500px;
