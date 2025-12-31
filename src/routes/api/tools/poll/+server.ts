@@ -2,14 +2,17 @@
  * Standalone Poll API
  * 
  * Allows creating and managing polls without an event.
- * Polls are stored server-side for cross-device access.
+ * 
+ * STORAGE: Uses in-memory storage for serverless compatibility.
+ * Polls persist while the serverless function is warm (typically ~5-15 min).
+ * For persistent cross-device polls, users should use Event Mode.
+ * 
+ * Note: This is intentionally simple. If persistence is needed, 
+ * consider Vercel KV, Redis, or a database.
  */
 
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { readFile, writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
 
 // Type for standalone poll
 interface StandalonePoll {
@@ -28,31 +31,33 @@ interface StandalonePoll {
   voterIds: string[]; // Track who voted (by anonymous session ID)
 }
 
-const DATA_DIR = path.join(process.cwd(), 'data', 'tools');
-const POLLS_FILE = path.join(DATA_DIR, 'standalone-polls.json');
+// In-memory storage - works across requests while serverless function is warm
+// This is a module-level variable that persists between requests
+const pollsStore = new Map<string, StandalonePoll>();
 
-async function ensureDataDir() {
-  if (!existsSync(DATA_DIR)) {
-    await mkdir(DATA_DIR, { recursive: true });
-  }
-}
-
-async function getPolls(): Promise<StandalonePoll[]> {
-  await ensureDataDir();
-  try {
-    if (!existsSync(POLLS_FILE)) {
-      return [];
+// Clean up old polls (older than 1 hour) to prevent memory leaks
+function cleanupOldPolls() {
+  const oneHourAgo = Date.now() - 60 * 60 * 1000;
+  for (const [id, poll] of pollsStore.entries()) {
+    const createdAt = new Date(poll.createdAt).getTime();
+    if (createdAt < oneHourAgo) {
+      pollsStore.delete(id);
     }
-    const content = await readFile(POLLS_FILE, 'utf-8');
-    return JSON.parse(content) as StandalonePoll[];
-  } catch {
-    return [];
   }
 }
 
-async function savePolls(polls: StandalonePoll[]): Promise<void> {
-  await ensureDataDir();
-  await writeFile(POLLS_FILE, JSON.stringify(polls, null, 2));
+function getPolls(): StandalonePoll[] {
+  cleanupOldPolls();
+  return Array.from(pollsStore.values());
+}
+
+function getPoll(id: string): StandalonePoll | undefined {
+  cleanupOldPolls();
+  return pollsStore.get(id);
+}
+
+function savePoll(poll: StandalonePoll): void {
+  pollsStore.set(poll.id, poll);
 }
 
 // GET /api/tools/poll?id=xxx - Get a poll by ID
@@ -64,8 +69,7 @@ export const GET: RequestHandler = async ({ url }) => {
   }
   
   try {
-    const polls = await getPolls();
-    const poll = polls.find(p => p.id === pollId);
+    const poll = getPoll(pollId);
     
     if (!poll) {
       return json({ error: 'Poll not found', pollId }, { status: 404 });
@@ -105,9 +109,7 @@ export const POST: RequestHandler = async ({ request }) => {
       poll.votes[option] = 0;
     }
     
-    const polls = await getPolls();
-    polls.push(poll);
-    await savePolls(polls);
+    savePoll(poll);
     
     const { voterIds, ...publicPoll } = poll;
     return json({ poll: publicPoll });
@@ -127,14 +129,11 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
   
   try {
     const body = await request.json();
-    const polls = await getPolls();
-    const index = polls.findIndex(p => p.id === pollId);
+    const poll = getPoll(pollId);
     
-    if (index === -1) {
+    if (!poll) {
       return json({ error: 'Poll not found' }, { status: 404 });
     }
-    
-    const poll = polls[index];
     
     // Handle vote
     if (body.action === 'vote' && body.option) {
@@ -177,7 +176,7 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
       poll.closedAt = new Date().toISOString();
     }
     
-    await savePolls(polls);
+    savePoll(poll);
     
     const { voterIds, ...publicPoll } = poll;
     return json({ poll: publicPoll });
