@@ -7,17 +7,41 @@
 
 Vercel's serverless architecture doesn't support persistent WebSocket connections. Our Socket.io server (`src/lib/websocket/server.ts`) requires a persistent server to maintain real-time connections.
 
-## Current Solution: Polling Fallback
+## Current Solution: Polling Fallback + SessionStorage
 
 The WebSocket client (`src/lib/websocket/client.ts`) automatically detects when running on Vercel and falls back to HTTP polling:
 
 - **Poll interval**: 3 seconds
 - **Auto-detection**: Checks if `VITE_WEBSOCKET_URL` is configured
 - **Graceful degradation**: WebSocket failures trigger polling fallback
+- **Poll data**: Stored in `sessionStorage` (same-tab persistence)
+
+### Current Limitations
+
+The standalone poll tool (`/tools/poll`) currently has these limitations:
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Create poll | ✅ Works | Generates unique ID |
+| Vote in poll | ✅ Works | Within same browser tab |
+| Share URL | ✅ Works | URL includes poll ID |
+| QR code | ✅ Works | Links to specific poll |
+| Cross-tab sync | ⚠️ Same-device only | Uses `storage` events |
+| Cross-device voting | ❌ Not yet | Requires server-side storage |
+
+**Why**: `sessionStorage` is tab-specific. Each tab/device has its own session.
+
+### Workarounds for Cross-Device Polling
+
+For events needing cross-device voting today:
+1. **Use event-connected poll** (`/events/[id]/tools/poll`) - Uses server storage
+2. **Screen share the results** - Organizer shares their screen with live results
+3. **Wait for server-side storage** - Future enhancement
 
 This works well for:
 - ✅ Small events (<50 concurrent users)
-- ✅ Tools like Poll where 3-second delay is acceptable
+- ✅ Same-device multi-tab scenarios
+- ✅ Organizer presenting live results on shared screen
 - ✅ Zero additional infrastructure cost
 
 ## Future Options (When Scaling)
