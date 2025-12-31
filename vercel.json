@@ -4,14 +4,6 @@
   "installCommand": "npm install",
   "framework": "sveltekit",
   "regions": ["iad1"],
-  "functions": {
-    "src/routes/api/**/*.js": {
-      "maxDuration": 10
-    },
-    "src/routes/api/**/*.ts": {
-      "maxDuration": 10
-    }
-  },
   "headers": [
     {
       "source": "/(.*)",
