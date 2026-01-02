@@ -177,10 +177,10 @@
     return name;
   }
   
-  // Load poll from server using config
-  async function loadPoll(config: string): Promise<LocalPoll | null> {
+  // Load poll from server using ID
+  async function loadPoll(): Promise<LocalPoll | null> {
     try {
-      const response = await fetch(`/api/tools/poll?c=${encodeURIComponent(config)}&id=${pollId}`);
+      const response = await fetch(`/api/tools/poll?id=${pollId}`);
       if (!response.ok) {
         if (response.status === 400 || response.status === 404) {
           return null;
@@ -199,9 +199,9 @@
   function startPolling() {
     if (pollInterval) clearInterval(pollInterval);
     pollInterval = setInterval(async () => {
-      if (pollConfig && activePoll) {
+      if (pollId && activePoll) {
         const prevTotal = Object.values(activePoll.votes).reduce((sum, count) => sum + count, 0);
-        const updated = await loadPoll(pollConfig);
+        const updated = await loadPoll();
         if (updated) {
           const newTotal = Object.values(updated.votes).reduce((sum, count) => sum + count, 0);
           
@@ -240,29 +240,29 @@
     // Load voted state from localStorage
     const votedPolls = JSON.parse(localStorage.getItem('voted_polls') || '{}');
     
-    // Check URL for poll config (new format)
-    const urlConfig = $page.url.searchParams.get('c');
+    // Check URL for poll ID (supports legacy 'c' param for backwards compatibility)
     const urlPollId = $page.url.searchParams.get('id');
+    const urlConfig = $page.url.searchParams.get('c'); // Legacy support
     
-    if (urlConfig) {
+    if (urlPollId || urlConfig) {
       isLoading = true;
-      pollConfig = urlConfig;
-      pollId = urlPollId || urlConfig.substring(0, 16);
+      pollId = urlPollId || 'legacy-poll';
+      if (urlConfig) pollConfig = urlConfig; // Keep for legacy support
       
-      loadPoll(urlConfig).then(poll => {
+      loadPoll().then(poll => {
         isLoading = false;
         if (poll) {
           activePoll = poll;
+          pollId = poll.id; // Ensure we have the correct ID
           viewMode = 'participate';
           updateShareLink();
           startPolling();
           
           // Restore voted state
-          const stateKey = `${pollConfig}_${pollId}`;
-          if (votedPolls[stateKey]) {
+          if (votedPolls[pollId]) {
             voted = true;
-            votedOptions = votedPolls[stateKey].options || [];
-            upvotedResponses = votedPolls[stateKey].upvoted || [];
+            votedOptions = votedPolls[pollId].options || [];
+            upvotedResponses = votedPolls[pollId].upvoted || [];
             userVoteCount = upvotedResponses.length;
           }
         } else {
@@ -279,9 +279,10 @@
   
   // Update share link when poll is created
   function updateShareLink() {
-    if (!browser || !pollConfig) return;
+    if (!browser || !pollId) return;
     const url = new URL(window.location.href);
-    url.searchParams.set('c', pollConfig);
+    // Clean URL - only needs ID
+    url.search = '';
     url.searchParams.set('id', pollId);
     shareLink = url.toString();
   }
@@ -331,10 +332,9 @@
   
   // Save voted state to localStorage
   function saveVotedState() {
-    if (!browser || !pollConfig) return;
+    if (!browser || !pollId) return;
     const votedPolls = JSON.parse(localStorage.getItem('voted_polls') || '{}');
-    const stateKey = `${pollConfig}_${pollId}`;
-    votedPolls[stateKey] = {
+    votedPolls[pollId] = {
       options: votedOptions,
       upvoted: upvotedResponses
     };
@@ -364,7 +364,7 @@
       allowOpenResponses,
     };
     
-    // Save to server (returns encoded config)
+    // Save to server
     isLoading = true;
     errorMessage = '';
     try {
@@ -380,13 +380,13 @@
       
       const data = await response.json();
       activePoll = data.poll;
-      pollConfig = data.config; // Store the encoded config
+      pollId = data.poll.id; // Use ID from server
       
-      // Update URL and share link
+      // Update URL with clean ID-only format
       updateShareLink();
       if (browser) {
         const url = new URL(window.location.href);
-        url.searchParams.set('c', pollConfig);
+        url.search = '';
         url.searchParams.set('id', pollId);
         window.history.pushState({}, '', url.toString());
       }
@@ -446,7 +446,7 @@
       if (voted) return;
       
       try {
-        const response = await fetch(`/api/tools/poll?c=${encodeURIComponent(pollConfig)}&id=${pollId}`, {
+        const response = await fetch(`/api/tools/poll?id=${pollId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'vote', option, voterId })
@@ -477,7 +477,7 @@
     if (!activePoll || !openResponse.trim() || isOverWordLimit) return;
     
     try {
-      const response = await fetch(`/api/tools/poll?c=${encodeURIComponent(pollConfig)}&id=${pollId}`, {
+      const response = await fetch(`/api/tools/poll?id=${pollId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'addResponse', text: openResponse.trim() })
@@ -514,7 +514,7 @@
       
       // Add upvote
       try {
-        const response = await fetch(`/api/tools/poll?c=${encodeURIComponent(pollConfig)}&id=${pollId}`, {
+        const response = await fetch(`/api/tools/poll?id=${pollId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'upvoteResponse', responseId })
@@ -542,7 +542,7 @@
     // Submit all selected options
     try {
       for (const option of votedOptions) {
-        await fetch(`/api/tools/poll?c=${encodeURIComponent(pollConfig)}&id=${pollId}`, {
+        await fetch(`/api/tools/poll?id=${pollId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'vote', option, voterId })
@@ -550,7 +550,7 @@
       }
       
       // Reload poll to get updated counts
-      const updated = await loadPoll(pollConfig);
+      const updated = await loadPoll();
       if (updated) {
         activePoll = updated;
       }
@@ -567,9 +567,9 @@
     stopPolling();
     
     // Close poll on server
-    if (pollConfig) {
+    if (pollId) {
       try {
-        await fetch(`/api/tools/poll?c=${encodeURIComponent(pollConfig)}&id=${pollId}`, {
+        await fetch(`/api/tools/poll?id=${pollId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'close' })
