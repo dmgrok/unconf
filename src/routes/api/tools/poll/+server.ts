@@ -61,13 +61,20 @@ function encodePollConfig(config: PollConfig): string {
   return Buffer.from(jsonStr).toString('base64url');
 }
 
-// Decode poll config from base64
+// Decode poll config from base64 (supports both base64url and standard base64)
 function decodePollConfig(encoded: string): PollConfig | null {
   try {
+    // First try base64url encoding
     const jsonStr = Buffer.from(encoded, 'base64url').toString('utf-8');
     return JSON.parse(jsonStr);
   } catch {
-    return null;
+    // Fall back to standard base64 encoding for backwards compatibility
+    try {
+      const jsonStr = Buffer.from(encoded, 'base64').toString('utf-8');
+      return JSON.parse(jsonStr);
+    } catch {
+      return null;
+    }
   }
 }
 
