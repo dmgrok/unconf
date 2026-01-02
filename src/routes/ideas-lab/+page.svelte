@@ -169,6 +169,18 @@
           <h3>{tool.name}</h3>
           <p class="description">{tool.description}</p>
           
+          {#if tool.suggestedBy}
+            <div class="suggested-by">
+              <span class="suggested-icon">💭</span>
+              <span class="suggested-text">
+                Suggested by <strong>{tool.suggestedBy.name}</strong>
+                {#if tool.suggestedBy.role}
+                  <span class="suggested-role">({tool.suggestedBy.role})</span>
+                {/if}
+              </span>
+            </div>
+          {/if}
+          
           {#if tool.longDescription}
             <p class="long-description">{tool.longDescription}</p>
           {/if}
@@ -461,6 +473,32 @@
     padding-top: 0.75rem;
     border-top: 1px dashed #27272a;
     line-height: 1.5;
+  }
+  
+  /* Attribution */
+  .suggested-by {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(99, 102, 241, 0.1);
+    border-radius: 8px;
+    font-size: 0.75rem;
+    color: #a5b4fc;
+  }
+  
+  .suggested-icon {
+    font-size: 0.875rem;
+  }
+  
+  .suggested-text strong {
+    color: #c7d2fe;
+  }
+  
+  .suggested-role {
+    color: #818cf8;
+    font-style: italic;
   }
   
   .no-functionality-notice {

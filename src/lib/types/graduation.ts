@@ -135,6 +135,12 @@ export interface GraduatedToolConfig {
   enabled: boolean;
   /** URL path (null for wireframes with no page) */
   path: string | null;
+  /** Who suggested this idea (for community attribution) */
+  suggestedBy?: {
+    name: string;
+    role?: string;
+    github?: string;
+  };
   /** Individual features within the tool */
   features?: ToolFeature[];
   /** Graduation metrics (for non-wireframe tools) */
@@ -220,6 +226,7 @@ export const TOOL_REGISTRY: GraduatedToolConfig[] = [
     statusSince: '2026-01-02',
     enabled: true,
     path: null,  // No page - wireframe only
+    suggestedBy: { name: 'Community Request', role: 'Event Organizers' },
   },
   {
     toolId: 'icebreaker',
@@ -231,6 +238,7 @@ export const TOOL_REGISTRY: GraduatedToolConfig[] = [
     statusSince: '2026-01-02',
     enabled: true,
     path: null,
+    suggestedBy: { name: 'Community Request', role: 'Facilitators' },
   },
   {
     toolId: 'retro',
@@ -242,6 +250,7 @@ export const TOOL_REGISTRY: GraduatedToolConfig[] = [
     statusSince: '2026-01-02',
     enabled: true,
     path: null,
+    suggestedBy: { name: 'Community Request', role: 'Agile Teams' },
   },
   {
     toolId: 'networking',
@@ -253,6 +262,7 @@ export const TOOL_REGISTRY: GraduatedToolConfig[] = [
     statusSince: '2026-01-02',
     enabled: true,
     path: null,
+    suggestedBy: { name: 'Community Request', role: 'Conference Organizers' },
   },
   {
     toolId: 'qa',
@@ -264,6 +274,7 @@ export const TOOL_REGISTRY: GraduatedToolConfig[] = [
     statusSince: '2026-01-02',
     enabled: true,
     path: null,
+    suggestedBy: { name: 'Community Request', role: 'Speakers & Moderators' },
   },
   {
     toolId: 'leaderboard',
@@ -275,6 +286,7 @@ export const TOOL_REGISTRY: GraduatedToolConfig[] = [
     statusSince: '2026-01-02',
     enabled: true,
     path: null,
+    suggestedBy: { name: 'Community Request', role: 'Engagement Managers' },
   },
 ];
 
