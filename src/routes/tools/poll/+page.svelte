@@ -51,8 +51,8 @@
   // View mode: 'setup' (creating poll) | 'results' (display for participants) | 'participate' (joined via URL) | 'not-found' (poll link not found)
   let viewMode = $state<'setup' | 'results' | 'participate' | 'not-found'>('setup');
   
-  // Visualization mode: 'list' | 'bubbles' | 'bars'
-  let vizMode = $state<'list' | 'bubbles' | 'bars'>('list');
+  // Visualization mode: 'list' | 'bubbles'
+  let vizMode = $state<'list' | 'bubbles'>('list');
   
   // Vote notifications
   let voteNotifications = $state<VoteNotification[]>([]);
@@ -143,9 +143,16 @@
       : 0
   );
   
-  // Generate a unique poll ID
+  // Word lists for friendly poll IDs
+  const adjectives = ['happy', 'swift', 'bright', 'calm', 'cool', 'bold', 'wild', 'free', 'warm', 'wise'];
+  const animals = ['tiger', 'eagle', 'panda', 'whale', 'fox', 'wolf', 'hawk', 'bear', 'owl', 'lion'];
+  
+  // Generate a friendly, human-readable poll ID
   function generatePollId(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substring(2, 8);
+    const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const animal = animals[Math.floor(Math.random() * animals.length)];
+    const num = Math.floor(Math.random() * 100);
+    return `${adj}-${animal}-${num}`;
   }
   
   // Get or create voter ID
@@ -422,6 +429,8 @@
   
   async function vote(option: string) {
     if (!activePoll || activePoll.pollType !== 'options') return;
+    // Allow voting in both participate and results (organizer) mode
+    if (viewMode !== 'participate' && viewMode !== 'results') return;
     
     const maxVotes = activePoll.maxOptionsVotes ?? 1;
     
@@ -865,15 +874,6 @@
           <span class="viz-icon">🫧</span>
           <span class="viz-label">Bubbles</span>
         </button>
-        <button 
-          class="viz-mode-btn" 
-          class:active={vizMode === 'bars'}
-          onclick={() => vizMode = 'bars'}
-          title="Bar Chart View"
-        >
-          <span class="viz-icon">📊</span>
-          <span class="viz-label">Bars</span>
-        </button>
       </div>
       
       <!-- List View (Original) -->
@@ -942,47 +942,6 @@
       {/if}
       
       <!-- Horizontal Bar Chart View -->
-      {#if vizMode === 'bars'}
-        <div class="bar-chart-container">
-          {#each activePoll.options as option, index}
-            {@const voteCount = activePoll.votes[option] || 0}
-            {@const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0}
-            {@const isSelected = votedOptions.includes(option)}
-            {@const colors = ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ef4444', '#14b8a6', '#f97316', '#84cc16']}
-            
-            <button 
-              class="bar-row"
-              class:voted
-              class:selected={isSelected}
-              onclick={() => vote(option)}
-              disabled={(activePoll.maxOptionsVotes ?? 1) === 1 && voted}
-            >
-              <div class="bar-label-container">
-                <span class="bar-option-label">{option}</span>
-                {#if isSelected && voted}
-                  <span class="bar-check">✓</span>
-                {/if}
-              </div>
-              <div class="bar-track">
-                <div 
-                  class="bar-fill" 
-                  style="
-                    width: {Math.max(percentage, 2)}%;
-                    background: linear-gradient(90deg, {colors[index % colors.length]}, {colors[index % colors.length]}cc);
-                  "
-                >
-                  {#if percentage > 15}
-                    <span class="bar-value-inside">{voteCount} ({percentage}%)</span>
-                  {/if}
-                </div>
-                {#if percentage <= 15}
-                  <span class="bar-value-outside">{voteCount} ({percentage}%)</span>
-                {/if}
-              </div>
-            </button>
-          {/each}
-        </div>
-      {/if}
       
       {#if (activePoll.maxOptionsVotes ?? 1) > 1 && !voted}
         <button class="submit-vote-btn" onclick={submitMultipleVote} disabled={votedOptions.length === 0}>
@@ -2280,96 +2239,6 @@
     font-weight: 700;
     font-size: 0.8rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Horizontal Bar Chart */
-  .bar-chart-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem 0;
-  }
-  
-  .bar-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: rgba(0, 0, 0, 0.02);
-    border: 2px solid transparent;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: left;
-  }
-  
-  .bar-row:hover:not(:disabled) {
-    background: rgba(99, 102, 241, 0.05);
-    border-color: rgba(99, 102, 241, 0.2);
-  }
-  
-  .bar-row:disabled {
-    cursor: default;
-  }
-  
-  .bar-row.selected {
-    background: rgba(99, 102, 241, 0.1);
-    border-color: #6366f1;
-  }
-  
-  .bar-label-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .bar-option-label {
-    font-weight: 600;
-    font-size: 1rem;
-    color: #374151;
-  }
-  
-  .bar-check {
-    color: #6366f1;
-    font-weight: 700;
-  }
-  
-  .bar-track {
-    height: 2.5rem;
-    background: #e5e7eb;
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  
-  .bar-fill {
-    height: 100%;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 0.75rem;
-    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    min-width: 2%;
-  }
-  
-  .bar-value-inside {
-    color: white;
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    white-space: nowrap;
-  }
-  
-  .bar-value-outside {
-    position: absolute;
-    left: calc(2% + 0.75rem);
-    color: #6b7280;
-    font-weight: 600;
-    font-size: 0.875rem;
-    white-space: nowrap;
   }
   
 </style>
