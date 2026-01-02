@@ -355,7 +355,7 @@
 </script>
 
 <svelte:head>
-  <title>Create Survey - Event Tools Lab</title>
+  <title>Create Survey - unconf tools Lab</title>
   <meta name="description" content="Create surveys with multiple question types. Free, no signup required." />
 </svelte:head>
 

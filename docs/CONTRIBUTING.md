@@ -1,6 +1,6 @@
-# Contributing to Event Tools Lab
+# Contributing to unconf tools Lab
 
-> Guidelines for contributing code and documentation to Event Tools Lab.
+> Guidelines for contributing code and documentation to unconf tools Lab.
 
 ## Table of Contents
 - [Getting Started](#getting-started)

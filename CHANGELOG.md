@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Event Tools Lab will be documented in this file.
+All notable changes to unconf tools Lab will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -175,7 +175,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated project focus to community-driven micro-tools
 - Tools are now event-connected (removed standalone mode)
 - Updated copilot-instructions.md with new project philosophy
-- **Rebranded to UnConference.io** - Updated README.md and documentation from "Event Tools Lab" to "unconference.io"
+- **Rebranded to UnConference.io** - Updated README.md and documentation from "unconf tools Lab" to "unconference.io"
 
 ### Fixed
 - Poll tool `backToSetup()` function - Removed duplicate viewMode assignment that caused blank page

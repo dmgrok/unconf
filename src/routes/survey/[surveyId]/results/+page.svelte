@@ -82,7 +82,7 @@
 </script>
 
 <svelte:head>
-  <title>Results: {survey?.title || 'Survey'} - Event Tools Lab</title>
+  <title>Results: {survey?.title || 'Survey'} - unconf tools Lab</title>
 </svelte:head>
 
 <main>

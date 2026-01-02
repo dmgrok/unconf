@@ -127,7 +127,7 @@
 		});
 
 		return () => {
-			if (intervalId !== undefined) {
+			if (intervalId !== null) {
 				sessionUtils.stopSessionMonitoring(intervalId);
 			}
 			// Cleanup GrowthBook

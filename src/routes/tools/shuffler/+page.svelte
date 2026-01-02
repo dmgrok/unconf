@@ -604,14 +604,14 @@ Jack Anderson`;
 </script>
 
 <svelte:head>
-  <title>Group Shuffler - Event Tools Lab</title>
+  <title>Group Shuffler - unconf tools Lab</title>
   <meta name="description" content="Randomly distribute people into diverse groups. Paste from Excel, configure columns, and maximize team diversity." />
 </svelte:head>
 
 <div class="shuffler-container">
   <header>
     <div class="header-row">
-      <a href="/" class="back">← Event Tools Lab</a>
+      <a href="/" class="back">← unconf tools Lab</a>
       {#if hasRealData || advancedShuffled}
         <button class="save-activity-btn" onclick={openSaveDialog}>
           💾 {savedActivity ? 'Saved!' : 'Save Activity'}

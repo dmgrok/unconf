@@ -1,4 +1,4 @@
-# Event Tools Lab - AI Coding Agent Instructions
+# unconf tools Lab - AI Coding Agent Instructions
 
 > **Community-driven micro-tools for professional events.** Built entirely from community requests using AI-assisted development.
 
@@ -208,7 +208,7 @@ const outOfScope = manifest.outOfScope.categories
 - ❌ Duplicates free/cheap existing tools
 - ❌ Requires significant infrastructure
 - ❌ Complex enterprise features
-- ❌ Doesn't fit "simple event tools" scope
+- ❌ Doesn't fit "simple unconf tools" scope
 - ❌ **Technology-focused** - specifies implementation over user need (from non-core team)
 
 ## Agent Implementation Requirements

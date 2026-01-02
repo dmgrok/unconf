@@ -1,7 +1,7 @@
 /**
- * Event Tools Lab - Simplified Type Definitions
+ * unconf tools Lab - Simplified Type Definitions
  * 
- * Core types for the community-driven event tools platform.
+ * Core types for the community-driven unconf tools platform.
  * Kept intentionally minimal - add complexity only when needed.
  */
 

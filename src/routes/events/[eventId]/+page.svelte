@@ -67,7 +67,7 @@
 </script>
 
 <svelte:head>
-  <title>{event?.name || 'Event'} - Event Tools Lab</title>
+  <title>{event?.name || 'Event'} - unconf tools Lab</title>
 </svelte:head>
 
 <main>

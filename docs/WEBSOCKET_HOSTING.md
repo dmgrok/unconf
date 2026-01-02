@@ -1,4 +1,4 @@
-# WebSocket Hosting Options for Event Tools Lab
+# WebSocket Hosting Options for unconf tools Lab
 
 > **Current Status**: Using polling fallback for Vercel serverless deployment.  
 > **Decision Date**: December 31, 2025

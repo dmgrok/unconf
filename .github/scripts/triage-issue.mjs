@@ -47,7 +47,7 @@ DEFINITIONS:
   Examples: "help organizers shuffle teams faster", "participants need to vote on topics", "make check-in easier"
 
 PROJECT CONTEXT:
-This is an event tools platform. Good requests describe:
+This is an unconf tools platform. Good requests describe:
 - Problems event organizers or participants face
 - What they're trying to accomplish
 - Specific event scenarios or use cases
@@ -119,7 +119,7 @@ Be strict: If it mentions ANY specific technology as a requirement (not just an 
       issue_number: issue.number,
       body: `🤖 **Please Resubmit: Focus on the Problem, Not the Tech**
 
-Hey @${author}! Thanks for your interest in improving Event Tools Lab! 
+Hey @${author}! Thanks for your interest in improving unconf tools Lab! 
 
 We noticed your request focuses on **implementation details** rather than **user problems**. As a community-driven project, we prioritize requests that describe:
 
@@ -178,14 +178,14 @@ Use our [Tool Request](../../issues/new?template=tool-request.yml) or [Improveme
   let scopeAnalysis = null;
   
   try {
-    const scopePrompt = `Analyze this GitHub issue to determine if it's a COMMODITY TOOL or OUT OF SCOPE for an event tools platform.
+    const scopePrompt = `Analyze this GitHub issue to determine if it's a COMMODITY TOOL or OUT OF SCOPE for an unconf tools platform.
 
 ISSUE:
 Title: ${title}
 Body: ${body}
 
 PROJECT CONTEXT:
-This is a small event tools platform focused on simple, event-specific micro-tools.
+This is a small unconf tools platform focused on simple, event-specific micro-tools.
 
 DEFINITIONS:
 
@@ -322,10 +322,10 @@ If there's an event-specific twist we're missing, we're all ears! Resubmit with 
 
 **Detected concepts:** ${concepts}
 
-That's beyond our humble event tools orbit! We're more "cozy workshop helper" than "enterprise space station." 🛸
+That's beyond our humble unconf tools orbit! We're more "cozy workshop helper" than "enterprise space station." 🛸
 
 **Our philosophy:**
-- ✅ Simple, single-purpose event tools
+- ✅ Simple, single-purpose unconf tools
 - ✅ Works without complex setup
 - ✅ Small team, realistic scope
 - ❌ No enterprise features until proven necessary
@@ -508,7 +508,7 @@ We're not saying no forever - just "tell us more!" The best tools come from comp
 
     comment = `✅ **Issue Accepted for Review**
 
-This looks like a valuable addition to Event Tools Lab!
+This looks like a valuable addition to unconf tools Lab!
 
 **Value assessment:**
 ${valueResult.valueDetails.map(d => `- ${d}`).join('\n')}
@@ -582,7 +582,7 @@ async function checkDuplicateWithAI(github, context, manifest, data) {
       const evalCriteria = manifest.evaluationCriteria?.mustHave?.map(c => `- ${c}`).join('\n') 
         || 'Value for both organizers AND participants';
 
-      const analysisPrompt = `You are evaluating a GitHub issue for an event tools platform.
+      const analysisPrompt = `You are evaluating a GitHub issue for an unconf tools platform.
 
 EXISTING TOOLS AND CAPABILITIES:
 ${toolsSummary}

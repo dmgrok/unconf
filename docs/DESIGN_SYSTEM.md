@@ -1,6 +1,6 @@
-# Event Tools Lab - Design System
+# unconf tools Lab - Design System
 
-> Design documentation for the AI-built event tools platform.
+> Design documentation for the AI-built unconf tools platform.
 
 ---
 

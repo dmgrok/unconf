@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "lastUpdated": "2025-12-30",
   "project": {
-    "name": "Event Tools Lab",
+    "name": "unconf tools Lab",
     "purpose": "Community-driven micro-tools for professional events",
     "philosophy": "One tool = one problem. No feature creep."
   },
@@ -182,7 +182,7 @@
       "Duplicates free/cheap existing tools",
       "Requires significant infrastructure",
       "Complex enterprise features",
-      "Doesn't fit 'simple event tools' scope"
+      "Doesn't fit 'simple unconf tools' scope"
     ]
   }
 }

@@ -73,7 +73,7 @@
 </script>
 
 <svelte:head>
-  <title>Create Event - Event Tools Lab</title>
+  <title>Create Event - unconf tools Lab</title>
 </svelte:head>
 
 <main>

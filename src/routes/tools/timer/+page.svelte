@@ -84,13 +84,13 @@
 </script>
 
 <svelte:head>
-  <title>{label || 'Session Timer'} - Event Tools Lab</title>
+  <title>{label || 'Session Timer'} - unconf tools Lab</title>
   <meta name="description" content="Simple countdown timer for sessions. Fullscreen display mode available." />
 </svelte:head>
 
 <main class:urgent class:done class:display-mode={displayMode}>
   {#if !displayMode}
-    <a href="/" class="back">← Event Tools Lab</a>
+    <a href="/" class="back">← unconf tools Lab</a>
   {/if}
   
   {#if label}

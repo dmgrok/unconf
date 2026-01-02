@@ -1,5 +1,5 @@
 /**
- * Event Tools Lab - Simple Storage Layer
+ * unconf tools Lab - Simple Storage Layer
  * 
  * File-based JSON storage for events, participants, and tool data.
  * Intentionally simple - can be replaced with a database later if needed.

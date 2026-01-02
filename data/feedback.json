@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "lastUpdated": "2026-01-02T10:55:11.942Z",
+  "feedback": [
+    {
+      "type": "concept_vote",
+      "toolId": "scheduler",
+      "sessionId": "c21c934d-f7cb-4137-9e6e-49438440d6b2",
+      "vote": "not_interested",
+      "moderationStatus": "approved",
+      "id": "84049d86-d549-4676-bb0f-22bf7eba637d",
+      "createdAt": "2026-01-02T10:54:24.581Z"
+    },
+    {
+      "type": "improvement",
+      "toolId": "new",
+      "sessionId": "c21c934d-f7cb-4137-9e6e-49438440d6b2",
+      "message": "yrsy",
+      "moderationStatus": "flagged",
+      "moderation": {
+        "status": "flagged",
+        "confidence": 0.5,
+        "reason": "Automated moderation unavailable - flagged for manual review",
+        "moderatedAt": "2026-01-02T10:55:11.941Z",
+        "method": "auto"
+      },
+      "id": "ffe23f24-b879-4866-92d2-d204f04eb5f0",
+      "createdAt": "2026-01-02T10:55:11.942Z"
+    }
+  ],
+  "githubIssues": {
+    "scheduler": {
+      "number": 22,
+      "url": "https://github.com/dmgrok/unconf/issues/22",
+      "createdAt": "2026-01-02T10:54:25Z",
+      "lastSyncedAt": "2026-01-02T10:54:25.494Z"
+    }
+  }
+}

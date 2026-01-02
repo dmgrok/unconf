@@ -19,7 +19,7 @@ body:
         - Duplicate free tools that already exist
         - Focus on technology instead of user problems
         - Require significant infrastructure
-        - Don't fit the "simple event tools" scope
+        - Don't fit the "simple unconf tools" scope
 
   - type: input
     id: tool-name

@@ -1,6 +1,6 @@
 # AGENTS.md - AI Agent Instructions
 
-> Instructions for AI coding agents working on Event Tools Lab.
+> Instructions for AI coding agents working on unconf tools Lab.
 
 ## Quick Reference
 

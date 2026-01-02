@@ -11,15 +11,15 @@
 </script>
 
 <svelte:head>
-  <title>Tools - Event Tools Lab</title>
-  <meta name="description" content="Free event tools: Team Shuffler, Session Timer, Quick Polls, and more." />
+  <title>Tools - unconf tools Lab</title>
+  <meta name="description" content="Free unconf tools: Team Shuffler, Session Timer, Quick Polls, and more." />
 </svelte:head>
 
 <main>
   <header>
-    <a href="/" class="back">← Event Tools Lab</a>
+    <a href="/" class="back">← unconf tools Lab</a>
     <h1>🧰 All Tools</h1>
-    <p class="subtitle">Free event tools - use standalone or with an event</p>
+    <p class="subtitle">Free unconf tools - use standalone or with an event</p>
   </header>
   
   <div class="mode-toggle">

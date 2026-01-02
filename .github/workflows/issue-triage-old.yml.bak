@@ -537,7 +537,7 @@ jobs:
                 issue_number: issue.number,
                 body: `🔧 **Paused: Technology-Focused Request**
 
-Hey @${author}! Thanks for your interest in improving Event Tools Lab! 
+Hey @${author}! Thanks for your interest in improving unconf tools Lab! 
 
 We noticed your request focuses on **implementation details** rather than **user problems**. As a community-driven project, we prioritize requests that describe:
 
@@ -655,7 +655,7 @@ Use our [Tool Request](../../issues/new?template=tool-request.yml) or [Improveme
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: `🚀 **Closed: Out of Scope** (Too Big For Our Little Spaceship!)\n\nYou're asking about: **${outOfScopeMatches.join(', ')}**\n\nThat's beyond our humble event tools orbit! We're more "cozy workshop helper" than "enterprise space station." 🛸\n\n**Our philosophy:**\n- ✅ Simple, single-purpose event tools\n- ✅ Works without complex setup\n- ✅ Small team, realistic scope\n- ❌ No enterprise features until proven necessary\n- ❌ No complex infrastructure (we like sleep)\n\nWe appreciate you thinking big though! Maybe that's a great startup idea? 💡\n\n---\n*🤖 Automated triage - keeping our feet on the ground*`
+                body: `🚀 **Closed: Out of Scope** (Too Big For Our Little Spaceship!)\n\nYou're asking about: **${outOfScopeMatches.join(', ')}**\n\nThat's beyond our humble unconf tools orbit! We're more "cozy workshop helper" than "enterprise space station." 🛸\n\n**Our philosophy:**\n- ✅ Simple, single-purpose unconf tools\n- ✅ Works without complex setup\n- ✅ Small team, realistic scope\n- ❌ No enterprise features until proven necessary\n- ❌ No complex infrastructure (we like sleep)\n\nWe appreciate you thinking big though! Maybe that's a great startup idea? 💡\n\n---\n*🤖 Automated triage - keeping our feet on the ground*`
               });
               
               await github.rest.issues.update({
@@ -708,7 +708,7 @@ Use our [Tool Request](../../issues/new?template=tool-request.yml) or [Improveme
                 
                 // Build prompt parts
                 const promptParts = [
-                  'You are evaluating a GitHub issue for an event tools platform.',
+                  'You are evaluating a GitHub issue for an unconf tools platform.',
                   '',
                   'EXISTING TOOLS AND CAPABILITIES:',
                   toolsSummary,
@@ -827,7 +827,7 @@ Use our [Tool Request](../../issues/new?template=tool-request.yml) or [Improveme
             // ============================================
             // STEP 3: VALUE ASSESSMENT
             // ============================================
-            // High-value indicators for event tools
+            // High-value indicators for unconf tools
             const VALUE_INDICATORS = {
               organizerValue: [
                 'save time', 'easier', 'automate', 'simplify', 'manage',
@@ -965,7 +965,7 @@ Use our [Tool Request](../../issues/new?template=tool-request.yml) or [Improveme
                 labelsToAdd.push('high-value');
               }
               
-              comment = `✅ **Issue Accepted for Review**\n\nThis looks like a valuable addition to Event Tools Lab!\n\n**Value assessment:**\n${valueDetails.map(d => `- ${d}`).join('\n')}\n\nA maintainer will review this and determine next steps.\n\n---\n*Automated triage*`;
+              comment = `✅ **Issue Accepted for Review**\n\nThis looks like a valuable addition to unconf tools Lab!\n\n**Value assessment:**\n${valueDetails.map(d => `- ${d}`).join('\n')}\n\nA maintainer will review this and determine next steps.\n\n---\n*Automated triage*`;
             } else {
               decision = 'review';
               labelsToAdd.push('needs-review');

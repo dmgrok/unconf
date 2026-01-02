@@ -129,7 +129,7 @@
 </script>
 
 <svelte:head>
-  <title>Join Event - Event Tools Lab</title>
+  <title>Join Event - unconf tools Lab</title>
 </svelte:head>
 
 <main>
