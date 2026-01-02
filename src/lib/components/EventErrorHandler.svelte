@@ -291,21 +291,21 @@
 	}
 
 	.error-inline.error {
-		background-color: #fef2f2;
-		border-color: #fecaca;
-		color: #991b1b;
+		background-color: rgba(239, 68, 68, 0.1);
+		border-color: rgba(239, 68, 68, 0.3);
+		color: #fca5a5;
 	}
 
 	.error-inline.warning {
-		background-color: #fffbeb;
-		border-color: #fde68a;
-		color: #92400e;
+		background-color: rgba(245, 158, 11, 0.1);
+		border-color: rgba(245, 158, 11, 0.3);
+		color: #fbbf24;
 	}
 
 	.error-inline.info {
-		background-color: #f0f9ff;
-		border-color: #bae6fd;
-		color: #075985;
+		background-color: rgba(99, 102, 241, 0.1);
+		border-color: rgba(99, 102, 241, 0.3);
+		color: #a5b4fc;
 	}
 
 	.error-content {
@@ -334,6 +334,7 @@
 		line-height: 1;
 		opacity: 0.6;
 		transition: opacity 0.2s;
+		color: inherit;
 	}
 
 	.dismiss-btn:hover {
@@ -359,19 +360,20 @@
 		margin: 0;
 		font-size: 1.25rem;
 		font-weight: 600;
-		color: #1f2937;
+		color: #f4f4f5;
 	}
 
 	.recovery-section {
 		margin-bottom: 1.5rem;
 		padding: 1rem;
-		background-color: #f9fafb;
+		background-color: rgba(255, 255, 255, 0.03);
+		border: 1px solid rgba(255, 255, 255, 0.08);
 		border-radius: 0.5rem;
 	}
 
 	.recovery-text {
 		margin: 0;
-		color: #4b5563;
+		color: #a1a1aa;
 		font-size: 0.875rem;
 		line-height: 1.5;
 	}
@@ -384,17 +386,19 @@
 	.error-details summary {
 		cursor: pointer;
 		font-size: 0.75rem;
-		color: #6b7280;
+		color: #a1a1aa;
 		padding: 0.5rem;
 	}
 
 	.error-details pre {
 		margin: 0.5rem 0 0;
 		padding: 0.75rem;
-		background-color: #f3f4f6;
+		background-color: rgba(255, 255, 255, 0.03);
+		border: 1px solid rgba(255, 255, 255, 0.08);
 		border-radius: 0.375rem;
 		font-size: 0.75rem;
 		overflow-x: auto;
+		color: #d4d4d8;
 	}
 
 	.error-actions {
@@ -411,7 +415,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: rgba(0, 0, 0, 0.7);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -420,7 +424,8 @@
 	}
 
 	.error-modal {
-		background: white;
+		background: #18181b;
+		border: 1px solid rgba(255, 255, 255, 0.1);
 		border-radius: 1rem;
 		padding: 2rem;
 		max-width: 500px;
@@ -437,12 +442,12 @@
 		margin: 0 0 1rem;
 		font-size: 1.5rem;
 		font-weight: 700;
-		color: #1f2937;
+		color: #f4f4f5;
 	}
 
 	.modal-recovery {
 		margin: 0 0 2rem;
-		color: #6b7280;
+		color: #a1a1aa;
 		font-size: 0.875rem;
 		line-height: 1.5;
 	}
@@ -456,24 +461,26 @@
 	.modal-details {
 		margin-top: 1.5rem;
 		padding-top: 1.5rem;
-		border-top: 1px solid #e5e7eb;
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
 	}
 
 	.modal-details summary {
 		cursor: pointer;
 		font-size: 0.75rem;
-		color: #9ca3af;
+		color: #71717a;
 		margin-bottom: 0.5rem;
 	}
 
 	.modal-details pre {
 		margin: 0;
 		padding: 0.75rem;
-		background-color: #f9fafb;
+		background-color: rgba(255, 255, 255, 0.03);
+		border: 1px solid rgba(255, 255, 255, 0.08);
 		border-radius: 0.375rem;
 		font-size: 0.7rem;
 		overflow-x: auto;
 		text-align: left;
+		color: #d4d4d8;
 	}
 
 	/* Animations */

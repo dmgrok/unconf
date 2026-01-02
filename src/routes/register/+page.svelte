@@ -259,9 +259,10 @@
 	}
 
 	.register-card {
-		background: white;
+		background: rgba(255, 255, 255, 0.03);
+		border: 1px solid rgba(255, 255, 255, 0.08);
 		border-radius: 12px;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 		padding: 2.5rem;
 		width: 100%;
 		max-width: 480px;
@@ -270,12 +271,12 @@
 	h1 {
 		margin: 0 0 0.5rem 0;
 		font-size: 2rem;
-		color: #1f2937;
+		color: #f4f4f5;
 		text-align: center;
 	}
 
 	.subtitle {
-		color: #6b7280;
+		color: #a1a1aa;
 		margin: 0 0 2rem 0;
 		text-align: center;
 		font-size: 0.95rem;
@@ -296,26 +297,33 @@
 	label {
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: #374151;
+		color: #d4d4d8;
 	}
 
 	.form-input {
 		width: 100%;
 		padding: 0.75rem;
-		border: 2px solid #d1d5db;
+		border: 1px solid rgba(255, 255, 255, 0.1);
 		border-radius: 8px;
 		font-size: 1rem;
 		transition: all 0.2s;
 		box-sizing: border-box;
+		background: rgba(255, 255, 255, 0.05);
+		color: #e4e4e7;
 	}
 
 	.form-input:focus {
 		outline: none;
-		border-color: #3b82f6;
+		border-color: #6366f1;
+		background: rgba(255, 255, 255, 0.08);
+	}
+
+	.form-input::placeholder {
+		color: #71717a;
 	}
 
 	.form-input.valid {
-		border-color: #10b981;
+		border-color: #22c55e;
 	}
 
 	.form-input.invalid {
@@ -333,7 +341,7 @@
 		transform: translateY(-50%);
 		background: none;
 		border: none;
-		color: #6b7280;
+		color: #a1a1aa;
 		cursor: pointer;
 		padding: 0.25rem;
 		display: flex;
@@ -342,7 +350,7 @@
 	}
 
 	.password-toggle:hover {
-		color: #1f2937;
+		color: #e4e4e7;
 	}
 
 	.password-strength {
@@ -354,7 +362,7 @@
 	.strength-bar {
 		flex: 1;
 		height: 4px;
-		background: #e5e7eb;
+		background: rgba(255, 255, 255, 0.1);
 		border-radius: 2px;
 		overflow: hidden;
 	}
@@ -380,16 +388,16 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		color: #6b7280;
+		color: #a1a1aa;
 		padding: 0.25rem 0;
 	}
 
 	.password-requirements li.met {
-		color: #10b981;
+		color: #4ade80;
 	}
 
 	.field-error {
-		color: #ef4444;
+		color: #f87171;
 		font-size: 0.75rem;
 		margin: 0;
 	}
@@ -403,7 +411,7 @@
 		align-items: flex-start;
 		gap: 0.75rem;
 		font-size: 0.875rem;
-		color: #4b5563;
+		color: #a1a1aa;
 		cursor: pointer;
 	}
 
@@ -415,7 +423,7 @@
 	}
 
 	.checkbox-label a {
-		color: #3b82f6;
+		color: #818cf8;
 		text-decoration: none;
 	}
 
@@ -426,7 +434,7 @@
 	.submit-button {
 		width: 100%;
 		padding: 0.875rem;
-		background: #3b82f6;
+		background: #6366f1;
 		color: white;
 		border: none;
 		border-radius: 8px;
@@ -438,11 +446,11 @@
 	}
 
 	.submit-button:hover:not(:disabled) {
-		background: #2563eb;
+		background: #4f46e5;
 	}
 
 	.submit-button:disabled {
-		background: #9ca3af;
+		background: #52525b;
 		cursor: not-allowed;
 	}
 
@@ -450,11 +458,11 @@
 		text-align: center;
 		margin-top: 1.5rem;
 		font-size: 0.9rem;
-		color: #6b7280;
+		color: #a1a1aa;
 	}
 
 	.signin-link a {
-		color: #3b82f6;
+		color: #818cf8;
 		text-decoration: none;
 		font-weight: 500;
 	}

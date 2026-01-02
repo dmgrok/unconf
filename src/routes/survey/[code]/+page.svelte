@@ -304,6 +304,7 @@
     margin: 0 auto;
     padding: 1.5rem 1rem 3rem;
     font-family: system-ui, -apple-system, sans-serif;
+    color: #e4e4e7;
   }
   
   .loading {
@@ -312,14 +313,14 @@
     align-items: center;
     justify-content: center;
     min-height: 50vh;
-    color: #6b7280;
+    color: #a1a1aa;
   }
   
   .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid #e5e7eb;
-    border-top-color: #2563eb;
+    border: 3px solid #27272a;
+    border-top-color: #6366f1;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -340,43 +341,49 @@
   
   .success-page h1 {
     margin: 0 0 0.5rem;
+    color: #f4f4f5;
   }
   
   .success-page p, .error-page p {
-    color: #6b7280;
+    color: #a1a1aa;
     margin: 0 0 1.5rem;
   }
   
   .btn {
     display: inline-block;
     padding: 0.75rem 1.5rem;
-    background: #2563eb;
+    background: #6366f1;
     color: white;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 500;
   }
   
+  .btn:hover {
+    background: #4f46e5;
+  }
+  
   /* Header */
   header {
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
   
   header h1 {
     font-size: 1.75rem;
     margin: 0 0 0.5rem;
+    color: #f4f4f5;
   }
   
   .description {
-    color: #4b5563;
+    color: #a1a1aa;
     margin: 0 0 0.5rem;
     line-height: 1.5;
   }
   
   .question-count {
-    color: #9ca3af;
+    color: #71717a;
     font-size: 0.875rem;
     margin: 0;
   }
@@ -385,24 +392,36 @@
   .name-section {
     margin-bottom: 1.5rem;
     padding: 1rem;
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 10px;
   }
   
   .name-section label {
     display: block;
     font-size: 0.875rem;
-    color: #6b7280;
+    color: #a1a1aa;
     margin-bottom: 0.5rem;
   }
   
   .name-section input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     font-size: 1rem;
     box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e4e4e7;
+  }
+  
+  .name-section input:focus {
+    outline: none;
+    border-color: #6366f1;
+  }
+  
+  .name-section input::placeholder {
+    color: #71717a;
   }
   
   /* Questions */
@@ -414,15 +433,15 @@
   }
   
   .question-card {
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 1.25rem;
   }
   
   .question-card.has-error {
-    border-color: #fca5a5;
-    background: #fef2f2;
+    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(239, 68, 68, 0.05);
   }
   
   .question-label {
@@ -433,7 +452,7 @@
   }
   
   .q-number {
-    background: #2563eb;
+    background: #6366f1;
     color: white;
     padding: 0.15rem 0.4rem;
     border-radius: 4px;
@@ -445,10 +464,11 @@
   .q-text {
     font-weight: 500;
     line-height: 1.4;
+    color: #f4f4f5;
   }
   
   .required-star {
-    color: #dc2626;
+    color: #f87171;
     font-weight: bold;
   }
   
@@ -464,14 +484,15 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem;
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.2s;
   }
   
   .option-label:hover {
-    background: #f1f5f9;
+    background: rgba(255, 255, 255, 0.06);
   }
   
   .option-label input {
@@ -482,6 +503,7 @@
   
   .option-text {
     font-size: 0.95rem;
+    color: #e4e4e7;
   }
   
   /* Rating */
@@ -495,7 +517,7 @@
   
   .rating-label-text {
     font-size: 0.8rem;
-    color: #6b7280;
+    color: #a1a1aa;
   }
   
   .stars {
@@ -508,7 +530,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: #d1d5db;
+    color: #52525b;
     padding: 0;
     transition: transform 0.1s;
   }
@@ -531,41 +553,48 @@
   .yesno-btn {
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
-    background: #f8fafc;
-    border: 2px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
+    color: #e4e4e7;
   }
   
   .yesno-btn:hover {
-    border-color: #2563eb;
+    border-color: #6366f1;
   }
   
   .yesno-btn.selected {
-    background: #eff6ff;
-    border-color: #2563eb;
+    background: rgba(99, 102, 241, 0.15);
+    border-color: #6366f1;
   }
   
   /* Text */
   .text-input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     font-size: 1rem;
     font-family: inherit;
     resize: vertical;
     box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e4e4e7;
   }
   
   .text-input:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: #6366f1;
+  }
+  
+  .text-input::placeholder {
+    color: #71717a;
   }
   
   .error-message {
-    color: #dc2626;
+    color: #f87171;
     font-size: 0.8rem;
     margin: 0.5rem 0 0;
   }
@@ -574,7 +603,7 @@
   .submit-btn {
     width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
     color: white;
     border: none;
     border-radius: 10px;

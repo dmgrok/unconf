@@ -165,13 +165,13 @@
   }
   
   .back {
-    color: #6b7280;
+    color: #a1a1aa;
     text-decoration: none;
     font-size: 0.875rem;
   }
   
   .back:hover {
-    color: #374151;
+    color: #e4e4e7;
   }
   
   header {
@@ -181,26 +181,29 @@
   h1 {
     font-size: 1.75rem;
     margin: 0 0 0.5rem;
+    color: #e4e4e7;
   }
   
   header p {
-    color: #6b7280;
+    color: #a1a1aa;
     margin: 0;
   }
   
   form {
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 1.5rem;
     border-radius: 12px;
   }
   
   .error-banner {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
     padding: 0.75rem 1rem;
     border-radius: 8px;
     margin-bottom: 1rem;
     font-size: 0.875rem;
+    border: 1px solid rgba(239, 68, 68, 0.3);
   }
   
   .form-group {
@@ -212,26 +215,34 @@
     font-weight: 500;
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
+    color: #e4e4e7;
   }
   
   .optional {
-    color: #9ca3af;
+    color: #71717a;
     font-weight: 400;
   }
   
   input, textarea {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.2s;
     box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e4e4e7;
+  }
+  
+  input::placeholder, textarea::placeholder {
+    color: #71717a;
   }
   
   input:focus, textarea:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.1);
   }
   
   textarea {
@@ -242,20 +253,20 @@
   .hint {
     display: block;
     font-size: 0.75rem;
-    color: #9ca3af;
+    color: #71717a;
     margin-top: 0.25rem;
   }
   
   hr {
     border: none;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin: 1.5rem 0;
   }
   
   .submit-btn {
     width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
     color: white;
     border: none;
     border-radius: 10px;
@@ -277,22 +288,22 @@
   .info-box {
     margin-top: 2rem;
     padding: 1.25rem;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
     border-radius: 10px;
   }
   
   .info-box h3 {
     font-size: 0.875rem;
     margin: 0 0 0.75rem;
-    color: #166534;
+    color: #4ade80;
   }
   
   .info-box ul {
     margin: 0;
     padding-left: 1.25rem;
     font-size: 0.875rem;
-    color: #15803d;
+    color: #86efac;
   }
   
   .info-box li {

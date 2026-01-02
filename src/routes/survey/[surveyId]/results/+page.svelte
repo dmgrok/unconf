@@ -232,6 +232,7 @@
     margin: 0 auto;
     padding: 1.5rem 1rem 3rem;
     font-family: system-ui, -apple-system, sans-serif;
+    color: #e4e4e7;
   }
   
   .loading {
@@ -240,14 +241,14 @@
     align-items: center;
     justify-content: center;
     min-height: 50vh;
-    color: #6b7280;
+    color: #a1a1aa;
   }
   
   .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid #e5e7eb;
-    border-top-color: #2563eb;
+    border: 3px solid #27272a;
+    border-top-color: #6366f1;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -264,16 +265,24 @@
   .btn {
     display: inline-block;
     padding: 0.75rem 1.5rem;
-    background: #2563eb;
+    background: #6366f1;
     color: white;
     border-radius: 8px;
     text-decoration: none;
   }
   
+  .btn:hover {
+    background: #4f46e5;
+  }
+  
   .back {
-    color: #6b7280;
+    color: #71717a;
     text-decoration: none;
     font-size: 0.875rem;
+  }
+  
+  .back:hover {
+    color: #a1a1aa;
   }
   
   header {
@@ -283,6 +292,7 @@
   header h1 {
     font-size: 1.5rem;
     margin: 0.75rem 0 0.5rem;
+    color: #f4f4f5;
   }
   
   .meta-row {
@@ -292,7 +302,7 @@
   }
   
   .response-count {
-    color: #6b7280;
+    color: #a1a1aa;
     font-size: 0.9rem;
   }
   
@@ -304,13 +314,13 @@
   }
   
   .status-badge.open {
-    background: #dcfce7;
-    color: #15803d;
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
   }
   
   .status-badge.closed {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
   }
   
   /* Actions bar */
@@ -330,48 +340,58 @@
   .share-url {
     flex: 1;
     padding: 0.5rem 0.75rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 6px 0 0 6px;
     font-size: 0.85rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e4e4e7;
   }
   
   .copy-btn {
     padding: 0.5rem 0.75rem;
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-left: none;
     border-radius: 0 6px 6px 0;
     cursor: pointer;
+    color: #e4e4e7;
+  }
+  
+  .copy-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
   }
   
   .toggle-btn {
     padding: 0.5rem 1rem;
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 6px;
     font-size: 0.85rem;
     cursor: pointer;
+    color: #e4e4e7;
   }
   
   .toggle-btn:hover {
-    background: #f9fafb;
+    background: rgba(255, 255, 255, 0.1);
   }
   
   /* No responses */
   .no-responses {
     text-align: center;
     padding: 3rem 1rem;
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
   }
   
   .no-responses p {
     margin: 0;
     font-size: 1.25rem;
+    color: #f4f4f5;
   }
   
   .no-responses .hint {
-    color: #6b7280;
+    color: #a1a1aa;
     font-size: 0.9rem;
     margin-top: 0.5rem;
   }
@@ -384,8 +404,8 @@
   }
   
   .result-card {
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 12px;
     padding: 1.25rem;
   }
@@ -399,7 +419,7 @@
   }
   
   .q-number {
-    background: #2563eb;
+    background: #6366f1;
     color: white;
     padding: 0.15rem 0.4rem;
     border-radius: 4px;
@@ -411,10 +431,11 @@
     flex: 1;
     font-weight: 500;
     min-width: 150px;
+    color: #f4f4f5;
   }
   
   .response-count-small {
-    color: #9ca3af;
+    color: #71717a;
     font-size: 0.8rem;
   }
   
@@ -437,25 +458,26 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: #e4e4e7;
   }
   
   .choice-bar-wrapper {
     height: 24px;
-    background: #f3f4f6;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 4px;
     overflow: hidden;
   }
   
   .choice-bar {
     height: 100%;
-    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    background: linear-gradient(90deg, #6366f1, #818cf8);
     border-radius: 4px;
     transition: width 0.3s ease;
   }
   
   .choice-stats {
     font-size: 0.85rem;
-    color: #6b7280;
+    color: #a1a1aa;
     text-align: right;
   }
   
@@ -469,7 +491,8 @@
   .average-rating {
     text-align: center;
     padding: 1rem;
-    background: #fef3c7;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
     border-radius: 12px;
     min-width: 100px;
   }
@@ -477,13 +500,13 @@
   .avg-number {
     font-size: 2rem;
     font-weight: 700;
-    color: #92400e;
+    color: #fbbf24;
     display: block;
   }
   
   .avg-label {
     font-size: 0.75rem;
-    color: #a16207;
+    color: #f59e0b;
   }
   
   .avg-stars {
@@ -512,13 +535,13 @@
   .rating-value {
     width: 30px;
     font-size: 0.8rem;
-    color: #6b7280;
+    color: #a1a1aa;
   }
   
   .rating-bar-wrapper {
     flex: 1;
     height: 16px;
-    background: #f3f4f6;
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 3px;
   }
   
@@ -531,7 +554,7 @@
   .rating-count {
     width: 30px;
     font-size: 0.8rem;
-    color: #6b7280;
+    color: #a1a1aa;
     text-align: right;
   }
   
@@ -549,8 +572,8 @@
   }
   
   .yes-portion {
-    background: #86efac;
-    color: #15803d;
+    background: rgba(34, 197, 94, 0.3);
+    color: #4ade80;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -559,8 +582,8 @@
   }
   
   .no-portion {
-    background: #fca5a5;
-    color: #b91c1c;
+    background: rgba(239, 68, 68, 0.3);
+    color: #f87171;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -573,7 +596,7 @@
     justify-content: center;
     gap: 2rem;
     font-size: 0.85rem;
-    color: #6b7280;
+    color: #a1a1aa;
   }
   
   /* Text results */
@@ -585,22 +608,23 @@
   
   .text-response {
     padding: 0.75rem;
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 8px;
     font-size: 0.9rem;
     font-style: italic;
-    color: #374151;
+    color: #d4d4d8;
   }
   
   .more-responses {
-    color: #6b7280;
+    color: #a1a1aa;
     font-size: 0.85rem;
     text-align: center;
     margin: 0.5rem 0 0;
   }
   
   .no-data {
-    color: #9ca3af;
+    color: #71717a;
     font-size: 0.9rem;
     text-align: center;
   }

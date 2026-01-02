@@ -163,6 +163,48 @@ export async function POST({ request, locals }) {
 </script>
 ```
 
+## Navigation Header (IMPORTANT)
+
+**Location**: `src/routes/+layout.svelte`
+
+The global navigation header must be updated when adding new top-level routes/pages.
+
+### Current Navigation Links
+```svelte
+<div class="nav-links">
+  <a href="/">Home</a>
+  <a href="/tools">Tools</a>
+  <a href="/ideas-lab">💡 Ideas Lab</a>
+  <a href="/create">Create Event</a>
+  {#if $isAuthenticated}
+    <a href="/events">My Events</a>
+  {/if}
+</div>
+```
+
+### When to Update Navigation
+**AI agents MUST update the header** when:
+- ✅ Adding a new top-level page (e.g., `/tools`, `/ideas-lab`, `/docs`)
+- ✅ Renaming or removing an existing top-level route
+- ✅ Changing the status of a feature (e.g., Ideas Lab graduating to a standard page)
+
+**DO NOT add to navigation:**
+- ❌ Nested routes (e.g., `/events/[eventId]/tools/poll`)
+- ❌ API routes
+- ❌ Auth routes (`/signin`, `/register`)
+- ❌ Temporary or experimental pages
+
+### How to Add a Navigation Link
+1. Open `src/routes/+layout.svelte`
+2. Find the `<div class="nav-links">` section (~line 184)
+3. Add the new link with proper `class:active` binding:
+```svelte
+<a href="/new-page" class="nav-link" class:active={$page.url.pathname === '/new-page'}>
+  New Page
+</a>
+```
+4. For highlighted links (like Ideas Lab), add a custom class and styles
+
 ## Community Requests
 
 ### Issue Templates

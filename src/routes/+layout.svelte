@@ -179,6 +179,12 @@
 			<a href="/" class="nav-link" class:active={$page.url.pathname === '/'}>
 				Home
 			</a>
+			<a href="/tools" class="nav-link" class:active={$page.url.pathname.startsWith('/tools')}>
+				Tools
+			</a>
+			<a href="/ideas-lab" class="nav-link ideas" class:active={$page.url.pathname === '/ideas-lab'}>
+				💡 Ideas Lab
+			</a>
 			<a href="/create" class="nav-link" class:active={$page.url.pathname === '/create'}>
 				Create Event
 			</a>
@@ -234,8 +240,8 @@
 
 <style>
 	.navbar {
-		background: #f8f9fa;
-		border-bottom: 1px solid #dee2e6;
+		background: #0f0f18;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 		padding: 0.5rem 0;
 		position: sticky;
 		top: 0;
@@ -260,7 +266,7 @@
 		font-size: 1.5rem;
 		font-weight: bold;
 		text-decoration: none;
-		color: #333;
+		color: #e4e4e7;
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
@@ -283,7 +289,7 @@
 	.nav-link {
 		padding: 0.5rem 1rem;
 		text-decoration: none;
-		color: #666;
+		color: #a1a1aa;
 		border-radius: 6px;
 		transition: all 0.2s;
 		font-weight: 500;
@@ -295,13 +301,27 @@
 	}
 
 	.nav-link:hover {
-		background: #e9ecef;
-		color: #333;
+		background: rgba(255, 255, 255, 0.08);
+		color: #e4e4e7;
 	}
 
 	.nav-link.active {
-		background: #007bff;
+		background: #6366f1;
 		color: white;
+	}
+
+	.nav-link.ideas {
+		background: rgba(245, 158, 11, 0.15);
+		color: #fbbf24;
+	}
+
+	.nav-link.ideas:hover {
+		background: rgba(245, 158, 11, 0.25);
+	}
+
+	.nav-link.ideas.active {
+		background: #f59e0b;
+		color: #0a0a0f;
 	}
 
 	/* Mobile: Hide text, show icons or minimal text */
@@ -331,7 +351,7 @@
 	}
 
 	.user-info {
-		color: #666;
+		color: #a1a1aa;
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -350,8 +370,8 @@
 	}
 
 	.guest-badge {
-		background: #ffc107;
-		color: #212529;
+		background: #fbbf24;
+		color: #0a0a0f;
 		padding: 0.2rem 0.5rem;
 		border-radius: 12px;
 		font-size: 0.7rem;
@@ -361,7 +381,7 @@
 
 	.auth-button {
 		padding: 0.5rem 1rem;
-		background: #007bff;
+		background: #6366f1;
 		color: white;
 		border: none;
 		border-radius: 4px;
@@ -378,7 +398,7 @@
 	}
 
 	.auth-button:hover {
-		background: #0056b3;
+		background: #4f46e5;
 	}
 
 	.auth-button:active {
@@ -394,11 +414,12 @@
 	}
 
 	.auth-button.guest {
-		background: #6c757d;
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.15);
 	}
 
 	.auth-button.guest:hover {
-		background: #545b62;
+		background: rgba(255, 255, 255, 0.15);
 	}
 
 	main {

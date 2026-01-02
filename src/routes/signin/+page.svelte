@@ -240,9 +240,9 @@
 	}
 
 	.signin-card {
-		background: white;
-		border-radius: 8px;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		background: rgba(255, 255, 255, 0.03);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		border-radius: 12px;
 		padding: 3rem;
 		width: 100%;
 		max-width: 400px;
@@ -252,11 +252,11 @@
 	h1 {
 		margin: 0 0 0.5rem 0;
 		font-size: 2rem;
-		color: #333;
+		color: #e4e4e7;
 	}
 
 	.subtitle {
-		color: #666;
+		color: #a1a1aa;
 		margin: 0 0 2rem 0;
 	}
 
@@ -273,9 +273,10 @@
 		justify-content: center;
 		gap: 0.75rem;
 		padding: 0.75rem 1.5rem;
-		border: 2px solid #ddd;
+		border: 1px solid rgba(255, 255, 255, 0.15);
 		border-radius: 6px;
-		background: white;
+		background: rgba(255, 255, 255, 0.05);
+		color: #e4e4e7;
 		font-size: 1rem;
 		cursor: pointer;
 		transition: all 0.2s;
@@ -283,8 +284,8 @@
 	}
 
 	.signin-button:hover:not(:disabled) {
-		border-color: #bbb;
-		background: #f8f9fa;
+		border-color: rgba(255, 255, 255, 0.25);
+		background: rgba(255, 255, 255, 0.1);
 	}
 
 	.signin-button:disabled {
@@ -293,23 +294,23 @@
 	}
 
 	.signin-button.google {
-		border-color: #4285F4;
-		color: #4285F4;
+		border-color: rgba(66, 133, 244, 0.5);
+		color: #60a5fa;
 	}
 
 	.signin-button.google:hover:not(:disabled) {
-		background: #4285F4;
-		color: white;
+		background: rgba(66, 133, 244, 0.15);
+		border-color: #4285F4;
 	}
 
 	.signin-button.guest {
-		border-color: #6c757d;
-		color: #6c757d;
+		border-color: rgba(255, 255, 255, 0.15);
+		color: #a1a1aa;
 	}
 
 	.signin-button.guest:hover:not(:disabled) {
-		background: #6c757d;
-		color: white;
+		background: rgba(255, 255, 255, 0.1);
+		color: #e4e4e7;
 	}
 
 	.google-icon {
@@ -327,29 +328,29 @@
 		content: '';
 		flex: 1;
 		height: 1px;
-		background: #ddd;
+		background: rgba(255, 255, 255, 0.1);
 	}
 
 	.divider span {
 		padding: 0 1rem;
-		color: #666;
+		color: #71717a;
 		font-size: 0.9rem;
 	}
 
 	.terms {
 		font-size: 0.8rem;
-		color: #666;
+		color: #71717a;
 		margin: 0;
 	}
 
 	.help-links {
 		margin-top: 1rem;
 		padding-top: 1rem;
-		border-top: 1px solid #eee;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
 	}
 
 	.recovery-link {
-		color: #007bff;
+		color: #60a5fa;
 		text-decoration: none;
 		font-size: 0.9rem;
 	}
@@ -365,11 +366,11 @@
 	.event-code-form h3 {
 		margin: 0 0 0.5rem 0;
 		font-size: 1.25rem;
-		color: #333;
+		color: #e4e4e7;
 	}
 
 	.form-description {
-		color: #666;
+		color: #a1a1aa;
 		font-size: 0.9rem;
 		margin: 0 0 1.5rem 0;
 	}
@@ -377,25 +378,32 @@
 	.event-code-input {
 		width: 100%;
 		padding: 0.75rem;
-		border: 2px solid #ddd;
+		border: 1px solid rgba(255, 255, 255, 0.15);
 		border-radius: 6px;
 		font-size: 1rem;
 		text-align: center;
 		text-transform: uppercase;
 		margin-bottom: 1rem;
+		background: rgba(255, 255, 255, 0.05);
+		color: #e4e4e7;
+	}
+
+	.event-code-input::placeholder {
+		color: #71717a;
 	}
 
 	.event-code-input:focus {
 		outline: none;
-		border-color: #4285F4;
+		border-color: #6366f1;
+		background: rgba(99, 102, 241, 0.1);
 	}
 
 	.event-code-input.error {
-		border-color: #dc3545;
+		border-color: #f87171;
 	}
 
 	.error-message {
-		color: #dc3545;
+		color: #fca5a5;
 		font-size: 0.875rem;
 		margin: 0 0 1rem 0;
 	}
@@ -407,29 +415,30 @@
 	}
 
 	.signin-button.primary {
-		background: #4285F4;
+		background: #6366f1;
 		color: white;
-		border-color: #4285F4;
+		border-color: #6366f1;
 	}
 
 	.signin-button.primary:hover:not(:disabled) {
-		background: #3367D6;
-		border-color: #3367D6;
+		background: #4f46e5;
+		border-color: #4f46e5;
 	}
 
 	.signin-button.primary:disabled {
-		background: #ccc;
-		border-color: #ccc;
+		background: rgba(99, 102, 241, 0.4);
+		border-color: rgba(99, 102, 241, 0.4);
 	}
 
 	.signin-button.secondary {
-		background: white;
-		color: #666;
-		border-color: #ddd;
+		background: rgba(255, 255, 255, 0.05);
+		color: #a1a1aa;
+		border-color: rgba(255, 255, 255, 0.15);
 	}
 
 	.signin-button.secondary:hover:not(:disabled) {
-		background: #f8f9fa;
+		background: rgba(255, 255, 255, 0.1);
+		color: #e4e4e7;
 	}
 
 	.email-password-form {
@@ -441,19 +450,26 @@
 	.form-input {
 		width: 100%;
 		padding: 0.75rem;
-		border: 2px solid #ddd;
+		border: 1px solid rgba(255, 255, 255, 0.15);
 		border-radius: 6px;
 		font-size: 1rem;
 		box-sizing: border-box;
+		background: rgba(255, 255, 255, 0.05);
+		color: #e4e4e7;
+	}
+
+	.form-input::placeholder {
+		color: #71717a;
 	}
 
 	.form-input:focus {
 		outline: none;
-		border-color: #4285F4;
+		border-color: #6366f1;
+		background: rgba(99, 102, 241, 0.1);
 	}
 
 	.form-input.error {
-		border-color: #dc3545;
+		border-color: #f87171;
 	}
 
 	.signin-button.full-width {

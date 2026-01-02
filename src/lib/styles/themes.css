@@ -1,4 +1,4 @@
-/* CSS Custom Properties Theme System */
+/* CSS Custom Properties Theme System - Dark Mode Only */
 
 :root {
   /* Color Palette */
@@ -68,59 +68,60 @@
   --color-neutral-700: #374151;
   --color-neutral-800: #1f2937;
   --color-neutral-900: #111827;
+  --color-neutral-950: #0a0a0f;
 }
 
-/* Light Theme (Default) */
+/* Dark Theme (Default & Only) */
 :root {
-  /* Semantic Color Tokens */
-  --color-background: var(--color-neutral-50);
-  --color-surface: #ffffff;
-  --color-surface-secondary: var(--color-neutral-100);
-  --color-surface-tertiary: var(--color-neutral-200);
+  /* Semantic Color Tokens - Dark Mode */
+  --color-background: var(--color-neutral-950);
+  --color-surface: var(--color-neutral-900);
+  --color-surface-secondary: var(--color-neutral-800);
+  --color-surface-tertiary: var(--color-neutral-700);
 
-  --color-text-primary: var(--color-neutral-900);
-  --color-text-secondary: var(--color-neutral-800);
-  --color-text-tertiary: var(--color-neutral-600);
-  --color-text-disabled: var(--color-neutral-400);
-  --color-text-inverse: #ffffff;
+  --color-text-primary: #e4e4e7;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
+  --color-text-disabled: var(--color-neutral-600);
+  --color-text-inverse: var(--color-neutral-900);
 
-  --color-border: var(--color-neutral-200);
-  --color-border-secondary: var(--color-neutral-300);
-  --color-border-tertiary: var(--color-neutral-400);
+  --color-border: var(--color-neutral-800);
+  --color-border-secondary: var(--color-neutral-700);
+  --color-border-tertiary: var(--color-neutral-600);
 
   --color-primary: var(--color-primary-500);
-  --color-primary-hover: var(--color-primary-600);
-  --color-primary-active: var(--color-primary-700);
-  --color-primary-light: var(--color-primary-100);
+  --color-primary-hover: var(--color-primary-400);
+  --color-primary-active: var(--color-primary-300);
+  --color-primary-light: var(--color-primary-900);
   --color-primary-text: #ffffff;
 
-  --color-secondary: var(--color-secondary-500);
-  --color-secondary-hover: var(--color-secondary-600);
-  --color-secondary-active: var(--color-secondary-700);
-  --color-secondary-light: var(--color-secondary-100);
+  --color-secondary: var(--color-secondary-400);
+  --color-secondary-hover: var(--color-secondary-300);
+  --color-secondary-active: var(--color-secondary-200);
+  --color-secondary-light: var(--color-secondary-800);
   --color-secondary-text: #ffffff;
 
   --color-success: var(--color-success-500);
-  --color-success-hover: var(--color-success-600);
-  --color-success-active: var(--color-success-700);
-  --color-success-light: var(--color-success-100);
+  --color-success-hover: var(--color-success-400);
+  --color-success-active: var(--color-success-300);
+  --color-success-light: var(--color-success-900);
   --color-success-text: #ffffff;
 
   --color-warning: var(--color-warning-500);
-  --color-warning-hover: var(--color-warning-600);
-  --color-warning-active: var(--color-warning-700);
-  --color-warning-light: var(--color-warning-100);
-  --color-warning-text: #ffffff;
+  --color-warning-hover: var(--color-warning-400);
+  --color-warning-active: var(--color-warning-300);
+  --color-warning-light: var(--color-warning-900);
+  --color-warning-text: #000000;
 
   --color-danger: var(--color-danger-500);
-  --color-danger-hover: var(--color-danger-600);
-  --color-danger-active: var(--color-danger-700);
-  --color-danger-light: var(--color-danger-100);
+  --color-danger-hover: var(--color-danger-400);
+  --color-danger-active: var(--color-danger-300);
+  --color-danger-light: var(--color-danger-900);
   --color-danger-text: #ffffff;
 
   /* Focus and interaction states */
-  --color-focus: var(--color-primary-500);
-  --color-focus-outline: var(--color-primary-200);
+  --color-focus: var(--color-primary-400);
+  --color-focus-outline: var(--color-primary-800);
 
   /* Spacing Scale */
   --spacing-0: 0;
@@ -192,91 +193,8 @@
   --transition-all: all var(--transition-base);
 }
 
-/* Dark Theme */
-[data-theme="dark"] {
-  /* Override semantic colors for dark theme */
-  --color-background: var(--color-neutral-900);
-  --color-surface: var(--color-neutral-800);
-  --color-surface-secondary: var(--color-neutral-700);
-  --color-surface-tertiary: var(--color-neutral-600);
-
-  --color-text-primary: var(--color-neutral-100);
-  --color-text-secondary: var(--color-neutral-300);
-  --color-text-tertiary: var(--color-neutral-400);
-  --color-text-disabled: var(--color-neutral-500);
-  --color-text-inverse: var(--color-neutral-900);
-
-  --color-border: var(--color-neutral-700);
-  --color-border-secondary: var(--color-neutral-600);
-  --color-border-tertiary: var(--color-neutral-500);
-
-  /* Adjust component colors for dark theme */
-  --color-primary-light: var(--color-primary-900);
-  --color-secondary-light: var(--color-secondary-800);
-  --color-success-light: var(--color-success-900);
-  --color-warning-light: var(--color-warning-900);
-  --color-danger-light: var(--color-danger-900);
-
-  /* Dark theme shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-}
-
-/* High Contrast Theme */
-[data-theme="high-contrast"] {
-  --color-background: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-secondary: #f8f9fa;
-  --color-surface-tertiary: #e9ecef;
-
-  --color-text-primary: #000000;
-  --color-text-secondary: #212529;
-  --color-text-tertiary: #495057;
-  --color-text-disabled: #6c757d;
-  --color-text-inverse: #ffffff;
-
-  --color-border: #000000;
-  --color-border-secondary: #495057;
-  --color-border-tertiary: #6c757d;
-
-  --color-primary: #0000ff;
-  --color-primary-hover: #0000cc;
-  --color-primary-active: #000099;
-  --color-primary-light: #e6f3ff;
-  --color-primary-text: #ffffff;
-
-  --color-secondary: #6c757d;
-  --color-secondary-hover: #5a6268;
-  --color-secondary-active: #495057;
-  --color-secondary-light: #f8f9fa;
-  --color-secondary-text: #ffffff;
-
-  --color-success: #00b300;
-  --color-success-hover: #009900;
-  --color-success-active: #007700;
-  --color-success-light: #e6ffe6;
-  --color-success-text: #ffffff;
-
-  --color-warning: #ff8800;
-  --color-warning-hover: #e67600;
-  --color-warning-active: #cc6600;
-  --color-warning-light: #fff5e6;
-  --color-warning-text: #000000;
-
-  --color-danger: #dd0000;
-  --color-danger-hover: #bb0000;
-  --color-danger-active: #990000;
-  --color-danger-light: #ffe6e6;
-  --color-danger-text: #ffffff;
-
-  --color-focus: #0000ff;
-  --color-focus-outline: #0066ff;
-
-  /* High contrast shadows */
+/* Dark mode shadows - deeper for dark backgrounds */
+:root {
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
@@ -292,31 +210,5 @@
     --transition-base: 0ms;
     --transition-slow: 0ms;
     --transition-all: none;
-  }
-}
-
-/* Color Scheme Preference */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    /* Apply dark theme colors when system preference is dark and no explicit theme is set */
-    --color-background: var(--color-neutral-900);
-    --color-surface: var(--color-neutral-800);
-    --color-surface-secondary: var(--color-neutral-700);
-    --color-surface-tertiary: var(--color-neutral-600);
-
-    --color-text-primary: var(--color-neutral-100);
-    --color-text-secondary: var(--color-neutral-300);
-    --color-text-tertiary: var(--color-neutral-400);
-    --color-text-disabled: var(--color-neutral-500);
-
-    --color-border: var(--color-neutral-700);
-    --color-border-secondary: var(--color-neutral-600);
-    --color-border-tertiary: var(--color-neutral-500);
-
-    --color-primary-light: var(--color-primary-900);
-    --color-secondary-light: var(--color-secondary-800);
-    --color-success-light: var(--color-success-900);
-    --color-warning-light: var(--color-warning-900);
-    --color-danger-light: var(--color-danger-900);
   }
 }

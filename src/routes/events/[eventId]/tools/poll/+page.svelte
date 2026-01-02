@@ -301,6 +301,7 @@
     margin: 0 auto;
     padding: 1.5rem 1rem;
     font-family: system-ui, -apple-system, sans-serif;
+    color: #e4e4e7;
   }
   
   .loading {
@@ -309,14 +310,14 @@
     align-items: center;
     justify-content: center;
     min-height: 50vh;
-    color: #6b7280;
+    color: #a1a1aa;
   }
   
   .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid #e5e7eb;
-    border-top-color: #2563eb;
+    border: 3px solid #27272a;
+    border-top-color: #6366f1;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -331,9 +332,13 @@
   }
   
   .back {
-    color: #6b7280;
+    color: #71717a;
     text-decoration: none;
     font-size: 0.875rem;
+  }
+  
+  .back:hover {
+    color: #a1a1aa;
   }
   
   header {
@@ -343,6 +348,7 @@
   h1 {
     font-size: 1.75rem;
     margin: 1rem 0 0;
+    color: #f4f4f5;
   }
   
   .btn {
@@ -354,13 +360,17 @@
   }
   
   .btn.primary {
-    background: #2563eb;
+    background: #6366f1;
     color: white;
   }
   
+  .btn.primary:hover {
+    background: #4f46e5;
+  }
+  
   .join-prompt {
-    background: #fef3c7;
-    border: 1px solid #fcd34d;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
     padding: 1.5rem;
     border-radius: 12px;
     text-align: center;
@@ -368,7 +378,7 @@
   
   .join-prompt p {
     margin: 0 0 1rem;
-    color: #92400e;
+    color: #fbbf24;
   }
   
   /* Waiting state */
@@ -385,17 +395,18 @@
   
   .waiting h2 {
     margin: 0 0 0.5rem;
-    color: #374151;
+    color: #f4f4f5;
   }
   
   .waiting p {
-    color: #6b7280;
+    color: #a1a1aa;
     margin: 0;
   }
   
   /* Create Poll Form */
   .create-poll {
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 1.5rem;
     border-radius: 12px;
   }
@@ -403,6 +414,7 @@
   .create-poll h2 {
     margin: 0 0 1.5rem;
     font-size: 1.25rem;
+    color: #f4f4f5;
   }
   
   .form-group {
@@ -414,20 +426,28 @@
     font-weight: 500;
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
+    color: #d4d4d8;
   }
   
   .form-group input {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     font-size: 1rem;
     box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e4e4e7;
   }
   
   .form-group input:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: #6366f1;
+    background: rgba(255, 255, 255, 0.08);
+  }
+  
+  .form-group input::placeholder {
+    color: #71717a;
   }
   
   .option-row {
@@ -442,34 +462,38 @@
   
   .remove-btn {
     width: 40px;
-    background: #fee2e2;
-    color: #b91c1c;
-    border: none;
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
     border-radius: 8px;
     font-size: 1.25rem;
     cursor: pointer;
+  }
+  
+  .remove-btn:hover {
+    background: rgba(239, 68, 68, 0.25);
   }
   
   .add-option-btn {
     width: 100%;
     padding: 0.75rem;
     background: none;
-    border: 2px dashed #d1d5db;
+    border: 2px dashed rgba(255, 255, 255, 0.15);
     border-radius: 8px;
-    color: #6b7280;
+    color: #71717a;
     cursor: pointer;
     font-size: 0.875rem;
   }
   
   .add-option-btn:hover {
-    border-color: #9ca3af;
-    color: #374151;
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #a1a1aa;
   }
   
   .create-btn {
     width: 100%;
     padding: 1rem;
-    background: #2563eb;
+    background: #6366f1;
     color: white;
     border: none;
     border-radius: 10px;
@@ -479,7 +503,7 @@
   }
   
   .create-btn:hover:not(:disabled) {
-    background: #1d4ed8;
+    background: #4f46e5;
   }
   
   .create-btn:disabled {
@@ -495,6 +519,7 @@
   .active-poll h2 {
     font-size: 1.5rem;
     margin: 0 0 1.5rem;
+    color: #f4f4f5;
   }
   
   .poll-options {
@@ -506,17 +531,18 @@
   .poll-option {
     position: relative;
     padding: 1rem 1.25rem;
-    background: #f8fafc;
-    border: 2px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     text-align: left;
     cursor: pointer;
     overflow: hidden;
     transition: border-color 0.2s;
+    color: #e4e4e7;
   }
   
   .poll-option:not(:disabled):hover {
-    border-color: #2563eb;
+    border-color: #6366f1;
   }
   
   .poll-option:disabled {
@@ -524,12 +550,12 @@
   }
   
   .poll-option.voted {
-    background: white;
+    background: rgba(255, 255, 255, 0.05);
   }
   
   .poll-option.selected {
-    border-color: #2563eb;
-    background: #eff6ff;
+    border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.1);
   }
   
   .option-text {
@@ -542,7 +568,7 @@
     position: relative;
     z-index: 1;
     float: right;
-    color: #6b7280;
+    color: #a1a1aa;
     font-size: 0.875rem;
   }
   
@@ -551,7 +577,7 @@
     top: 0;
     left: 0;
     height: 100%;
-    background: #dbeafe;
+    background: rgba(99, 102, 241, 0.2);
     transition: width 0.3s ease;
     z-index: 0;
   }
@@ -561,34 +587,34 @@
     right: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #2563eb;
+    color: #6366f1;
     font-weight: bold;
     z-index: 1;
   }
   
   .total-votes {
     margin: 1.5rem 0 0;
-    color: #6b7280;
+    color: #a1a1aa;
   }
   
   .vote-prompt {
     margin: 1rem 0 0;
-    color: #9ca3af;
+    color: #71717a;
     font-size: 0.875rem;
   }
   
   .close-poll-btn {
     margin-top: 2rem;
     padding: 0.75rem 1.5rem;
-    background: #fee2e2;
-    color: #b91c1c;
-    border: none;
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
     border-radius: 8px;
     font-size: 0.875rem;
     cursor: pointer;
   }
   
   .close-poll-btn:hover {
-    background: #fecaca;
+    background: rgba(239, 68, 68, 0.25);
   }
 </style>

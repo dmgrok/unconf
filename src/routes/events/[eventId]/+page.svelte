@@ -183,14 +183,14 @@
     align-items: center;
     justify-content: center;
     min-height: 50vh;
-    color: #6b7280;
+    color: #a1a1aa;
   }
   
   .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid #e5e7eb;
-    border-top-color: #2563eb;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #6366f1;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
   }
@@ -207,18 +207,23 @@
   .error-page h1 {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
+    color: #e4e4e7;
   }
   
   .error-page p {
-    color: #6b7280;
+    color: #a1a1aa;
     margin-bottom: 1.5rem;
   }
   
   /* Header */
   .back {
-    color: #6b7280;
+    color: #a1a1aa;
     text-decoration: none;
     font-size: 0.875rem;
+  }
+  
+  .back:hover {
+    color: #e4e4e7;
   }
   
   header {
@@ -238,6 +243,7 @@
     margin: 0;
     flex: 1;
     min-width: 200px;
+    color: #e4e4e7;
   }
   
   .event-meta {
@@ -251,16 +257,17 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 0.75rem;
-    background: #f3f4f6;
-    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     font-size: 0.875rem;
     cursor: pointer;
     transition: background 0.2s;
+    color: #e4e4e7;
   }
   
   .code-badge:hover {
-    background: #e5e7eb;
+    background: rgba(255, 255, 255, 0.1);
   }
   
   .code-badge strong {
@@ -275,29 +282,29 @@
   
   .share-btn, .manage-btn {
     padding: 0.5rem 0.75rem;
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     font-size: 0.875rem;
     cursor: pointer;
     text-decoration: none;
-    color: inherit;
+    color: #e4e4e7;
   }
   
   .share-btn:hover, .manage-btn:hover {
-    background: #f9fafb;
+    background: rgba(255, 255, 255, 0.1);
   }
   
   .description {
-    color: #6b7280;
+    color: #a1a1aa;
     margin: 1rem 0 0;
     line-height: 1.5;
   }
   
   /* Join Prompt */
   .join-prompt {
-    background: #fef3c7;
-    border: 1px solid #fcd34d;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.3);
     padding: 1rem 1.25rem;
     border-radius: 10px;
     display: flex;
@@ -309,26 +316,27 @@
   
   .join-prompt p {
     margin: 0;
-    color: #92400e;
+    color: #fbbf24;
   }
   
   /* Welcome */
   .welcome {
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
     padding: 0.75rem 1rem;
     border-radius: 8px;
     margin-bottom: 2rem;
-    color: #166534;
+    color: #4ade80;
   }
   
   .role-badge {
-    background: #166534;
-    color: white;
+    background: #22c55e;
+    color: #0a0a0f;
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
     font-size: 0.75rem;
     margin-left: 0.5rem;
+    font-weight: 600;
   }
   
   /* Buttons */
@@ -343,7 +351,7 @@
   }
   
   .btn.primary {
-    background: #2563eb;
+    background: #6366f1;
     color: white;
   }
   
@@ -355,6 +363,7 @@
   .tools-section h2 {
     font-size: 1.25rem;
     margin: 0 0 1rem;
+    color: #e4e4e7;
   }
   
   .tools-grid {
@@ -364,21 +373,21 @@
   }
   
   .tool-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.03);
     padding: 1.25rem;
     border-radius: 12px;
     text-align: center;
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     text-decoration: none;
     color: inherit;
     position: relative;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, border-color 0.2s;
   }
   
   .tool-card:not(.disabled):hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-color: #2563eb;
+    border-color: rgba(99, 102, 241, 0.5);
+    background: rgba(99, 102, 241, 0.1);
   }
   
   .tool-card.disabled {
@@ -395,11 +404,12 @@
   .tool-card h3 {
     font-size: 0.9rem;
     margin: 0 0 0.25rem;
+    color: #e4e4e7;
   }
   
   .tool-card p {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: #a1a1aa;
     margin: 0;
     line-height: 1.3;
   }
@@ -415,18 +425,19 @@
   }
   
   .badge.coming {
-    background: #fef3c7;
-    color: #92400e;
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
   }
   
   .badge.disabled {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
   }
   
   /* Participants Section */
   .participants-section {
-    background: #f8fafc;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     padding: 1.25rem;
     border-radius: 12px;
   }
@@ -441,16 +452,17 @@
   .section-header h2 {
     font-size: 1rem;
     margin: 0;
+    color: #e4e4e7;
   }
   
   .view-all {
     font-size: 0.875rem;
-    color: #2563eb;
+    color: #60a5fa;
     text-decoration: none;
   }
   
   .empty-state {
-    color: #6b7280;
+    color: #a1a1aa;
     font-size: 0.875rem;
     margin: 0;
   }
@@ -465,7 +477,7 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #2563eb;
+    background: #6366f1;
     color: white;
     display: flex;
     align-items: center;
@@ -478,8 +490,8 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #e5e7eb;
-    color: #6b7280;
+    background: rgba(255, 255, 255, 0.1);
+    color: #a1a1aa;
     display: flex;
     align-items: center;
     justify-content: center;

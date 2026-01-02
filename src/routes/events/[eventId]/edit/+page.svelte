@@ -145,8 +145,9 @@
 <style>
   .edit-event-page {
     min-height: 100vh;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background: #0a0a0f;
     padding: 2rem 1rem;
+    color: #e4e4e7;
   }
 
   .page-header {
@@ -160,13 +161,13 @@
   .page-header h1 {
     font-size: 2.5rem;
     font-weight: 700;
-    color: #1f2937;
+    color: #f4f4f5;
     margin: 0 0 1rem 0;
   }
 
   .page-header p {
     font-size: 1.125rem;
-    color: #6b7280;
+    color: #a1a1aa;
     margin: 0;
     line-height: 1.6;
   }
@@ -180,12 +181,12 @@
     gap: 1rem;
     text-align: center;
     padding: 2rem;
-    background: white;
+    background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     max-width: 500px;
     margin: 0 auto;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   }
 
   .loading-state {
@@ -195,8 +196,8 @@
   .spinner {
     width: 40px;
     height: 40px;
-    border: 4px solid #f3f4f6;
-    border-top: 4px solid #3b82f6;
+    border: 4px solid #27272a;
+    border-top: 4px solid #6366f1;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
@@ -207,12 +208,12 @@
   }
 
   .error-state h2, .auth-required h2, .not-found h2 {
-    color: #1f2937;
+    color: #f4f4f5;
     margin: 0 0 1rem 0;
   }
 
   .error-state p, .auth-required p, .not-found p {
-    color: #6b7280;
+    color: #a1a1aa;
     margin: 0 0 2rem 0;
   }
 
@@ -234,25 +235,25 @@
   }
 
   .btn-primary {
-    background: #3b82f6;
+    background: #6366f1;
     color: white;
   }
 
   .btn-primary:hover {
-    background: #2563eb;
+    background: #4f46e5;
     transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
   }
 
   .btn-secondary {
-    background: #f9fafb;
-    color: #374151;
-    border: 1px solid #d1d5db;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e4e4e7;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .btn-secondary:hover {
-    background: #f3f4f6;
-    border-color: #9ca3af;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   .form-container {

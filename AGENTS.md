@@ -79,6 +79,30 @@ See `docs/FUNCTIONALITY_MANIFEST.md` for detailed guidance.
 - Add or remove dependencies
 - Change configuration files
 - **Add or modify GitHub Actions workflows** (`.github/workflows/*.yml`)
+- **Add new top-level pages** (update navigation in `src/routes/+layout.svelte`)
+
+### Navigation Header Updates
+
+**Location**: `src/routes/+layout.svelte` (~line 184)
+
+**AI agents MUST update the navigation header when:**
+- ✅ Adding a new top-level page (e.g., `/tools`, `/ideas-lab`, `/docs`)
+- ✅ Renaming or removing an existing top-level route
+- ✅ Changing the status of a feature
+
+**Current navigation links:**
+- `/` - Home
+- `/tools` - Tools listing
+- `/ideas-lab` - Ideas Lab (highlighted)
+- `/create` - Create Event
+- `/events` - My Events (authenticated only)
+
+**How to add a link:**
+```svelte
+<a href="/new-page" class="nav-link" class:active={$page.url.pathname === '/new-page'}>
+  New Page
+</a>
+```
 
 ### Documentation Checklist
 
