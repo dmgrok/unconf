@@ -53,11 +53,14 @@ function getBlobPath(pollId: string): string {
 }
 
 // Get poll by ID (from cache or blob storage)
-async function getPollById(id: string): Promise<StoredPoll | null> {
-  // Check cache first
-  const cached = pollCache.get(id);
-  if (cached && Date.now() - cached.cachedAt < CACHE_TTL) {
-    return cached.poll;
+// skipCache: true for write operations to avoid race conditions
+async function getPollById(id: string, skipCache = false): Promise<StoredPoll | null> {
+  // Check cache first (unless skipping for write operations)
+  if (!skipCache) {
+    const cached = pollCache.get(id);
+    if (cached && Date.now() - cached.cachedAt < CACHE_TTL) {
+      return cached.poll;
+    }
   }
   
   try {
@@ -65,8 +68,8 @@ async function getPollById(id: string): Promise<StoredPoll | null> {
     const blobInfo = await head(getBlobPath(id));
     if (!blobInfo) return null;
     
-    // Fetch the poll data
-    const response = await fetch(blobInfo.url);
+    // Fetch the poll data (add cache-busting for fresh reads)
+    const response = await fetch(blobInfo.url + '?t=' + Date.now());
     if (!response.ok) return null;
     
     const poll = await response.json() as StoredPoll;
@@ -239,7 +242,8 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
     return json({ error: 'Poll ID required' }, { status: 400 });
   }
   
-  const poll = await getPollById(pollId);
+  // Skip cache to get fresh data - prevents race conditions in live voting
+  const poll = await getPollById(pollId, true);
   if (!poll) {
     return json({ error: 'Poll not found' }, { status: 404 });
   }
