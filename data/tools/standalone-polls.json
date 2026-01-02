@@ -1,1 +1,25 @@
-[]
+[
+  {
+    "id": "cool-wolf-78",
+    "question": "What are the topics to discuss now?",
+    "pollType": "options",
+    "options": [
+      "A",
+      "V"
+    ],
+    "votes": {
+      "A": 1,
+      "V": 0
+    },
+    "openResponses": [],
+    "voterIds": [
+      "voter_bright-bear-16"
+    ],
+    "maxOptionsVotes": 1,
+    "maxWords": 10,
+    "maxVotesPerPerson": 1,
+    "allowOpenResponses": false,
+    "status": "open",
+    "createdAt": "2026-01-02T21:01:27.095Z"
+  }
+]

@@ -4,17 +4,17 @@
  * Allows creating and managing polls without an event.
  * 
  * STORAGE STRATEGY:
- * - Polls are stored persistently in JSON file with friendly IDs
- * - URL only needs the poll ID (e.g., ?id=happy-tiger-42)
- * - Supports legacy base64-encoded config URLs for backwards compatibility
+ * - Polls are stored in-memory with friendly IDs (e.g., happy-tiger-42)
+ * - URLs only need the poll ID: ?id=happy-tiger-42
+ * - Votes are ephemeral and will reset on serverless cold starts
+ * - This is acceptable for quick, ephemeral polls
+ * - For persistent polls, users should use Event Mode with a database
+ * 
+ * NOTE: Vercel serverless has read-only filesystem, so we use in-memory storage.
  */
 
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
-
-const POLLS_FILE = join(process.cwd(), 'data/tools/standalone-polls.json');
 
 // Type for stored poll
 interface StoredPoll {
@@ -45,48 +45,29 @@ interface LegacyPollConfig {
   ao?: boolean;     // allowOpenResponses
 }
 
-// Load polls from JSON file
-function loadPolls(): StoredPoll[] {
-  try {
-    if (existsSync(POLLS_FILE)) {
-      const data = readFileSync(POLLS_FILE, 'utf-8');
-      return JSON.parse(data);
-    }
-  } catch (error) {
-    console.error('Error loading polls:', error);
-  }
-  return [];
-}
+// In-memory storage - will reset on cold starts (acceptable for quick polls)
+const pollStorage = new Map<string, StoredPoll>();
 
-// Save polls to JSON file
-function savePolls(polls: StoredPoll[]): void {
-  try {
-    writeFileSync(POLLS_FILE, JSON.stringify(polls, null, 2));
-  } catch (error) {
-    console.error('Error saving polls:', error);
+// Clean up old polls (older than 4 hours) to prevent memory bloat
+function cleanupOldPolls() {
+  const fourHoursAgo = Date.now() - 4 * 60 * 60 * 1000;
+  for (const [id, poll] of pollStorage.entries()) {
+    const createdAt = new Date(poll.createdAt).getTime();
+    if (createdAt < fourHoursAgo) {
+      pollStorage.delete(id);
+    }
   }
 }
 
 // Get poll by ID
 function getPollById(id: string): StoredPoll | null {
-  const polls = loadPolls();
-  return polls.find(p => p.id === id) || null;
+  cleanupOldPolls();
+  return pollStorage.get(id) || null;
 }
 
-// Save or update a poll
+// Save a poll
 function savePoll(poll: StoredPoll): void {
-  const polls = loadPolls();
-  const existingIndex = polls.findIndex(p => p.id === poll.id);
-  if (existingIndex >= 0) {
-    polls[existingIndex] = poll;
-  } else {
-    polls.push(poll);
-  }
-  // Keep only last 1000 polls to prevent file bloat
-  if (polls.length > 1000) {
-    polls.splice(0, polls.length - 1000);
-  }
-  savePolls(polls);
+  pollStorage.set(poll.id, poll);
 }
 
 // Decode legacy poll config from base64
