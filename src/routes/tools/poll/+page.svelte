@@ -21,8 +21,16 @@
     openResponses: OpenResponse[];
     maxWords: number;
     status: 'open' | 'closed';
-    allowMultiple: boolean;
-    maxVotesPerPerson: number;
+    maxOptionsVotes: number; // How many options each person can vote for
+    allowOpenResponses?: boolean;
+    maxVotesPerPerson: number; // For suggestions
+  };
+  
+  // Vote notification type
+  type VoteNotification = {
+    id: string;
+    voterName: string;
+    timestamp: number;
   };
   
   // Poll state (now server-synced!)
@@ -36,18 +44,28 @@
   
   // Voter ID for tracking votes (persisted in localStorage)
   let voterId = $state('');
+  
+  // Voter display name (for notifications)
+  let voterName = $state('');
 
   // View mode: 'setup' (creating poll) | 'results' (display for participants) | 'participate' (joined via URL) | 'not-found' (poll link not found)
   let viewMode = $state<'setup' | 'results' | 'participate' | 'not-found'>('setup');
+  
+  // Visualization mode: 'list' | 'bubbles' | 'bars'
+  let vizMode = $state<'list' | 'bubbles' | 'bars'>('list');
+  
+  // Vote notifications
+  let voteNotifications = $state<VoteNotification[]>([]);
+  let previousTotalVotes = $state(0);
   
   // Track if we came from a shared link
   let sharedPollId = $state<string | null>(null);
   
   // Create poll form
   let question = $state('');
-  let pollType = $state<PollType>('options');
   let options = $state(['', '']);
-  let allowMultiple = $state(false);
+  let maxOptionsVotes = $state(1); // How many options each person can vote for
+  let allowOpenResponses = $state(false);
   let maxWords = $state(10);
   let maxVotesPerPerson = $state(3); // Default limit for open response upvotes
   
@@ -75,6 +93,42 @@
   
   let wordCount = $derived(openResponse.trim() ? openResponse.trim().split(/\s+/).length : 0);
   let isOverWordLimit = $derived(activePoll ? wordCount > activePoll.maxWords : false);
+  
+  // Calculate max votes for bubble sizing
+  let maxVoteCount = $derived(activePoll 
+    ? Math.max(...Object.values(activePoll.votes), 1)
+    : 1);
+  
+  // Generate bubble sizes (min 40px, max 200px, scales based on votes)
+  function getBubbleSize(voteCount: number): number {
+    if (maxVoteCount === 0) return 60;
+    const minSize = 50;
+    const maxSize = 180;
+    const scale = voteCount / maxVoteCount;
+    return minSize + (maxSize - minSize) * Math.sqrt(scale);
+  }
+  
+  // Random names for demo notifications
+  const demoNames = ['Alex', 'Jordan', 'Sam', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Charlie'];
+  
+  function getRandomName(): string {
+    return demoNames[Math.floor(Math.random() * demoNames.length)];
+  }
+  
+  // Add notification when new vote is detected
+  function addVoteNotification(name: string) {
+    const notification: VoteNotification = {
+      id: Date.now().toString() + Math.random().toString(36).substring(2),
+      voterName: name,
+      timestamp: Date.now()
+    };
+    voteNotifications = [...voteNotifications, notification];
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+      voteNotifications = voteNotifications.filter(n => n.id !== notification.id);
+    }, 3000);
+  }
   
   // Sort open responses by votes (highest first)
   let sortedResponses = $derived(
@@ -105,6 +159,17 @@
     return id;
   }
   
+  // Get or create voter name
+  function getVoterName(): string {
+    if (!browser) return 'Someone';
+    let name = localStorage.getItem('poll_voter_name');
+    if (!name) {
+      name = getRandomName();
+      localStorage.setItem('poll_voter_name', name);
+    }
+    return name;
+  }
+  
   // Load poll from server using config
   async function loadPoll(config: string): Promise<LocalPoll | null> {
     try {
@@ -128,8 +193,21 @@
     if (pollInterval) clearInterval(pollInterval);
     pollInterval = setInterval(async () => {
       if (pollConfig && activePoll) {
+        const prevTotal = Object.values(activePoll.votes).reduce((sum, count) => sum + count, 0);
         const updated = await loadPoll(pollConfig);
         if (updated) {
+          const newTotal = Object.values(updated.votes).reduce((sum, count) => sum + count, 0);
+          
+          // Detect new votes and show notifications
+          if (newTotal > prevTotal) {
+            const diff = newTotal - prevTotal;
+            for (let i = 0; i < diff; i++) {
+              setTimeout(() => {
+                addVoteNotification(getRandomName());
+              }, i * 300); // Stagger notifications
+            }
+          }
+          
           activePoll = updated;
         }
       }
@@ -148,8 +226,9 @@
   onMount(() => {
     if (!browser) return;
     
-    // Get or create voter ID
+    // Get or create voter ID and name
     voterId = getVoterId();
+    voterName = getVoterName();
     
     // Load voted state from localStorage
     const votedPolls = JSON.parse(localStorage.getItem('voted_polls') || '{}');
@@ -258,41 +337,25 @@
   async function createPoll() {
     if (!question.trim()) return;
     
+    const validOptions = options.filter(o => o.trim());
+    if (validOptions.length < 2) return;
+    
     // Generate unique poll ID
     pollId = generatePollId();
     
-    let newPoll: LocalPoll;
-    
-    if (pollType === 'options') {
-      const validOptions = options.filter(o => o.trim());
-      if (validOptions.length < 2) return;
-      
-      newPoll = {
-        id: pollId,
-        question: question.trim(),
-        pollType: 'options',
-        options: validOptions,
-        votes: Object.fromEntries(validOptions.map(o => [o, 0])),
-        openResponses: [],
-        maxWords: 10,
-        status: 'open',
-        allowMultiple,
-        maxVotesPerPerson: 1,
-      };
-    } else {
-      newPoll = {
-        id: pollId,
-        question: question.trim(),
-        pollType: 'open',
-        options: [],
-        votes: {},
-        openResponses: [],
-        maxWords,
-        status: 'open',
-        allowMultiple: false,
-        maxVotesPerPerson,
-      };
-    }
+    const newPoll: LocalPoll = {
+      id: pollId,
+      question: question.trim(),
+      pollType: 'options', // Always options-based now
+      options: validOptions,
+      votes: Object.fromEntries(validOptions.map(o => [o, 0])),
+      openResponses: [],
+      maxWords: allowOpenResponses ? maxWords : 10,
+      status: 'open',
+      maxOptionsVotes,
+      maxVotesPerPerson: allowOpenResponses ? maxVotesPerPerson : 1,
+      allowOpenResponses,
+    };
     
     // Save to server (returns encoded config)
     isLoading = true;
@@ -360,11 +423,13 @@
   async function vote(option: string) {
     if (!activePoll || activePoll.pollType !== 'options') return;
     
-    if (activePoll.allowMultiple) {
-      // Toggle selection for multiple choice (local only until submit)
+    const maxVotes = activePoll.maxOptionsVotes ?? 1;
+    
+    if (maxVotes > 1) {
+      // Multiple choice - toggle selection (local only until submit)
       if (votedOptions.includes(option)) {
         votedOptions = votedOptions.filter(o => o !== option);
-      } else {
+      } else if (votedOptions.length < maxVotes) {
         votedOptions = [...votedOptions, option];
       }
     } else {
@@ -550,7 +615,8 @@
     // Clear form fields for new poll
     question = '';
     options = ['', ''];
-    allowMultiple = false;
+    maxOptionsVotes = 1;
+    allowOpenResponses = false;
     maxWords = 10;
     maxVotesPerPerson = 3;
   }
@@ -561,13 +627,13 @@
 </script>
 
 <svelte:head>
-  <title>Quick Poll - Event Tools Lab</title>
+  <title>Quick Poll - unconf tools Lab</title>
   <meta name="description" content="Create instant polls with live results. Free, no signup required." />
 </svelte:head>
 
 <div class="poll-container">
   <header>
-    <a href="/" class="back">← Event Tools Lab</a>
+    <a href="/" class="back">← unconf tools Lab</a>
     <h1>🗳️ Quick Poll</h1>
     <p class="subtitle">Create instant polls with live results</p>
   </header>
@@ -669,104 +735,95 @@
           />
         </div>
         
-        <div class="form-group poll-type-selector">
-          <span class="form-label">Response Type</span>
-          <div class="type-options">
-            <button 
-              type="button" 
-              class="type-option" 
-              class:active={pollType === 'options'}
-              onclick={() => pollType = 'options'}
-            >
-              <span class="type-icon">📊</span>
-              <span class="type-name">Fixed Options</span>
-              <span class="type-desc">Participants choose from your options</span>
+        <div class="form-group">
+          <span class="form-label">Options</span>
+          {#each options as option, i}
+            <div class="option-row">
+              <input 
+                type="text" 
+                bind:value={options[i]}
+                placeholder="Option {i + 1}"
+                maxlength="100"
+              />
+              {#if options.length > 2}
+                <button type="button" class="remove-btn" onclick={() => removeOption(i)}>×</button>
+              {/if}
+            </div>
+          {/each}
+          {#if options.length < 10}
+            <button type="button" class="add-option-btn" onclick={addOption}>
+              + Add option
             </button>
-            <button 
-              type="button" 
-              class="type-option" 
-              class:active={pollType === 'open'}
-              onclick={() => pollType = 'open'}
-            >
-              <span class="type-icon">✍️</span>
-              <span class="type-name">Open Responses</span>
-              <span class="type-desc">Participants write their own answers</span>
-            </button>
+          {/if}
+        </div>
+        
+        <div class="form-group vote-type-group">
+          <div class="setting-row">
+            <span>Votes per person:</span>
+            <input 
+              type="number" 
+              min="1" 
+              max="10" 
+              bind:value={maxOptionsVotes}
+              class="compact-input"
+            />
           </div>
         </div>
         
-        {#if pollType === 'options'}
-          <div class="form-group">
-            <span class="form-label">Options</span>
-            {#each options as option, i}
-              <div class="option-row">
+        <div class="form-group vote-type-group">
+          <label class="checkbox-label">
+            <input type="checkbox" bind:checked={allowOpenResponses} />
+            <span>Let participants suggest additional options</span>
+          </label>
+          
+          {#if allowOpenResponses}
+            <div class="suggestion-settings">
+              <div class="setting-row">
+                <span>Max words:</span>
                 <input 
-                  type="text" 
-                  bind:value={options[i]}
-                  placeholder="Option {i + 1}"
-                  maxlength="100"
+                  type="number" 
+                  min="3" 
+                  max="50" 
+                  bind:value={maxWords}
+                  class="compact-input"
                 />
-                {#if options.length > 2}
-                  <button type="button" class="remove-btn" onclick={() => removeOption(i)}>×</button>
-                {/if}
               </div>
-            {/each}
-            {#if options.length < 10}
-              <button type="button" class="add-option-btn" onclick={addOption}>
-                + Add option
-              </button>
-            {/if}
-          </div>
-          
-          <div class="form-group vote-type-group">
-            <label class="checkbox-label">
-              <input type="checkbox" bind:checked={allowMultiple} />
-              <span>Allow multiple selections</span>
-            </label>
-            <p class="help-text">{allowMultiple ? 'Participants can select multiple options' : 'Participants can only select one option'}</p>
-          </div>
-        {:else}
-          <div class="form-group word-limit-group">
-            <label for="maxWords">Word Limit</label>
-            <div class="word-limit-control">
-              <input 
-                id="maxWords"
-                type="range" 
-                min="3" 
-                max="50" 
-                bind:value={maxWords}
-              />
-              <span class="word-limit-value">{maxWords} words</span>
+              <div class="setting-row">
+                <span>Votes per suggestion:</span>
+                <input 
+                  type="number" 
+                  min="1" 
+                  max="10" 
+                  bind:value={maxVotesPerPerson}
+                  class="compact-input"
+                />
+              </div>
             </div>
-            <p class="help-text">Responses will be limited to {maxWords} words maximum</p>
-          </div>
-          
-          <div class="form-group vote-limit-group">
-            <label for="maxVotesPerPerson">Votes Per Person</label>
-            <div class="vote-limit-control">
-              <input 
-                id="maxVotesPerPerson"
-                type="range" 
-                min="1" 
-                max="10" 
-                bind:value={maxVotesPerPerson}
-              />
-              <span class="vote-limit-value">{maxVotesPerPerson} vote{maxVotesPerPerson !== 1 ? 's' : ''}</span>
-            </div>
-            <p class="help-text">Each participant can vote for up to {maxVotesPerPerson} response{maxVotesPerPerson !== 1 ? 's' : ''}</p>
-          </div>
-        {/if}
+          {/if}
+        </div>
         
         <button 
           type="submit" 
           class="create-btn" 
-          disabled={!question.trim() || (pollType === 'options' && options.filter(o => o.trim()).length < 2)}
+          disabled={!question.trim() || options.filter(o => o.trim()).length < 2}
         >
           🗳️ Start Poll
         </button>
       </form>
     </section>
   {:else if (viewMode === 'results' || viewMode === 'participate') && activePoll}
+    <!-- Vote Notifications Toast -->
+    {#if voteNotifications.length > 0}
+      <div class="vote-notifications">
+        {#each voteNotifications as notification (notification.id)}
+          <div class="vote-notification" class:entering={Date.now() - notification.timestamp < 300}>
+            <span class="notification-icon">🗳️</span>
+            <span class="notification-text"><strong>{notification.voterName}</strong> has voted</span>
+          </div>
+        {/each}
+      </div>
+    {/if}
+    
     <!-- Results View - Real-time Display (also used for participate mode) -->
     <section class="results-display">
       <div class="poll-header">
@@ -777,20 +834,50 @@
         </div>
         <h2>{activePoll.question}</h2>
         <div class="poll-meta">
-          {#if activePoll.pollType === 'options'}
-            {#if activePoll.allowMultiple}
-              <span class="poll-type-badge">📊 Multiple choice</span>
-            {:else}
-              <span class="poll-type-badge single">🎯 Single choice</span>
-            {/if}
+          {#if (activePoll.maxOptionsVotes ?? 1) > 1}
+            <span class="poll-type-badge">📊 Select up to {activePoll.maxOptionsVotes}</span>
           {:else}
-            <span class="poll-type-badge open">✍️ Open responses • {activePoll.maxWords} words max</span>
-            <span class="poll-type-badge votes-limit">👆 {activePoll.maxVotesPerPerson} vote{activePoll.maxVotesPerPerson !== 1 ? 's' : ''} per person</span>
+            <span class="poll-type-badge single">🎯 Single choice</span>
+          {/if}
+          {#if activePoll.allowOpenResponses}
+            <span class="poll-type-badge open">✍️ Open responses enabled</span>
           {/if}
         </div>
       </div>
       
-      {#if activePoll.pollType === 'options'}
+      <!-- Visualization Mode Switcher (shared for all poll types) -->
+      <div class="viz-mode-switcher">
+        <button 
+          class="viz-mode-btn" 
+          class:active={vizMode === 'list'}
+          onclick={() => vizMode = 'list'}
+          title="List View"
+        >
+          <span class="viz-icon">📋</span>
+          <span class="viz-label">List</span>
+        </button>
+        <button 
+          class="viz-mode-btn" 
+          class:active={vizMode === 'bubbles'}
+          onclick={() => vizMode = 'bubbles'}
+          title="Bubble View"
+        >
+          <span class="viz-icon">🫧</span>
+          <span class="viz-label">Bubbles</span>
+        </button>
+        <button 
+          class="viz-mode-btn" 
+          class:active={vizMode === 'bars'}
+          onclick={() => vizMode = 'bars'}
+          title="Bar Chart View"
+        >
+          <span class="viz-icon">📊</span>
+          <span class="viz-label">Bars</span>
+        </button>
+      </div>
+      
+      <!-- List View (Original) -->
+      {#if vizMode === 'list'}
         <div class="poll-options">
           {#each activePoll.options as option}
             {@const voteCount = activePoll.votes[option] || 0}
@@ -802,9 +889,9 @@
               class:voted
               class:selected={isSelected}
               onclick={() => vote(option)}
-              disabled={!activePoll.allowMultiple && voted}
+              disabled={(activePoll.maxOptionsVotes ?? 1) === 1 && voted}
             >
-              {#if activePoll.allowMultiple && !voted}
+              {#if (activePoll.maxOptionsVotes ?? 1) > 1 && !voted}
                 <span class="checkbox-indicator" class:checked={isSelected}>{isSelected ? '☑' : '☐'}</span>
               {/if}
               <span class="option-text">{option}</span>
@@ -816,88 +903,173 @@
             </button>
           {/each}
         </div>
-        
-        {#if activePoll.allowMultiple && !voted}
-          <button class="submit-vote-btn" onclick={submitMultipleVote} disabled={votedOptions.length === 0}>
-            ✓ Submit Vote ({votedOptions.length} selected)
-          </button>
-        {/if}
-        
-        {#if voted}
-          <p class="total-votes">{totalVotes} vote{totalVotes !== 1 ? 's' : ''}</p>
-        {:else if !activePoll.allowMultiple}
-          <p class="vote-prompt">Tap an option to vote</p>
-        {:else}
-          <p class="vote-prompt">Select one or more options, then submit</p>
-        {/if}
-      {:else}
-        <!-- Open Response Mode -->
-        <div class="open-response-form">
-          <textarea 
-            bind:value={openResponse}
-            placeholder="Propose a response..."
-            rows="2"
-            class:over-limit={isOverWordLimit}
-          ></textarea>
-          <div class="response-form-footer">
-            <span class="word-counter" class:over-limit={isOverWordLimit}>
-              {wordCount} / {activePoll.maxWords} words
-            </span>
+      {/if}
+      
+      <!-- Bubble View -->
+      {#if vizMode === 'bubbles'}
+        <div class="bubble-container">
+          {#each activePoll.options as option, index}
+            {@const voteCount = activePoll.votes[option] || 0}
+            {@const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0}
+            {@const bubbleSize = getBubbleSize(voteCount)}
+            {@const isSelected = votedOptions.includes(option)}
+            {@const colors = ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ef4444', '#14b8a6', '#f97316', '#84cc16']}
+            
             <button 
-              class="submit-response-btn" 
-              onclick={submitOpenResponse}
-              disabled={!openResponse.trim() || isOverWordLimit}
+              class="bubble"
+              class:voted
+              class:selected={isSelected}
+              style="
+                width: {bubbleSize}px; 
+                height: {bubbleSize}px;
+                background: linear-gradient(135deg, {colors[index % colors.length]}dd, {colors[index % colors.length]}99);
+                box-shadow: 0 4px 20px {colors[index % colors.length]}40;
+              "
+              onclick={() => vote(option)}
+              disabled={(activePoll.maxOptionsVotes ?? 1) === 1 && voted}
             >
-              + Add Response
+              <span class="bubble-label">{option}</span>
+              <span class="bubble-count">{voteCount}</span>
+              {#if percentage > 0}
+                <span class="bubble-percent">{percentage}%</span>
+              {/if}
+              {#if isSelected && voted}
+                <span class="bubble-check">✓</span>
+              {/if}
             </button>
-          </div>
+          {/each}
         </div>
-        
-        {#if activePoll.openResponses.length > 0}
-          <div class="responses-list">
-            <div class="responses-header">
-              <h3>Responses ({activePoll.openResponses.length})</h3>
-              <div class="vote-stats">
-                {#if totalResponseVotes > 0}
-                  <span class="vote-count-badge">💙 {totalResponseVotes} total vote{totalResponseVotes !== 1 ? 's' : ''}</span>
+      {/if}
+      
+      <!-- Horizontal Bar Chart View -->
+      {#if vizMode === 'bars'}
+        <div class="bar-chart-container">
+          {#each activePoll.options as option, index}
+            {@const voteCount = activePoll.votes[option] || 0}
+            {@const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0}
+            {@const isSelected = votedOptions.includes(option)}
+            {@const colors = ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ef4444', '#14b8a6', '#f97316', '#84cc16']}
+            
+            <button 
+              class="bar-row"
+              class:voted
+              class:selected={isSelected}
+              onclick={() => vote(option)}
+              disabled={(activePoll.maxOptionsVotes ?? 1) === 1 && voted}
+            >
+              <div class="bar-label-container">
+                <span class="bar-option-label">{option}</span>
+                {#if isSelected && voted}
+                  <span class="bar-check">✓</span>
                 {/if}
-                <span class="user-votes-remaining" class:limit-reached={userVoteCount >= activePoll.maxVotesPerPerson}>
-                  You: {userVoteCount}/{activePoll.maxVotesPerPerson} votes used
-                </span>
+              </div>
+              <div class="bar-track">
+                <div 
+                  class="bar-fill" 
+                  style="
+                    width: {Math.max(percentage, 2)}%;
+                    background: linear-gradient(90deg, {colors[index % colors.length]}, {colors[index % colors.length]}cc);
+                  "
+                >
+                  {#if percentage > 15}
+                    <span class="bar-value-inside">{voteCount} ({percentage}%)</span>
+                  {/if}
+                </div>
+                {#if percentage <= 15}
+                  <span class="bar-value-outside">{voteCount} ({percentage}%)</span>
+                {/if}
+              </div>
+            </button>
+          {/each}
+        </div>
+      {/if}
+      
+      {#if (activePoll.maxOptionsVotes ?? 1) > 1 && !voted}
+        <button class="submit-vote-btn" onclick={submitMultipleVote} disabled={votedOptions.length === 0}>
+          ✓ Submit Vote ({votedOptions.length}/{activePoll.maxOptionsVotes} selected)
+        </button>
+      {/if}
+      
+      {#if voted}
+        <p class="total-votes">{totalVotes} vote{totalVotes !== 1 ? 's' : ''}</p>
+      {:else if (activePoll.maxOptionsVotes ?? 1) === 1}
+        <p class="vote-prompt">Tap an option to vote</p>
+      {:else}
+        <p class="vote-prompt">Select up to {activePoll.maxOptionsVotes} options, then submit</p>
+      {/if}
+      
+      <!-- Open Responses Section (when enabled) -->
+      {#if activePoll.allowOpenResponses}
+        <div class="open-responses-section">
+          <h3 class="section-divider">✍️ Participant Suggestions</h3>
+          
+          <div class="open-response-form">
+            <textarea 
+              bind:value={openResponse}
+              placeholder="Suggest your own option..."
+              rows="2"
+              class:over-limit={isOverWordLimit}
+            ></textarea>
+            <div class="response-form-footer">
+              <span class="word-counter" class:over-limit={isOverWordLimit}>
+                {wordCount} / {activePoll.maxWords} words
+              </span>
+              <button 
+                class="submit-response-btn" 
+                onclick={submitOpenResponse}
+                disabled={!openResponse.trim() || isOverWordLimit}
+              >
+                + Add Suggestion
+              </button>
+            </div>
+          </div>
+          
+          {#if activePoll.openResponses.length > 0}
+            <div class="responses-list">
+              <div class="responses-header">
+                <span class="response-count">{activePoll.openResponses.length} suggestion{activePoll.openResponses.length !== 1 ? 's' : ''}</span>
+                <div class="vote-stats">
+                  {#if totalResponseVotes > 0}
+                    <span class="vote-count-badge">💙 {totalResponseVotes} vote{totalResponseVotes !== 1 ? 's' : ''}</span>
+                  {/if}
+                  <span class="user-votes-remaining" class:limit-reached={userVoteCount >= activePoll.maxVotesPerPerson}>
+                    You: {userVoteCount}/{activePoll.maxVotesPerPerson} votes
+                  </span>
+                </div>
+              </div>
+              
+              <div class="responses-grid">
+                {#each sortedResponses as response (response.id)}
+                  {@const hasUpvoted = upvotedResponses.includes(response.id)}
+                  {@const canVote = hasUpvoted || userVoteCount < activePoll.maxVotesPerPerson}
+                  <button 
+                    class="response-card" 
+                    class:upvoted={hasUpvoted}
+                    class:disabled={!canVote}
+                    onclick={() => upvoteResponse(response.id)}
+                    disabled={!canVote}
+                  >
+                    <span class="response-text">"{response.text}"</span>
+                    <span class="response-vote-btn" class:active={hasUpvoted}>
+                      {#if hasUpvoted}
+                        <span class="vote-icon">💙</span>
+                      {:else if canVote}
+                        <span class="vote-icon">🤍</span>
+                      {:else}
+                        <span class="vote-icon disabled">🚫</span>
+                      {/if}
+                      <span class="vote-count">{response.votes}</span>
+                    </span>
+                  </button>
+                {/each}
               </div>
             </div>
-            <p class="responses-hint">👆 Click to vote for responses you like (up to {activePoll.maxVotesPerPerson})</p>
-            <div class="responses-grid">
-              {#each sortedResponses as response (response.id)}
-                {@const hasUpvoted = upvotedResponses.includes(response.id)}
-                {@const canVote = hasUpvoted || userVoteCount < activePoll.maxVotesPerPerson}
-                <button 
-                  class="response-card" 
-                  class:upvoted={hasUpvoted}
-                  class:disabled={!canVote}
-                  onclick={() => upvoteResponse(response.id)}
-                  disabled={!canVote}
-                >
-                  <span class="response-text">"{response.text}"</span>
-                  <span class="response-vote-btn" class:active={hasUpvoted}>
-                    {#if hasUpvoted}
-                      <span class="vote-icon">💙</span>
-                    {:else if canVote}
-                      <span class="vote-icon">🤍</span>
-                    {:else}
-                      <span class="vote-icon disabled">🚫</span>
-                    {/if}
-                    <span class="vote-count">{response.votes}</span>
-                  </span>
-                </button>
-              {/each}
+          {:else}
+            <div class="no-responses">
+              <p>No suggestions yet. Be the first!</p>
             </div>
-          </div>
-        {:else}
-          <div class="no-responses">
-            <p>No responses yet. Be the first to propose one!</p>
-          </div>
-        {/if}
+          {/if}
+        </div>
       {/if}
       
       <div class="poll-actions">
@@ -1379,10 +1551,11 @@
   }
   
   .vote-type-group {
-    background: #f0f9ff;
-    padding: 1rem;
+    background: #f8fafc;
+    padding: 0.75rem 1rem;
     border-radius: 8px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
+    border: 1px solid #e5e7eb;
   }
   
   .checkbox-label {
@@ -1396,6 +1569,37 @@
   .checkbox-label input {
     width: 18px;
     height: 18px;
+  }
+  
+  .suggestion-settings {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  .compact-input {
+    width: 60px;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+  
+  .compact-input:focus {
+    outline: none;
+    border-color: #2563eb;
   }
   
   .help-text {
@@ -1596,103 +1800,6 @@
     background: #fecaca;
   }
   
-  /* Poll Type Selector */
-  .poll-type-selector {
-    margin-bottom: 1.5rem;
-  }
-  
-  .type-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-  
-  .type-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 1rem;
-    background: white;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-  }
-  
-  .type-option:hover {
-    border-color: #2563eb;
-  }
-  
-  .type-option.active {
-    border-color: #2563eb;
-    background: #eff6ff;
-  }
-  
-  .type-icon {
-    font-size: 1.5rem;
-  }
-  
-  .type-name {
-    font-weight: 600;
-    font-size: 0.875rem;
-  }
-  
-  .type-desc {
-    font-size: 0.7rem;
-    color: #6b7280;
-  }
-  
-  /* Word Limit Control */
-  .word-limit-group {
-    background: #f0f9ff;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-  }
-  
-  .vote-limit-group {
-    background: #eff6ff;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-  }
-  
-  .word-limit-control,
-  .vote-limit-control {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  
-  .word-limit-control input[type="range"],
-  .vote-limit-control input[type="range"] {
-    flex: 1;
-    height: 8px;
-    border-radius: 4px;
-    background: #dbeafe;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  
-  .word-limit-control input[type="range"]::-webkit-slider-thumb,
-  .vote-limit-control input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #2563eb;
-    cursor: pointer;
-  }
-  
-  .word-limit-value,
-  .vote-limit-value {
-    font-weight: 600;
-    color: #2563eb;
-    min-width: 70px;
-  }
-  
   /* Open Response Form */
   .open-response-form {
     text-align: left;
@@ -1891,10 +1998,30 @@
     font-size: 0.9rem;
   }
   
+  /* Open Responses Section */
+  .open-responses-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #e5e7eb;
+  }
+  
+  .section-divider {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0 0 1rem;
+    text-align: center;
+  }
+  
+  .response-count {
+    font-weight: 600;
+    color: #374151;
+  }
+  
   /* Open Response Form - Updated */
   .open-response-form {
     text-align: left;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
   
   .open-response-form textarea {
@@ -1966,6 +2093,283 @@
     background: rgba(59, 130, 246, 0.1);
     color: #2563eb;
     border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+  
+  /* Vote Notifications */
+  .vote-notifications {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    pointer-events: none;
+  }
+  
+  .vote-notification {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.95) 0%, rgba(139, 92, 246, 0.95) 100%);
+    color: white;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    animation: slideInRight 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards;
+    backdrop-filter: blur(8px);
+  }
+  
+  .vote-notification.entering {
+    animation: slideInRight 0.3s ease-out;
+  }
+  
+  .notification-icon {
+    font-size: 1.1rem;
+  }
+  
+  .notification-text {
+    font-weight: 400;
+  }
+  
+  .notification-text strong {
+    font-weight: 600;
+  }
+  
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  
+  /* Visualization Mode Switcher */
+  .viz-mode-switcher {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+  }
+  
+  .viz-mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.625rem 1rem;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+  
+  .viz-mode-btn:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+  }
+  
+  .viz-mode-btn.active {
+    background: white;
+    border-color: #6366f1;
+    color: #6366f1;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+  }
+  
+  .viz-icon {
+    font-size: 1.1rem;
+  }
+  
+  .viz-label {
+    font-weight: 500;
+  }
+  
+  /* Bubble Visualization */
+  .bubble-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 1rem;
+    min-height: 300px;
+  }
+  
+  .bubble {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    min-width: 50px;
+    min-height: 50px;
+  }
+  
+  .bubble:hover:not(:disabled) {
+    transform: scale(1.1);
+    z-index: 10;
+  }
+  
+  .bubble:disabled {
+    cursor: default;
+  }
+  
+  .bubble.selected {
+    box-shadow: 0 0 0 4px white, 0 0 0 6px #6366f1 !important;
+  }
+  
+  .bubble-label {
+    font-weight: 600;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    max-width: 90%;
+    word-wrap: break-word;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  .bubble-count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 0.25rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .bubble-percent {
+    font-size: 0.7rem;
+    opacity: 0.9;
+    font-weight: 500;
+  }
+  
+  .bubble-check {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: white;
+    color: #6366f1;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Horizontal Bar Chart */
+  .bar-chart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+  
+  .bar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.02);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+  
+  .bar-row:hover:not(:disabled) {
+    background: rgba(99, 102, 241, 0.05);
+    border-color: rgba(99, 102, 241, 0.2);
+  }
+  
+  .bar-row:disabled {
+    cursor: default;
+  }
+  
+  .bar-row.selected {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: #6366f1;
+  }
+  
+  .bar-label-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .bar-option-label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #374151;
+  }
+  
+  .bar-check {
+    color: #6366f1;
+    font-weight: 700;
+  }
+  
+  .bar-track {
+    height: 2.5rem;
+    background: #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.75rem;
+    transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    min-width: 2%;
+  }
+  
+  .bar-value-inside {
+    color: white;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    white-space: nowrap;
+  }
+  
+  .bar-value-outside {
+    position: absolute;
+    left: calc(2% + 0.75rem);
+    color: #6b7280;
+    font-weight: 600;
+    font-size: 0.875rem;
+    white-space: nowrap;
   }
   
 </style>

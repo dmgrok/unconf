@@ -23,9 +23,11 @@ interface PollConfig {
   q: string;        // question
   t: 'o' | 'r';     // type: 'o' = options, 'r' = open responses
   opts?: string[];  // options (for fixed options type)
-  m?: boolean;      // allowMultiple
-  mw?: number;      // maxWords (for open type)
-  mv?: number;      // maxVotesPerPerson
+  m?: boolean;      // allowMultiple (legacy)
+  mo?: number;      // maxOptionsVotes (number of options each person can vote for)
+  mw?: number;      // maxWords (for open responses)
+  mv?: number;      // maxVotesPerPerson (for suggestions)
+  ao?: boolean;     // allowOpenResponses
 }
 
 // Type for runtime poll state (in-memory only)
@@ -128,9 +130,10 @@ export const GET: RequestHandler = async ({ url }) => {
     options: config.opts || [],
     votes: state.votes,
     openResponses: state.openResponses,
-    allowMultiple: config.m || false,
+    maxOptionsVotes: config.mo || (config.m ? 99 : 1), // Legacy: m=true means unlimited
     maxWords: config.mw || 10,
     maxVotesPerPerson: config.mv || 3,
+    allowOpenResponses: config.ao || false,
     status: state.status
   };
   
@@ -152,9 +155,11 @@ export const POST: RequestHandler = async ({ request }) => {
       config.opts = body.options.filter((o: string) => o.trim());
     }
     
-    if (body.allowMultiple) config.m = true;
+    // maxOptionsVotes: how many options each person can select
+    if (body.maxOptionsVotes && body.maxOptionsVotes > 1) config.mo = body.maxOptionsVotes;
     if (body.maxWords && body.maxWords !== 10) config.mw = body.maxWords;
     if (body.maxVotesPerPerson && body.maxVotesPerPerson !== 3) config.mv = body.maxVotesPerPerson;
+    if (body.allowOpenResponses) config.ao = true;
     
     // Encode config
     const configEncoded = encodePollConfig(config);
@@ -180,9 +185,10 @@ export const POST: RequestHandler = async ({ request }) => {
       options: config.opts || [],
       votes: state.votes,
       openResponses: state.openResponses,
-      allowMultiple: config.m || false,
+      maxOptionsVotes: config.mo || 1,
       maxWords: config.mw || 10,
       maxVotesPerPerson: config.mv || 3,
+      allowOpenResponses: config.ao || false,
       status: state.status
     };
     
@@ -227,8 +233,8 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
       const voterId = body.voterId || 'anonymous';
       
       // Check if already voted (for single-choice)
-      const allowMultiple = config.m || false;
-      if (!allowMultiple && state.voterIds.includes(voterId)) {
+      const maxOptionsVotes = config.mo || (config.m ? 99 : 1);
+      if (maxOptionsVotes === 1 && state.voterIds.includes(voterId)) {
         return json({ error: 'Already voted' }, { status: 400 });
       }
       
@@ -273,9 +279,10 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
       options: config.opts || [],
       votes: state.votes,
       openResponses: state.openResponses,
-      allowMultiple: config.m || false,
+      maxOptionsVotes: config.mo || (config.m ? 99 : 1),
       maxWords: config.mw || 10,
       maxVotesPerPerson: config.mv || 3,
+      allowOpenResponses: config.ao || false,
       status: state.status
     };
     
