@@ -43,40 +43,27 @@ interface LegacyPollConfig {
   ao?: boolean;     // allowOpenResponses
 }
 
-// In-memory cache to reduce blob reads (5 minute TTL)
-const pollCache = new Map<string, { poll: StoredPoll; cachedAt: number }>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+// In-memory cache disabled for now to ensure fresh data in live polls
+// const pollCache = new Map<string, { poll: StoredPoll; cachedAt: number }>();
+// const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 // Helper to get blob path for a poll
 function getBlobPath(pollId: string): string {
   return `polls/${pollId}.json`;
 }
 
-// Get poll by ID (from cache or blob storage)
-// skipCache: true for write operations to avoid race conditions
-async function getPollById(id: string, skipCache = false): Promise<StoredPoll | null> {
-  // Check cache first (unless skipping for write operations)
-  if (!skipCache) {
-    const cached = pollCache.get(id);
-    if (cached && Date.now() - cached.cachedAt < CACHE_TTL) {
-      return cached.poll;
-    }
-  }
-  
+// Get poll by ID (always fresh from blob storage)
+async function getPollById(id: string): Promise<StoredPoll | null> {
   try {
     // Check if blob exists
     const blobInfo = await head(getBlobPath(id));
     if (!blobInfo) return null;
     
-    // Fetch the poll data (add cache-busting for fresh reads)
+    // Fetch the poll data (cache-busting query param)
     const response = await fetch(blobInfo.url + '?t=' + Date.now());
     if (!response.ok) return null;
     
     const poll = await response.json() as StoredPoll;
-    
-    // Update cache
-    pollCache.set(id, { poll, cachedAt: Date.now() });
-    
     return poll;
   } catch {
     // Blob doesn't exist or fetch failed
@@ -94,16 +81,12 @@ async function savePoll(poll: StoredPoll): Promise<void> {
     contentType: 'application/json',
     addRandomSuffix: false
   });
-  
-  // Update cache
-  pollCache.set(poll.id, { poll, cachedAt: Date.now() });
 }
 
-// Delete a poll from blob storage
+// Delete a poll from blob storage (unused but kept for future)
 async function deletePoll(pollId: string): Promise<void> {
   try {
     await del(getBlobPath(pollId));
-    pollCache.delete(pollId);
   } catch {
     // Ignore errors if blob doesn't exist
   }
@@ -242,8 +225,7 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
     return json({ error: 'Poll ID required' }, { status: 400 });
   }
   
-  // Skip cache to get fresh data - prevents race conditions in live voting
-  const poll = await getPollById(pollId, true);
+  const poll = await getPollById(pollId);
   if (!poll) {
     return json({ error: 'Poll not found' }, { status: 404 });
   }
