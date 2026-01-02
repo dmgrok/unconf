@@ -7,7 +7,6 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-
     "test:unit": "vitest",
     "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -29,7 +28,6 @@
     "test:load": "node load-tests/run-load-tests.js",
     "test:load:websocket": "npx artillery run load-tests/artillery-config.yml",
     "test:load:http": "npx artillery run load-tests/http-load-test.yml",
-
     "test:coverage": "npm run test:unit -- --coverage",
     "test:coverage:validate": "node scripts/validate-coverage.js",
     "test:coverage:full": "npm run test:coverage && npm run test:coverage:validate",
@@ -42,7 +40,6 @@
     "pre-commit:quick": "bash scripts/pre-commit-ci.sh"
   },
   "devDependencies": {
-
     "@sveltejs/adapter-auto": "^6.0.0",
     "@sveltejs/adapter-vercel": "^5.10.2",
     "@sveltejs/kit": "^2.22.0",
@@ -77,12 +74,12 @@
     "@auth/core": "^0.40.0",
     "@auth/sveltekit": "^1.10.0",
     "@growthbook/growthbook": "^1.6.2",
-
     "@types/dompurify": "^3.0.5",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/qrcode": "^1.5.5",
     "@types/socket.io": "^3.0.1",
     "@vercel/analytics": "^1.6.1",
+    "@vercel/blob": "^2.0.0",
     "@vercel/speed-insights": "^1.3.1",
     "bcryptjs": "^3.0.2",
     "dompurify": "^3.2.7",

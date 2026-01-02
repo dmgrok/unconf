@@ -4,16 +4,14 @@
  * Allows creating and managing polls without an event.
  * 
  * STORAGE STRATEGY:
- * - Polls are stored in-memory with friendly IDs (e.g., happy-tiger-42)
+ * - Polls are stored in Vercel Blob storage with friendly IDs (e.g., happy-tiger-42)
  * - URLs only need the poll ID: ?id=happy-tiger-42
- * - Votes are ephemeral and will reset on serverless cold starts
- * - This is acceptable for quick, ephemeral polls
- * - For persistent polls, users should use Event Mode with a database
- * 
- * NOTE: Vercel serverless has read-only filesystem, so we use in-memory storage.
+ * - Votes persist across serverless cold starts
+ * - Polls auto-expire after 24 hours (configurable)
  */
 
 import { json } from '@sveltejs/kit';
+import { put, head, del } from '@vercel/blob';
 import type { RequestHandler } from './$types';
 
 // Type for stored poll
@@ -45,29 +43,67 @@ interface LegacyPollConfig {
   ao?: boolean;     // allowOpenResponses
 }
 
-// In-memory storage - will reset on cold starts (acceptable for quick polls)
-const pollStorage = new Map<string, StoredPoll>();
+// In-memory cache to reduce blob reads (5 minute TTL)
+const pollCache = new Map<string, { poll: StoredPoll; cachedAt: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-// Clean up old polls (older than 4 hours) to prevent memory bloat
-function cleanupOldPolls() {
-  const fourHoursAgo = Date.now() - 4 * 60 * 60 * 1000;
-  for (const [id, poll] of pollStorage.entries()) {
-    const createdAt = new Date(poll.createdAt).getTime();
-    if (createdAt < fourHoursAgo) {
-      pollStorage.delete(id);
-    }
+// Helper to get blob path for a poll
+function getBlobPath(pollId: string): string {
+  return `polls/${pollId}.json`;
+}
+
+// Get poll by ID (from cache or blob storage)
+async function getPollById(id: string): Promise<StoredPoll | null> {
+  // Check cache first
+  const cached = pollCache.get(id);
+  if (cached && Date.now() - cached.cachedAt < CACHE_TTL) {
+    return cached.poll;
+  }
+  
+  try {
+    // Check if blob exists
+    const blobInfo = await head(getBlobPath(id));
+    if (!blobInfo) return null;
+    
+    // Fetch the poll data
+    const response = await fetch(blobInfo.url);
+    if (!response.ok) return null;
+    
+    const poll = await response.json() as StoredPoll;
+    
+    // Update cache
+    pollCache.set(id, { poll, cachedAt: Date.now() });
+    
+    return poll;
+  } catch {
+    // Blob doesn't exist or fetch failed
+    return null;
   }
 }
 
-// Get poll by ID
-function getPollById(id: string): StoredPoll | null {
-  cleanupOldPolls();
-  return pollStorage.get(id) || null;
+// Save a poll to blob storage
+async function savePoll(poll: StoredPoll): Promise<void> {
+  const blobPath = getBlobPath(poll.id);
+  const pollJson = JSON.stringify(poll);
+  
+  await put(blobPath, pollJson, {
+    access: 'public',
+    contentType: 'application/json',
+    addRandomSuffix: false
+  });
+  
+  // Update cache
+  pollCache.set(poll.id, { poll, cachedAt: Date.now() });
 }
 
-// Save a poll
-function savePoll(poll: StoredPoll): void {
-  pollStorage.set(poll.id, poll);
+// Delete a poll from blob storage
+async function deletePoll(pollId: string): Promise<void> {
+  try {
+    await del(getBlobPath(pollId));
+    pollCache.delete(pollId);
+  } catch {
+    // Ignore errors if blob doesn't exist
+  }
 }
 
 // Decode legacy poll config from base64
@@ -118,14 +154,14 @@ export const GET: RequestHandler = async ({ url }) => {
   
   // Try to find poll by ID first
   if (pollId) {
-    let poll = getPollById(pollId);
+    let poll = await getPollById(pollId);
     
     // If not found but legacy config provided, create from legacy config
     if (!poll && legacyConfig) {
       const config = decodeLegacyConfig(legacyConfig);
       if (config) {
         poll = legacyConfigToPoll(config, pollId);
-        savePoll(poll);
+        await savePoll(poll);
       }
     }
     
@@ -146,7 +182,7 @@ export const GET: RequestHandler = async ({ url }) => {
     // Generate ID and create poll
     const newPollId = generateFriendlyId();
     const poll = legacyConfigToPoll(config, newPollId);
-    savePoll(poll);
+    await savePoll(poll);
     
     return json({ poll });
   }
@@ -186,7 +222,7 @@ export const POST: RequestHandler = async ({ request }) => {
       createdAt: new Date().toISOString()
     };
     
-    savePoll(poll);
+    await savePoll(poll);
     
     return json({ poll });
   } catch (error) {
@@ -203,7 +239,7 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
     return json({ error: 'Poll ID required' }, { status: 400 });
   }
   
-  const poll = getPollById(pollId);
+  const poll = await getPollById(pollId);
   if (!poll) {
     return json({ error: 'Poll not found' }, { status: 404 });
   }
@@ -251,7 +287,7 @@ export const PATCH: RequestHandler = async ({ request, url }) => {
       poll.status = 'closed';
     }
     
-    savePoll(poll);
+    await savePoll(poll);
     
     return json({ poll });
   } catch (error) {
