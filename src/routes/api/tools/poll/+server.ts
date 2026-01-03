@@ -11,7 +11,7 @@
  */
 
 import { json } from '@sveltejs/kit';
-import { put, head, del } from '@vercel/blob';
+import { put, head, del, BlobNotFoundError } from '@vercel/blob';
 import type { RequestHandler } from './$types';
 
 // Type for stored poll
@@ -72,13 +72,13 @@ async function getPollById(id: string): Promise<StoredPoll | null> {
     const poll = await response.json() as StoredPoll;
     return poll;
   } catch (error) {
-    // BlobNotFoundError is thrown when blob doesn't exist - this is expected
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    if (errorMessage.includes('not found') || errorMessage.includes('blob_not_found')) {
+    // BlobNotFoundError is thrown when blob doesn't exist - this is expected for new polls
+    if (error instanceof BlobNotFoundError) {
       console.log('Poll not found (expected for new polls):', id);
-    } else {
-      console.error('getPollById unexpected error:', errorMessage);
+      return null;
     }
+    // Log unexpected errors
+    console.error('getPollById unexpected error:', error);
     return null;
   }
 }
