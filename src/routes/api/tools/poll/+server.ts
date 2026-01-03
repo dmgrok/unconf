@@ -65,8 +65,9 @@ async function getPollById(id: string): Promise<StoredPoll | null> {
     
     const poll = await response.json() as StoredPoll;
     return poll;
-  } catch {
+  } catch (error) {
     // Blob doesn't exist or fetch failed
+    console.error('getPollById error:', error);
     return null;
   }
 }
@@ -76,11 +77,15 @@ async function savePoll(poll: StoredPoll): Promise<void> {
   const blobPath = getBlobPath(poll.id);
   const pollJson = JSON.stringify(poll);
   
-  await put(blobPath, pollJson, {
+  console.log('Saving poll to blob:', blobPath);
+  
+  const result = await put(blobPath, pollJson, {
     access: 'public',
     contentType: 'application/json',
     addRandomSuffix: false
   });
+  
+  console.log('Poll saved, URL:', result.url);
 }
 
 // Delete a poll from blob storage (unused but kept for future)
