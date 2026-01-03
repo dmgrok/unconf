@@ -11,9 +11,12 @@
  */
 
 import { json } from '@sveltejs/kit';
-import { put, list, del } from '@vercel/blob';
+import { put, del } from '@vercel/blob';
 import { env } from '$env/dynamic/private';
 import type { RequestHandler } from './$types';
+
+// Vercel Blob storage base URL
+const BLOB_BASE_URL = 'https://nspbwyiutuovvkcx.public.blob.vercel-storage.com';
 
 // Get the token from environment - use dynamic import for runtime availability
 function getBlobToken(): string {
@@ -22,6 +25,11 @@ function getBlobToken(): string {
     throw new Error('BLOB_READ_WRITE_TOKEN environment variable is not configured');
   }
   return token;
+}
+
+// Get the public URL for a poll blob
+function getBlobUrl(pollId: string): string {
+  return `${BLOB_BASE_URL}/polls/${pollId}.json`;
 }
 
 // Type for stored poll
@@ -62,33 +70,27 @@ function getBlobPath(pollId: string): string {
   return `polls/${pollId}.json`;
 }
 
-// Get poll by ID (always fresh from blob storage)
+// Get poll by ID - fetch directly from public blob URL
 async function getPollById(id: string): Promise<StoredPoll | null> {
-  const blobPath = getBlobPath(id);
-  const token = getBlobToken();
-  console.log('Looking for poll at:', blobPath);
-  console.log('Token available:', !!token, 'starts with:', token?.substring(0, 20));
+  const blobUrl = getBlobUrl(id);
+  console.log('Fetching poll from:', blobUrl);
   
   try {
-    // Use list() with prefix to find the blob - pass token explicitly
-    const { blobs } = await list({ prefix: blobPath, limit: 1, token });
+    // Fetch directly from public blob URL (cache-busting query param)
+    const response = await fetch(blobUrl + '?t=' + Date.now());
     
-    if (blobs.length === 0) {
-      console.log('Poll not found (no blobs with prefix):', id);
+    if (response.status === 404) {
+      console.log('Poll not found:', id);
       return null;
     }
     
-    const blob = blobs[0];
-    console.log('Found blob:', blob.url);
-    
-    // Fetch the poll data (cache-busting query param)
-    const response = await fetch(blob.url + '?t=' + Date.now());
     if (!response.ok) {
-      console.error('Failed to fetch blob content:', response.status);
+      console.error('Failed to fetch poll:', response.status, response.statusText);
       return null;
     }
     
     const poll = await response.json() as StoredPoll;
+    console.log('Found poll:', poll.id);
     return poll;
   } catch (error) {
     console.error('getPollById error:', error);
