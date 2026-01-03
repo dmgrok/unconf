@@ -12,7 +12,11 @@
 
 import { json } from '@sveltejs/kit';
 import { put, list, del } from '@vercel/blob';
+import { BLOB_READ_WRITE_TOKEN } from '$env/static/private';
 import type { RequestHandler } from './$types';
+
+// Get the token from SvelteKit env
+const blobToken = BLOB_READ_WRITE_TOKEN;
 
 // Type for stored poll
 interface StoredPoll {
@@ -56,10 +60,11 @@ function getBlobPath(pollId: string): string {
 async function getPollById(id: string): Promise<StoredPoll | null> {
   const blobPath = getBlobPath(id);
   console.log('Looking for poll at:', blobPath);
+  console.log('Token available:', !!blobToken, 'starts with:', blobToken?.substring(0, 20));
   
   try {
-    // Use list() with prefix to find the blob - this is more reliable than head()
-    const { blobs } = await list({ prefix: blobPath, limit: 1 });
+    // Use list() with prefix to find the blob - pass token explicitly
+    const { blobs } = await list({ prefix: blobPath, limit: 1, token: blobToken });
     
     if (blobs.length === 0) {
       console.log('Poll not found (no blobs with prefix):', id);
@@ -94,7 +99,8 @@ async function savePoll(poll: StoredPoll): Promise<void> {
   const result = await put(blobPath, pollJson, {
     access: 'public',
     contentType: 'application/json',
-    addRandomSuffix: false
+    addRandomSuffix: false,
+    token: blobToken
   });
   
   console.log('Poll saved, URL:', result.url);
@@ -103,7 +109,7 @@ async function savePoll(poll: StoredPoll): Promise<void> {
 // Delete a poll from blob storage (unused but kept for future)
 async function deletePoll(pollId: string): Promise<void> {
   try {
-    await del(getBlobPath(pollId));
+    await del(getBlobPath(pollId), { token: blobToken });
   } catch {
     // Ignore errors if blob doesn't exist
   }
