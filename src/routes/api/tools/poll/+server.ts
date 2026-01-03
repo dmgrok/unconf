@@ -11,14 +11,14 @@
  */
 
 import { json } from '@sveltejs/kit';
-import { put, del } from '@vercel/blob';
 import { env } from '$env/dynamic/private';
 import type { RequestHandler } from './$types';
 
-// Vercel Blob storage base URL
+// Vercel Blob storage configuration
 const BLOB_BASE_URL = 'https://nspbwyiutuovvkcx.public.blob.vercel-storage.com';
+const BLOB_API_URL = 'https://blob.vercel-storage.com';
 
-// Get the token from environment - use dynamic import for runtime availability
+// Get the token from environment
 function getBlobToken(): string {
   const token = env.BLOB_READ_WRITE_TOKEN;
   if (!token) {
@@ -31,8 +31,6 @@ function getBlobToken(): string {
 function getBlobUrl(pollId: string): string {
   return `${BLOB_BASE_URL}/polls/${pollId}.json`;
 }
-
-// Type for stored poll
 interface StoredPoll {
   id: string;
   question: string;
@@ -65,11 +63,6 @@ interface LegacyPollConfig {
 // const pollCache = new Map<string, { poll: StoredPoll; cachedAt: number }>();
 // const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-// Helper to get blob path for a poll
-function getBlobPath(pollId: string): string {
-  return `polls/${pollId}.json`;
-}
-
 // Get poll by ID - fetch directly from public blob URL
 async function getPollById(id: string): Promise<StoredPoll | null> {
   const blobUrl = getBlobUrl(id);
@@ -98,28 +91,55 @@ async function getPollById(id: string): Promise<StoredPoll | null> {
   }
 }
 
-// Save a poll to blob storage
+// Save a poll to blob storage using native fetch
 async function savePoll(poll: StoredPoll): Promise<void> {
-  const blobPath = getBlobPath(poll.id);
+  const pathname = `polls/${poll.id}.json`;
   const pollJson = JSON.stringify(poll);
   const token = getBlobToken();
   
-  console.log('Saving poll to blob:', blobPath);
+  console.log('Saving poll to blob:', pathname);
   
-  const result = await put(blobPath, pollJson, {
-    access: 'public',
-    contentType: 'application/json',
-    addRandomSuffix: false,
-    token
+  // Use Vercel Blob REST API directly
+  const uploadUrl = `${BLOB_API_URL}/${pathname}`;
+  
+  const response = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'x-api-version': '7',
+      'x-content-type': 'application/json',
+      'x-add-random-suffix': 'false'
+    },
+    body: pollJson
   });
   
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error('Failed to save poll:', response.status, errorText);
+    throw new Error(`Failed to save poll: ${response.status}`);
+  }
+  
+  const result = await response.json();
   console.log('Poll saved, URL:', result.url);
 }
 
-// Delete a poll from blob storage (unused but kept for future)
+// Delete a poll from blob storage using native fetch
 async function deletePoll(pollId: string): Promise<void> {
   try {
-    await del(getBlobPath(pollId), { token: getBlobToken() });
+    const pathname = `polls/${pollId}.json`;
+    const token = getBlobToken();
+    
+    // Use Vercel Blob REST API directly
+    const deleteUrl = `${BLOB_API_URL}/${pathname}`;
+    
+    await fetch(deleteUrl, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'x-api-version': '7'
+      }
+    });
   } catch {
     // Ignore errors if blob doesn't exist
   }
