@@ -9,6 +9,15 @@ import type { RequestHandler } from './$types';
 // Constants
 const BLOB_BASE_URL = 'https://nspbwyiutuovvkcx.public.blob.vercel-storage.com';
 
+// Helper to add no-cache headers
+function jsonNoCache(data: unknown, init?: ResponseInit) {
+  const headers = new Headers(init?.headers);
+  headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  headers.set('Pragma', 'no-cache');
+  headers.set('Expires', '0');
+  return json(data, { ...init, headers });
+}
+
 export const GET: RequestHandler = async ({ url, request }) => {
   // Try multiple ways to get the URL params
   const pollIdFromUrl = url.searchParams.get('id');
@@ -25,7 +34,7 @@ export const GET: RequestHandler = async ({ url, request }) => {
   const pollId = pollIdFromUrl || pollIdFromRequest;
   
   if (!pollId) {
-    return json({ 
+    return jsonNoCache({ 
       error: 'Poll ID required', 
       hasToken, 
       fullUrl, 
@@ -44,7 +53,7 @@ export const GET: RequestHandler = async ({ url, request }) => {
     const response = await fetch(blobUrl);
     
     if (!response.ok) {
-      return json({ 
+      return jsonNoCache({ 
         error: 'Poll not found', 
         status: response.status,
         blobUrl,
@@ -54,9 +63,9 @@ export const GET: RequestHandler = async ({ url, request }) => {
     }
     
     const poll = await response.json();
-    return json({ poll, hasToken, pollId });
+    return jsonNoCache({ poll, hasToken, pollId });
   } catch (error) {
-    return json({ 
+    return jsonNoCache({ 
       error: 'Fetch failed', 
       details: String(error),
       blobUrl,
