@@ -12,11 +12,17 @@
 
 import { json } from '@sveltejs/kit';
 import { put, list, del } from '@vercel/blob';
-import { BLOB_READ_WRITE_TOKEN } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import type { RequestHandler } from './$types';
 
-// Get the token from SvelteKit env
-const blobToken = BLOB_READ_WRITE_TOKEN;
+// Get the token from environment - use dynamic import for runtime availability
+function getBlobToken(): string {
+  const token = env.BLOB_READ_WRITE_TOKEN;
+  if (!token) {
+    throw new Error('BLOB_READ_WRITE_TOKEN environment variable is not configured');
+  }
+  return token;
+}
 
 // Type for stored poll
 interface StoredPoll {
@@ -59,12 +65,13 @@ function getBlobPath(pollId: string): string {
 // Get poll by ID (always fresh from blob storage)
 async function getPollById(id: string): Promise<StoredPoll | null> {
   const blobPath = getBlobPath(id);
+  const token = getBlobToken();
   console.log('Looking for poll at:', blobPath);
-  console.log('Token available:', !!blobToken, 'starts with:', blobToken?.substring(0, 20));
+  console.log('Token available:', !!token, 'starts with:', token?.substring(0, 20));
   
   try {
     // Use list() with prefix to find the blob - pass token explicitly
-    const { blobs } = await list({ prefix: blobPath, limit: 1, token: blobToken });
+    const { blobs } = await list({ prefix: blobPath, limit: 1, token });
     
     if (blobs.length === 0) {
       console.log('Poll not found (no blobs with prefix):', id);
@@ -93,6 +100,7 @@ async function getPollById(id: string): Promise<StoredPoll | null> {
 async function savePoll(poll: StoredPoll): Promise<void> {
   const blobPath = getBlobPath(poll.id);
   const pollJson = JSON.stringify(poll);
+  const token = getBlobToken();
   
   console.log('Saving poll to blob:', blobPath);
   
@@ -100,7 +108,7 @@ async function savePoll(poll: StoredPoll): Promise<void> {
     access: 'public',
     contentType: 'application/json',
     addRandomSuffix: false,
-    token: blobToken
+    token
   });
   
   console.log('Poll saved, URL:', result.url);
@@ -109,7 +117,7 @@ async function savePoll(poll: StoredPoll): Promise<void> {
 // Delete a poll from blob storage (unused but kept for future)
 async function deletePoll(pollId: string): Promise<void> {
   try {
-    await del(getBlobPath(pollId), { token: blobToken });
+    await del(getBlobPath(pollId), { token: getBlobToken() });
   } catch {
     // Ignore errors if blob doesn't exist
   }
