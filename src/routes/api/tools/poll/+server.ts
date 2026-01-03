@@ -11,7 +11,7 @@
  */
 
 import { json } from '@sveltejs/kit';
-import { put, head, del, BlobNotFoundError } from '@vercel/blob';
+import { put, list, del } from '@vercel/blob';
 import type { RequestHandler } from './$types';
 
 // Type for stored poll
@@ -58,12 +58,19 @@ async function getPollById(id: string): Promise<StoredPoll | null> {
   console.log('Looking for poll at:', blobPath);
   
   try {
-    // head() throws BlobNotFoundError if blob doesn't exist
-    const blobInfo = await head(blobPath);
-    console.log('Found blob:', blobInfo.url);
+    // Use list() with prefix to find the blob - this is more reliable than head()
+    const { blobs } = await list({ prefix: blobPath, limit: 1 });
+    
+    if (blobs.length === 0) {
+      console.log('Poll not found (no blobs with prefix):', id);
+      return null;
+    }
+    
+    const blob = blobs[0];
+    console.log('Found blob:', blob.url);
     
     // Fetch the poll data (cache-busting query param)
-    const response = await fetch(blobInfo.url + '?t=' + Date.now());
+    const response = await fetch(blob.url + '?t=' + Date.now());
     if (!response.ok) {
       console.error('Failed to fetch blob content:', response.status);
       return null;
@@ -72,13 +79,7 @@ async function getPollById(id: string): Promise<StoredPoll | null> {
     const poll = await response.json() as StoredPoll;
     return poll;
   } catch (error) {
-    // BlobNotFoundError is thrown when blob doesn't exist - this is expected for new polls
-    if (error instanceof BlobNotFoundError) {
-      console.log('Poll not found (expected for new polls):', id);
-      return null;
-    }
-    // Log unexpected errors
-    console.error('getPollById unexpected error:', error);
+    console.error('getPollById error:', error);
     return null;
   }
 }
