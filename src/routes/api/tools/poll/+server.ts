@@ -192,44 +192,35 @@ export const GET: RequestHandler = async ({ url }) => {
     const pollId = url.searchParams.get('id');
     const legacyConfig = url.searchParams.get('c');
     
-    console.log('GET /api/tools/poll - pollId:', pollId, 'hasLegacyConfig:', !!legacyConfig);
+    console.log('GET /api/tools/poll - START - pollId:', pollId, 'hasLegacyConfig:', !!legacyConfig);
     
-    // Try to find poll by ID first
-    if (pollId) {
-      let poll = await getPollById(pollId);
-      
-      // If not found but legacy config provided, create from legacy config
-      if (!poll && legacyConfig) {
-        const config = decodeLegacyConfig(legacyConfig);
-        if (config) {
-          poll = legacyConfigToPoll(config, pollId);
-          await savePoll(poll);
-        }
-      }
-      
-      if (poll) {
-        return json({ poll });
-      }
-      
-      return json({ error: 'Poll not found' }, { status: 404 });
+    // Temporary: Just return a debug response to test if handler is reached
+    if (!pollId) {
+      return json({ error: 'Poll ID required. Use ?id=<poll_id>', debug: true }, { status: 400 });
     }
     
-    // Legacy: config-only URL (no ID)
-    if (legacyConfig) {
+    console.log('About to fetch poll:', pollId);
+    
+    // Try to find poll by ID first
+    let poll = await getPollById(pollId);
+    
+    console.log('Fetch result:', poll ? 'found' : 'not found');
+    
+    // If not found but legacy config provided, create from legacy config
+    if (!poll && legacyConfig) {
+      console.log('Trying legacy config');
       const config = decodeLegacyConfig(legacyConfig);
-      if (!config) {
-        return json({ error: 'Invalid poll configuration' }, { status: 400 });
+      if (config) {
+        poll = legacyConfigToPoll(config, pollId);
+        await savePoll(poll);
       }
-      
-      // Generate ID and create poll
-      const newPollId = generateFriendlyId();
-      const poll = legacyConfigToPoll(config, newPollId);
-      await savePoll(poll);
-      
+    }
+    
+    if (poll) {
       return json({ poll });
     }
     
-    return json({ error: 'Poll ID required. Use ?id=<poll_id>' }, { status: 400 });
+    return json({ error: 'Poll not found' }, { status: 404 });
   } catch (error) {
     console.error('GET /api/tools/poll error:', error);
     return json({ error: 'Internal server error', details: String(error) }, { status: 500 });
