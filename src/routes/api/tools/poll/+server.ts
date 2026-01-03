@@ -54,20 +54,31 @@ function getBlobPath(pollId: string): string {
 
 // Get poll by ID (always fresh from blob storage)
 async function getPollById(id: string): Promise<StoredPoll | null> {
+  const blobPath = getBlobPath(id);
+  console.log('Looking for poll at:', blobPath);
+  
   try {
-    // Check if blob exists
-    const blobInfo = await head(getBlobPath(id));
-    if (!blobInfo) return null;
+    // head() throws BlobNotFoundError if blob doesn't exist
+    const blobInfo = await head(blobPath);
+    console.log('Found blob:', blobInfo.url);
     
     // Fetch the poll data (cache-busting query param)
     const response = await fetch(blobInfo.url + '?t=' + Date.now());
-    if (!response.ok) return null;
+    if (!response.ok) {
+      console.error('Failed to fetch blob content:', response.status);
+      return null;
+    }
     
     const poll = await response.json() as StoredPoll;
     return poll;
   } catch (error) {
-    // Blob doesn't exist or fetch failed
-    console.error('getPollById error:', error);
+    // BlobNotFoundError is thrown when blob doesn't exist - this is expected
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    if (errorMessage.includes('not found') || errorMessage.includes('blob_not_found')) {
+      console.log('Poll not found (expected for new polls):', id);
+    } else {
+      console.error('getPollById unexpected error:', errorMessage);
+    }
     return null;
   }
 }
