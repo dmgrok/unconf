@@ -396,9 +396,73 @@ task-master set-status --id=<id> --status=done
 ```
 See `.taskmaster/CLAUDE.md` for full workflow.
 
+## Vercel Deployment Pitfalls (IMPORTANT)
+
+### ISR and Query Parameters
+**CRITICAL**: ISR (Incremental Static Regeneration) was disabled because it caused query parameters to be stripped from API routes.
+
+```javascript
+// ❌ DON'T enable ISR - it breaks API query params
+adapter: adapter({
+  isr: { expiration: 3600 }  // This strips ?id=xxx from API routes!
+})
+
+// ✅ Current config - no ISR
+adapter: adapter({
+  runtime: 'nodejs22.x',
+  regions: ['iad1'],
+  memory: 1024,
+  split: false
+})
+```
+
+**What happens with ISR enabled:**
+- Vercel caches API routes like `/api/tools/poll?id=abc`
+- Cache key is just `/api/tools/poll` (WITHOUT query params)
+- All requests get the same cached response, ignoring the `?id=` parameter
+- Results in `FUNCTION_INVOCATION_FAILED` or wrong data returned
+
+### Debugging Vercel API Issues
+When API routes fail in production:
+
+1. **Check cache headers first**:
+   ```bash
+   curl -v "https://your-app.vercel.app/api/endpoint?param=value"
+   # Look for: x-vercel-cache: HIT  ← This means caching issue!
+   # Look for: age: X  ← How old the cached response is
+   ```
+
+2. **Create minimal test endpoint** to isolate the issue:
+   ```typescript
+   // src/routes/api/test/+server.ts
+   export const GET = async ({ url }) => {
+     return json({
+       params: url.searchParams.toString(),
+       hasParams: url.searchParams.size > 0
+     });
+   };
+   ```
+
+3. **Check svelte.config.js** for ISR, prerender, or caching settings
+
+4. **Vercel Blob Storage** works fine - use native `fetch` to blob URLs:
+   ```typescript
+   const BLOB_BASE_URL = 'https://xxx.public.blob.vercel-storage.com';
+   const response = await fetch(`${BLOB_BASE_URL}/polls/${id}.json`);
+   ```
+
+### Common Vercel Error Patterns
+| Symptom | Likely Cause |
+|---------|--------------|
+| `FUNCTION_INVOCATION_FAILED` | ISR caching, module import error, or runtime crash |
+| Query params ignored | ISR enabled (check `svelte.config.js`) |
+| `x-vercel-cache: HIT` on API | ISR or aggressive caching |
+| Works locally, fails in prod | Environment variables or ISR |
+
 ## What NOT to Do
 - ❌ Don't add databases - JSON files in `data/` are intentional
 - ❌ Don't create complex enterprise features before validation
 - ❌ Don't use legacy Svelte stores - use Svelte 5 runes
 - ❌ Don't skip security middleware for convenience
 - ❌ Don't create temporary files without registering in `.cleanup-tracker.json`
+- ❌ Don't enable ISR in `svelte.config.js` - it breaks API query parameters
