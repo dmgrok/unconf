@@ -145,14 +145,18 @@ async function deletePoll(pollId: string): Promise<void> {
   }
 }
 
-// Decode legacy poll config from base64
+// Decode legacy poll config from base64 using Web APIs (Node.js Buffer may not be available in serverless)
 function decodeLegacyConfig(encoded: string): LegacyPollConfig | null {
   try {
-    const jsonStr = Buffer.from(encoded, 'base64url').toString('utf-8');
+    // First try base64url decoding using Web APIs
+    const base64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64 + '='.repeat((4 - base64.length % 4) % 4);
+    const jsonStr = atob(padded);
     return JSON.parse(jsonStr);
   } catch {
     try {
-      const jsonStr = Buffer.from(encoded, 'base64').toString('utf-8');
+      // Try standard base64
+      const jsonStr = atob(encoded);
       return JSON.parse(jsonStr);
     } catch {
       return null;
