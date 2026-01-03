@@ -16,11 +16,10 @@ const config = {
 			regions: ['iad1'],
 			// Memory allocation for serverless functions
 			memory: 1024,
-			// Enable ISR for static generation with dynamic fallback
-			isr: {
-				// Cache static pages for 1 hour, then regenerate
-				expiration: 3600
-			},
+			// Disable ISR - it was causing query params to be stripped from API routes
+			// isr: {
+			// 	expiration: 3600
+			// },
 			// Disable function splitting for Hobby plan (max 12 functions)
 			split: false
 		}),
