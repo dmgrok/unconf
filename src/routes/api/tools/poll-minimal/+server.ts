@@ -9,14 +9,32 @@ import type { RequestHandler } from './$types';
 // Constants
 const BLOB_BASE_URL = 'https://nspbwyiutuovvkcx.public.blob.vercel-storage.com';
 
-export const GET: RequestHandler = async ({ url }) => {
-  const pollId = url.searchParams.get('id');
+export const GET: RequestHandler = async ({ url, request }) => {
+  // Try multiple ways to get the URL params
+  const pollIdFromUrl = url.searchParams.get('id');
+  const requestUrl = new URL(request.url);
+  const pollIdFromRequest = requestUrl.searchParams.get('id');
+  
   const hasToken = !!env.BLOB_READ_WRITE_TOKEN;
   const fullUrl = url.toString();
+  const fullRequestUrl = request.url;
   const searchParams = url.searchParams.toString();
+  const requestSearchParams = requestUrl.searchParams.toString();
+  
+  // Use pollId from either source
+  const pollId = pollIdFromUrl || pollIdFromRequest;
   
   if (!pollId) {
-    return json({ error: 'Poll ID required', hasToken, fullUrl, searchParams });
+    return json({ 
+      error: 'Poll ID required', 
+      hasToken, 
+      fullUrl, 
+      fullRequestUrl,
+      searchParams, 
+      requestSearchParams,
+      pollIdFromUrl,
+      pollIdFromRequest
+    });
   }
   
   // Try to fetch from blob
