@@ -151,45 +151,52 @@ function legacyConfigToPoll(config: LegacyPollConfig, pollId: string): StoredPol
 
 // GET /api/tools/poll?id=xxx - Get poll by ID (or legacy ?c=xxx)
 export const GET: RequestHandler = async ({ url }) => {
-  const pollId = url.searchParams.get('id');
-  const legacyConfig = url.searchParams.get('c');
-  
-  // Try to find poll by ID first
-  if (pollId) {
-    let poll = await getPollById(pollId);
+  try {
+    const pollId = url.searchParams.get('id');
+    const legacyConfig = url.searchParams.get('c');
     
-    // If not found but legacy config provided, create from legacy config
-    if (!poll && legacyConfig) {
-      const config = decodeLegacyConfig(legacyConfig);
-      if (config) {
-        poll = legacyConfigToPoll(config, pollId);
-        await savePoll(poll);
+    console.log('GET /api/tools/poll - pollId:', pollId, 'hasLegacyConfig:', !!legacyConfig);
+    
+    // Try to find poll by ID first
+    if (pollId) {
+      let poll = await getPollById(pollId);
+      
+      // If not found but legacy config provided, create from legacy config
+      if (!poll && legacyConfig) {
+        const config = decodeLegacyConfig(legacyConfig);
+        if (config) {
+          poll = legacyConfigToPoll(config, pollId);
+          await savePoll(poll);
+        }
       }
+      
+      if (poll) {
+        return json({ poll });
+      }
+      
+      return json({ error: 'Poll not found' }, { status: 404 });
     }
     
-    if (poll) {
+    // Legacy: config-only URL (no ID)
+    if (legacyConfig) {
+      const config = decodeLegacyConfig(legacyConfig);
+      if (!config) {
+        return json({ error: 'Invalid poll configuration' }, { status: 400 });
+      }
+      
+      // Generate ID and create poll
+      const newPollId = generateFriendlyId();
+      const poll = legacyConfigToPoll(config, newPollId);
+      await savePoll(poll);
+      
       return json({ poll });
     }
     
-    return json({ error: 'Poll not found' }, { status: 404 });
+    return json({ error: 'Poll ID required. Use ?id=<poll_id>' }, { status: 400 });
+  } catch (error) {
+    console.error('GET /api/tools/poll error:', error);
+    return json({ error: 'Internal server error', details: String(error) }, { status: 500 });
   }
-  
-  // Legacy: config-only URL (no ID)
-  if (legacyConfig) {
-    const config = decodeLegacyConfig(legacyConfig);
-    if (!config) {
-      return json({ error: 'Invalid poll configuration' }, { status: 400 });
-    }
-    
-    // Generate ID and create poll
-    const newPollId = generateFriendlyId();
-    const poll = legacyConfigToPoll(config, newPollId);
-    await savePoll(poll);
-    
-    return json({ poll });
-  }
-  
-  return json({ error: 'Poll ID required. Use ?id=<poll_id>' }, { status: 400 });
 };
 
 // POST /api/tools/poll - Create a new poll
