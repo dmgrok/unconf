@@ -1,20 +1,5 @@
 {
-  "temporaryFiles": {
-    ".github/workflows/issue-triage-old.yml.bak": {
-      "created": "2024-12-30",
-      "purpose": "Backup of original workflow before refactoring",
-      "task": "Workflow refactoring - extract JS to modules",
-      "status": "completed",
-      "keepUntil": "2025-01-13"
-    },
-    ".github/workflows/agent-pr-validation-old.yml.bak": {
-      "created": "2024-12-30",
-      "purpose": "Backup of original workflow before refactoring",
-      "task": "Workflow refactoring - extract JS to modules",
-      "status": "completed",
-      "keepUntil": "2025-01-13"
-    }
-  },
+  "temporaryFiles": {},
   "permanentFiles": [
     "README.md",
     "CHANGELOG.md",
@@ -57,6 +42,6 @@
     "maxAgeInDays": 7,
     "cleanupSchedule": "weekly"
   },
-  "lastCleanup": "2025-12-29T23:50:34.989Z",
-  "nextCleanup": "2026-01-05T23:50:34.990Z"
+  "lastCleanup": "2026-01-05T03:46:55.126Z",
+  "nextCleanup": "2026-01-12T03:46:55.126Z"
 }
