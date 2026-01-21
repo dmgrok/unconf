@@ -28,7 +28,6 @@
 	// Dynamic imports for non-critical components
 	let SecurityMonitor = $state<any>(null);
 	let DeveloperBanner = $state<any>(null);
-	let LanguageSwitcher = $state<any>(null);
 	let WebVitalsMonitor = $state<any>(null);
 
 	let { children, data }: { children: any; data: LayoutData } = $props();
@@ -104,15 +103,13 @@
 			await waitLocale();
 
 			// Dynamically import non-critical components
-			const [securityMonitorModule, languageSwitcherModule, developerBannerModule, webVitalsModule] = await Promise.all([
+			const [securityMonitorModule, developerBannerModule, webVitalsModule] = await Promise.all([
 				import('$lib/components/SecurityMonitor.svelte'),
-				import('$lib/components/LanguageSwitcher.svelte'),
 				dev ? import('../components/DeveloperBanner.svelte') : Promise.resolve({ default: null }),
 				import('$lib/components/WebVitalsMonitor.svelte')
 			]);
 
 			SecurityMonitor = securityMonitorModule.default;
-			LanguageSwitcher = languageSwitcherModule.default;
 			WebVitalsMonitor = webVitalsModule.default;
 			if (dev) {
 				DeveloperBanner = developerBannerModule.default;
@@ -196,9 +193,6 @@
 		</div>
 
 		<div class="nav-auth">
-			{#if LanguageSwitcher}
-				<LanguageSwitcher />
-			{/if}
 			{#if $isAuthenticated && $user}
 				<span class="user-info">
 					{$user.name || $user.email || 'User'}

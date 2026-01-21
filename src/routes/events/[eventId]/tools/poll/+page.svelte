@@ -2,6 +2,7 @@
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import { generateId, type Event, type Participant, type Poll } from '$lib/types/tools';
+  import { ToolHeader, LoadingState, ErrorState, PollDisplay } from '$lib/components/tools';
   
   let event = $state<Event | null>(null);
   let currentParticipant = $state<Participant | null>(null);
@@ -23,6 +24,16 @@
   let totalVotes = $derived(activePoll 
     ? Object.values(activePoll.votes).reduce((sum, voters) => sum + voters.length, 0)
     : 0);
+  
+  // Transform poll options for PollDisplay component
+  let pollOptions = $derived(activePoll 
+    ? activePoll.options.map(opt => ({
+        text: opt,
+        voteCount: activePoll!.votes[opt]?.length || 0,
+        isSelected: votedOption === opt
+      }))
+    : []
+  );
   
   onMount(async () => {
     try {
@@ -125,7 +136,7 @@
     isCreating = false;
   }
   
-  async function vote(option: string) {
+  async function handleVote(optionText: string) {
     if (voted || !currentParticipant || !activePoll) return;
     
     try {
@@ -133,17 +144,17 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          option,
+          option: optionText,
           participantId: currentParticipant.id,
         }),
       });
       
       if (response.ok) {
         voted = true;
-        votedOption = option;
+        votedOption = optionText;
         // Update local vote count
         if (activePoll) {
-          activePoll.votes[option] = [...(activePoll.votes[option] || []), currentParticipant.id];
+          activePoll.votes[optionText] = [...(activePoll.votes[optionText] || []), currentParticipant.id];
           activePoll = activePoll; // trigger reactivity
         }
       }
@@ -177,20 +188,16 @@
 
 <main>
   {#if isLoading}
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>Loading...</p>
-    </div>
+    <LoadingState message="Loading..." />
   {:else if error}
-    <div class="error-page">
-      <h1>😕 {error}</h1>
-      <a href="/" class="btn">← Back to Home</a>
-    </div>
+    <ErrorState title={error} backUrl="/" backText="← Back to Home" />
   {:else if event}
-    <header>
-      <a href="/events/{eventId}" class="back">← Back to {event.name}</a>
-      <h1>🗳️ Quick Poll</h1>
-    </header>
+    <ToolHeader 
+      {eventId}
+      eventName={event.name}
+      title="Quick Poll"
+      icon="🗳️"
+    />
     
     {#if !currentParticipant}
       <div class="join-prompt">
@@ -250,40 +257,14 @@
       {/if}
     {:else}
       <section class="active-poll">
-        <h2>{activePoll.question}</h2>
-        
-        <div class="poll-options">
-          {#each activePoll.options as option}
-            {@const voteCount = activePoll.votes[option]?.length || 0}
-            {@const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0}
-            {@const isSelected = votedOption === option}
-            
-            <button 
-              class="poll-option"
-              class:voted
-              class:selected={isSelected}
-              onclick={() => vote(option)}
-              disabled={voted}
-            >
-              <span class="option-text">{option}</span>
-              {#if voted}
-                <span class="vote-count">{voteCount} ({percentage}%)</span>
-              {/if}
-              {#if voted}
-                <div class="bar" style="width: {percentage}%"></div>
-              {/if}
-              {#if isSelected}
-                <span class="check">✓</span>
-              {/if}
-            </button>
-          {/each}
-        </div>
-        
-        {#if voted}
-          <p class="total-votes">{totalVotes} vote{totalVotes !== 1 ? 's' : ''}</p>
-        {:else}
-          <p class="vote-prompt">Tap an option to vote</p>
-        {/if}
+        <PollDisplay 
+          question={activePoll.question}
+          options={pollOptions}
+          {totalVotes}
+          hasVoted={voted}
+          status={activePoll.status}
+          onVote={handleVote}
+        />
         
         {#if isOrganizer}
           <button class="close-poll-btn" onclick={closePoll}>
@@ -302,53 +283,6 @@
     padding: 1.5rem 1rem;
     font-family: system-ui, -apple-system, sans-serif;
     color: #e4e4e7;
-  }
-  
-  .loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 50vh;
-    color: #a1a1aa;
-  }
-  
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #27272a;
-    border-top-color: #6366f1;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  
-  .error-page {
-    text-align: center;
-    padding: 4rem 1rem;
-  }
-  
-  .back {
-    color: #71717a;
-    text-decoration: none;
-    font-size: 0.875rem;
-  }
-  
-  .back:hover {
-    color: #a1a1aa;
-  }
-  
-  header {
-    margin-bottom: 2rem;
-  }
-  
-  h1 {
-    font-size: 1.75rem;
-    margin: 1rem 0 0;
-    color: #f4f4f5;
   }
   
   .btn {
@@ -514,93 +448,6 @@
   /* Active Poll */
   .active-poll {
     text-align: center;
-  }
-  
-  .active-poll h2 {
-    font-size: 1.5rem;
-    margin: 0 0 1.5rem;
-    color: #f4f4f5;
-  }
-  
-  .poll-options {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .poll-option {
-    position: relative;
-    padding: 1rem 1.25rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    text-align: left;
-    cursor: pointer;
-    overflow: hidden;
-    transition: border-color 0.2s;
-    color: #e4e4e7;
-  }
-  
-  .poll-option:not(:disabled):hover {
-    border-color: #6366f1;
-  }
-  
-  .poll-option:disabled {
-    cursor: default;
-  }
-  
-  .poll-option.voted {
-    background: rgba(255, 255, 255, 0.05);
-  }
-  
-  .poll-option.selected {
-    border-color: #6366f1;
-    background: rgba(99, 102, 241, 0.1);
-  }
-  
-  .option-text {
-    position: relative;
-    z-index: 1;
-    font-size: 1rem;
-  }
-  
-  .vote-count {
-    position: relative;
-    z-index: 1;
-    float: right;
-    color: #a1a1aa;
-    font-size: 0.875rem;
-  }
-  
-  .bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    background: rgba(99, 102, 241, 0.2);
-    transition: width 0.3s ease;
-    z-index: 0;
-  }
-  
-  .check {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6366f1;
-    font-weight: bold;
-    z-index: 1;
-  }
-  
-  .total-votes {
-    margin: 1.5rem 0 0;
-    color: #a1a1aa;
-  }
-  
-  .vote-prompt {
-    margin: 1rem 0 0;
-    color: #71717a;
-    font-size: 0.875rem;
   }
   
   .close-poll-btn {

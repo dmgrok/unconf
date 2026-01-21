@@ -2,6 +2,13 @@
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import { shuffleArray, chunkArray, type Event, type Participant, type Team } from '$lib/types/tools';
+  import { 
+    ToolHeader, 
+    LoadingState, 
+    ErrorState, 
+    TeamSizeControl, 
+    TeamsDisplay 
+  } from '$lib/components/tools';
   
   let event = $state<Event | null>(null);
   let participants = $state<Participant[]>([]);
@@ -97,6 +104,10 @@
     teams = [];
     shuffled = false;
   }
+  
+  function handleTeamSizeChange(newSize: number) {
+    teamSize = newSize;
+  }
 </script>
 
 <svelte:head>
@@ -105,21 +116,17 @@
 
 <main>
   {#if isLoading}
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>Loading...</p>
-    </div>
+    <LoadingState message="Loading..." />
   {:else if error}
-    <div class="error-page">
-      <h1>😕 {error}</h1>
-      <a href="/" class="btn">← Back to Home</a>
-    </div>
+    <ErrorState title={error} backUrl="/" backText="← Back to Home" />
   {:else if event}
-    <header>
-      <a href="/events/{eventId}" class="back">← Back to {event.name}</a>
-      <h1>🎲 Team Shuffler</h1>
-      <p class="subtitle">{participants.length} participants available</p>
-    </header>
+    <ToolHeader 
+      {eventId}
+      eventName={event.name}
+      title="Team Shuffler"
+      icon="🎲"
+      subtitle="{participants.length} participants available"
+    />
     
     {#if participants.length < 2}
       <div class="warning-box">
@@ -130,25 +137,12 @@
     {:else}
       <section class="controls">
         <div class="control-row">
-          <label>
-            <span>Team size</span>
-            <div class="size-input">
-              <button 
-                class="size-btn" 
-                onclick={() => teamSize = Math.max(2, teamSize - 1)}
-                disabled={teamSize <= 2}
-              >−</button>
-              <span class="size-value">{teamSize}</span>
-              <button 
-                class="size-btn" 
-                onclick={() => teamSize = Math.min(maxTeamSize, teamSize + 1)}
-                disabled={teamSize >= maxTeamSize}
-              >+</button>
-            </div>
-          </label>
-          <span class="team-count">
-            → {Math.ceil(participants.length / teamSize)} teams
-          </span>
+          <TeamSizeControl 
+            {teamSize}
+            max={maxTeamSize}
+            totalPeople={participants.length}
+            onChange={handleTeamSizeChange}
+          />
         </div>
         
         <div class="action-buttons">
@@ -177,19 +171,7 @@
             </div>
           </div>
           
-          <div class="teams-grid">
-            {#each teams as team, i}
-              <div class="team-card">
-                <h3>{team.name}</h3>
-                <ul>
-                  {#each team.members as member}
-                    <li>{member}</li>
-                  {/each}
-                </ul>
-                <span class="member-count">{team.members.length} members</span>
-              </div>
-            {/each}
-          </div>
+          <TeamsDisplay {teams} />
         </section>
       {/if}
       
@@ -212,58 +194,6 @@
     padding: 1.5rem 1rem;
     font-family: system-ui, -apple-system, sans-serif;
     color: #e4e4e7;
-  }
-  
-  .loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 50vh;
-    color: #a1a1aa;
-  }
-  
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #27272a;
-    border-top-color: #6366f1;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  
-  .error-page {
-    text-align: center;
-    padding: 4rem 1rem;
-  }
-  
-  .back {
-    color: #71717a;
-    text-decoration: none;
-    font-size: 0.875rem;
-  }
-  
-  .back:hover {
-    color: #a1a1aa;
-  }
-  
-  header {
-    margin-bottom: 2rem;
-  }
-  
-  h1 {
-    font-size: 1.75rem;
-    margin: 1rem 0 0.25rem;
-    color: #f4f4f5;
-  }
-  
-  .subtitle {
-    color: #a1a1aa;
-    margin: 0;
   }
   
   .warning-box {
@@ -308,62 +238,7 @@
   }
   
   .control-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
     margin-bottom: 1rem;
-  }
-  
-  .control-row label {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  
-  .control-row label span {
-    font-weight: 500;
-    color: #d4d4d8;
-  }
-  
-  .size-input {
-    display: flex;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  .size-btn {
-    width: 36px;
-    height: 36px;
-    border: none;
-    background: none;
-    font-size: 1.25rem;
-    cursor: pointer;
-    color: #e4e4e7;
-  }
-  
-  .size-btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.1);
-  }
-  
-  .size-btn:disabled {
-    color: #52525b;
-    cursor: not-allowed;
-  }
-  
-  .size-value {
-    width: 40px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 1.125rem;
-    color: #f4f4f5;
-  }
-  
-  .team-count {
-    color: #a1a1aa;
-    font-size: 0.875rem;
   }
   
   .action-buttons {
@@ -450,49 +325,9 @@
     background: #16a34a;
   }
   
-  .teams-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
-  }
-  
-  .team-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 1rem;
-    position: relative;
-  }
-  
-  .team-card h3 {
-    margin: 0 0 0.75rem;
-    font-size: 1rem;
-    color: #6366f1;
-  }
-  
-  .team-card ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  
-  .team-card li {
-    padding: 0.375rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 0.9rem;
-    color: #e4e4e7;
-  }
-  
-  .team-card li:last-child {
-    border-bottom: none;
-  }
-  
-  .member-count {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    font-size: 0.7rem;
-    color: #71717a;
+  .save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
   
   /* Participant List */
@@ -528,10 +363,6 @@
     .control-row {
       flex-direction: column;
       align-items: flex-start;
-    }
-    
-    .teams-grid {
-      grid-template-columns: 1fr;
     }
   }
 </style>

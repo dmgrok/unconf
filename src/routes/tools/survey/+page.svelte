@@ -632,29 +632,36 @@
     color: var(--color-text-secondary);
     text-decoration: none;
     font-size: 0.875rem;
+    transition: color 0.2s;
+  }
+  
+  .back:hover {
+    color: var(--color-text-primary);
   }
   
   header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
   }
   
   h1 {
     font-size: 1.75rem;
-    margin: 1rem 0 0.25rem;
+    margin: 1rem 0 0.5rem;
+    color: var(--color-text-primary);
   }
   
   .subtitle {
     color: var(--color-text-secondary);
     margin: 0;
+    font-size: 1rem;
   }
   
   .standalone-notice {
     display: flex;
     gap: 0.75rem;
     align-items: flex-start;
-    background: #f0f9ff;
-    border: 1px solid #bae6fd;
-    padding: 1rem;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    padding: 1rem 1.25rem;
     border-radius: 10px;
     margin-bottom: 1.5rem;
   }
@@ -666,21 +673,23 @@
   .standalone-notice p {
     margin: 0;
     font-size: 0.875rem;
-    color: #0c4a6e;
+    color: var(--color-text-secondary);
   }
   
   .standalone-notice a {
-    color: #0284c7;
+    color: var(--color-primary);
+    font-weight: 500;
   }
   
   .error-box {
-    background: #fee2e2;
-    border: 1px solid #fecaca;
-    color: #b91c1c;
-    padding: 0.75rem 1rem;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: var(--color-danger-500);
+    padding: 0.875rem 1rem;
     border-radius: 8px;
     margin-bottom: 1rem;
     font-size: 0.9rem;
+    font-weight: 500;
   }
   
   /* Survey Meta */
@@ -689,44 +698,58 @@
     padding: 1.5rem;
     border-radius: 12px;
     margin-bottom: 1.5rem;
+    border: 1px solid var(--color-border);
   }
   
   .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
   }
   
   .form-group label {
     display: block;
-    font-weight: 500;
+    font-weight: 600;
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
+    color: var(--color-text-primary);
   }
   
   .form-group input, .form-group textarea {
     width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #e5e7eb;
+    padding: 0.875rem 1rem;
+    border: 2px solid var(--color-border);
     border-radius: 8px;
     font-size: 1rem;
     box-sizing: border-box;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    transition: border-color 0.2s ease;
+  }
+  
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: var(--color-text-tertiary);
   }
   
   .form-group input:focus, .form-group textarea:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
   }
   
   .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
     font-size: 0.9rem;
     cursor: pointer;
+    color: var(--color-text-primary);
+    font-weight: 500;
   }
   
   .checkbox-label input {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
   }
   
   /* Questions Section */
@@ -760,8 +783,8 @@
   }
   
   .question-card {
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 12px;
     padding: 1rem;
   }
@@ -774,7 +797,7 @@
   }
   
   .question-number {
-    background: #2563eb;
+    background: var(--color-primary);
     color: white;
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
@@ -783,8 +806,8 @@
   }
   
   .question-type-badge {
-    background: #f3f4f6;
-    color: #4b5563;
+    background: var(--color-surface-secondary);
+    color: var(--color-text-secondary);
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
     font-size: 0.75rem;
@@ -799,15 +822,16 @@
   .move-btn, .remove-btn {
     width: 28px;
     height: 28px;
-    border: 1px solid #e5e7eb;
-    background: white;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
     border-radius: 4px;
     cursor: pointer;
     font-size: 1rem;
   }
   
   .move-btn:hover:not(:disabled) {
-    background: #f3f4f6;
+    background: var(--color-surface-secondary);
   }
   
   .move-btn:disabled {
@@ -816,27 +840,34 @@
   }
   
   .remove-btn {
-    color: #b91c1c;
-    border-color: #fecaca;
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
   }
   
   .remove-btn:hover {
-    background: #fee2e2;
+    background: rgba(239, 68, 68, 0.1);
   }
   
   .question-input {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e5e7eb;
+    border: 2px solid var(--color-border);
     border-radius: 8px;
     font-size: 1rem;
     box-sizing: border-box;
     margin-bottom: 0.75rem;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+  }
+  
+  .question-input::placeholder {
+    color: var(--color-text-tertiary);
   }
   
   .question-input:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
   }
   
   /* Options */
@@ -852,23 +883,29 @@
   }
   
   .option-icon {
-    color: #9ca3af;
+    color: var(--color-text-tertiary);
     font-size: 1rem;
   }
   
   .option-row input {
     flex: 1;
     padding: 0.5rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     font-size: 0.9rem;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+  }
+  
+  .option-row input::placeholder {
+    color: var(--color-text-tertiary);
   }
   
   .remove-option-btn {
     width: 28px;
     height: 28px;
-    background: #fee2e2;
-    color: #b91c1c;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -929,10 +966,11 @@
   
   .yesno-option {
     padding: 0.5rem 1rem;
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     font-size: 0.9rem;
+    color: var(--color-text-primary);
   }
   
   /* Text preview */
@@ -984,16 +1022,16 @@
     align-items: center;
     gap: 0.25rem;
     padding: 0.75rem;
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
   
   .type-btn:hover {
-    border-color: #2563eb;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
   }
   
   .type-icon {
@@ -1002,7 +1040,7 @@
   
   .type-label {
     font-size: 0.75rem;
-    color: #4b5563;
+    color: var(--color-text-secondary);
   }
   
   /* Create button */
@@ -1012,18 +1050,20 @@
   
   .create-btn {
     width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-600) 100%);
     color: white;
     border: none;
     border-radius: 10px;
     font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
+    transition: all 0.2s ease;
   }
   
   .create-btn:hover:not(:disabled) {
-    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
   }
   
   .create-btn:disabled {
@@ -1045,12 +1085,13 @@
   .share-view h1 {
     text-align: center;
     margin: 0 0 2rem;
+    color: var(--color-text-primary);
   }
   
   .view-sections {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
     margin-bottom: 2rem;
   }
   
@@ -1063,7 +1104,7 @@
   
   .view-section h2 {
     font-size: 1.25rem;
-    margin: 0 0 0.5rem;
+    margin: 0 0 0.75rem;
     color: var(--color-text-primary);
   }
   
@@ -1074,16 +1115,17 @@
   }
   
   .results-section {
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-    border-color: rgba(99, 102, 241, 0.3);
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.4);
   }
   
   .view-hint {
     margin-top: 1rem;
-    padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.5);
+    padding: 0.875rem 1rem;
+    background: rgba(99, 102, 241, 0.1);
     border-radius: 8px;
     font-size: 0.85rem !important;
+    color: var(--color-text-secondary) !important;
   }
   
   .btn-full {
@@ -1113,27 +1155,36 @@
   .share-box {
     display: flex;
     gap: 0.5rem;
-    max-width: 500px;
-    margin: 0 auto 2rem;
+    margin-bottom: 1rem;
   }
   
   .share-url {
     flex: 1;
-    padding: 0.75rem;
-    border: 2px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--color-border);
     border-radius: 8px;
     font-size: 0.9rem;
-    text-align: center;
+    text-align: left;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    font-family: var(--font-family-mono);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   .copy-btn {
-    padding: 0.75rem 1rem;
-    background: #10b981;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-success-500);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  
+  .copy-btn:hover {
+    background: var(--color-success-600);
   }
   
   .success-actions {
@@ -1144,35 +1195,49 @@
   }
   
   .btn {
-    padding: 0.75rem 1.5rem;
+    padding: 0.875rem 1.5rem;
     border-radius: 8px;
-    font-weight: 500;
+    font-weight: 600;
     text-decoration: none;
     font-size: 0.95rem;
     border: none;
     cursor: pointer;
+    transition: all 0.2s;
+    display: inline-block;
   }
   
   .btn.primary {
-    background: #2563eb;
+    background: var(--color-primary);
     color: white;
+  }
+  
+  .btn.primary:hover {
+    background: var(--color-primary-hover);
   }
   
   .btn.secondary {
     background: var(--color-surface-secondary);
     color: var(--color-text-primary);
-  }
-  
-  .btn.outline {
-    background: var(--color-surface);
-    color: var(--color-text-secondary);
     border: 1px solid var(--color-border);
   }
   
-  @media (max-width: 500px) {
-    .question-type-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .btn.secondary:hover {
+    background: var(--color-surface);
+  }
+  
+  .btn.outline {
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 2px solid var(--color-border);
+  }
+  
+  .btn.outline:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  
+  .btn-full {
+    width: 100%;
   }
   
   /* Use Cases Section */
@@ -1181,15 +1246,15 @@
   }
   
   .use-cases h3 {
-    font-size: 1rem;
-    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    margin: 0 0 0.75rem;
     color: var(--color-text-primary);
   }
   
   .use-cases-intro {
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     color: var(--color-text-secondary);
-    margin: 0 0 0.75rem;
+    margin: 0 0 1rem;
   }
   
   .use-case-grid {
@@ -1202,7 +1267,7 @@
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
-    padding: 0.75rem;
+    padding: 1rem;
     background: var(--color-surface-secondary);
     border: 2px solid var(--color-border);
     border-radius: 10px;
@@ -1212,35 +1277,54 @@
   }
   
   .use-case-card:hover {
-    border-color: #2563eb;
-    background: #eff6ff;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+    border-color: var(--color-primary);
+    background: rgba(99, 102, 241, 0.05);
+    transform: translateX(4px);
   }
   
   .use-case-icon {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     flex-shrink: 0;
   }
   
   .use-case-content {
     display: flex;
     flex-direction: column;
-    gap: 0.125rem;
+    gap: 0.25rem;
   }
   
   .use-case-content strong {
-    font-size: 0.85rem;
-    color: #1f2937;
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
   }
   
   .use-case-content span {
-    font-size: 0.75rem;
-    color: #6b7280;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
   }
   
-  @media (max-width: 480px) {
+  @media (max-width: 640px) {
+    .survey-container {
+      padding: 1rem 0.75rem;
+    }
+    
+    .question-type-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
     .use-case-grid {
       grid-template-columns: 1fr;
+    }
+    
+    .question-header {
+      flex-wrap: wrap;
+    }
+    
+    .question-actions {
+      width: 100%;
+      margin-left: 0;
+      justify-content: flex-end;
+      margin-top: 0.5rem;
     }
   }
 </style>

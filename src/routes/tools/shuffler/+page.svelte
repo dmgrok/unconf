@@ -1247,13 +1247,13 @@ Jack Anderson`;
   .standalone-notice p {
     margin: 0;
     font-size: 0.875rem;
-    color: #c7d2fe;
+    color: var(--color-text-secondary);
   }
   
   .qr-btn-inline {
     background: none;
     border: 1px solid rgba(99, 102, 241, 0.4);
-    color: #a5b4fc;
+    color: var(--color-primary);
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
     font-size: 0.75rem;
@@ -1269,8 +1269,8 @@ Jack Anderson`;
   .qr-code-section {
     text-align: center;
     padding: 1.5rem;
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: var(--color-surface-secondary);
+    border: 1px solid var(--color-border);
     border-radius: 10px;
     margin-bottom: 1.5rem;
   }
@@ -1283,7 +1283,7 @@ Jack Anderson`;
   
   .qr-code-section p {
     margin: 0.75rem 0 0;
-    color: #6b7280;
+    color: var(--color-text-secondary);
     font-size: 0.875rem;
   }
   
@@ -1393,20 +1393,20 @@ Jack Anderson`;
 
   /* Editable Grid */
   .grid-container {
-    border: 2px solid #e5e7eb;
+    border: 2px solid var(--color-border);
     border-radius: 10px;
     overflow: hidden;
-    background: white;
+    background: var(--color-surface-secondary);
   }
   
   .grid-info {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 1rem;
-    background: #f9fafb;
-    border-bottom: 1px solid #e5e7eb;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--color-text-secondary);
   }
   
   .editable-grid-wrapper {
@@ -1422,13 +1422,13 @@ Jack Anderson`;
   
   .editable-grid th,
   .editable-grid td {
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-border);
     padding: 0.25rem;
     text-align: left;
   }
   
   .editable-grid th {
-    background: #f8fafc;
+    background: var(--color-surface);
     font-weight: 500;
     position: sticky;
     top: 0;
@@ -1438,7 +1438,7 @@ Jack Anderson`;
   
   .editable-grid th.selected,
   .editable-grid td.selected {
-    background: #eff6ff;
+    background: rgba(99, 102, 241, 0.1);
   }
   
   .editable-grid th.row-number,
@@ -1446,8 +1446,8 @@ Jack Anderson`;
     width: 40px;
     min-width: 40px;
     text-align: center;
-    background: #f9fafb;
-    color: #9ca3af;
+    background: var(--color-surface);
+    color: var(--color-text-tertiary);
     font-size: 0.75rem;
     font-weight: normal;
   }
@@ -1457,7 +1457,7 @@ Jack Anderson`;
     width: 50px;
     min-width: 50px;
     text-align: center;
-    background: #f9fafb;
+    background: var(--color-surface);
   }
   
   .header-input {
@@ -1467,18 +1467,19 @@ Jack Anderson`;
     background: transparent;
     font-weight: 600;
     font-size: 0.85rem;
+    color: var(--color-text-primary);
   }
   
   .header-input:focus {
-    outline: 2px solid #2563eb;
+    outline: 2px solid var(--color-primary);
     outline-offset: -2px;
-    background: white;
+    background: var(--color-surface-secondary);
     border-radius: 4px;
   }
   
   .col-num {
     font-size: 0.8rem;
-    color: #6b7280;
+    color: var(--color-text-secondary);
     padding: 0.375rem 0.5rem;
     display: block;
   }
@@ -1496,12 +1497,17 @@ Jack Anderson`;
     border: none;
     background: transparent;
     font-size: 0.85rem;
+    color: var(--color-text-primary);
+  }
+  
+  .cell-input::placeholder {
+    color: var(--color-text-tertiary);
   }
   
   .cell-input:focus {
-    outline: 2px solid #2563eb;
+    outline: 2px solid var(--color-primary);
     outline-offset: -2px;
-    background: #f0f9ff;
+    background: rgba(99, 102, 241, 0.1);
     border-radius: 4px;
   }
   
@@ -1520,38 +1526,39 @@ Jack Anderson`;
   
   .grid-footer {
     display: flex;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--color-border);
   }
   
   .add-row-btn, .add-col-btn {
     flex: 1;
     padding: 0.5rem;
-    background: #f9fafb;
+    background: var(--color-surface);
     border: none;
-    color: #6b7280;
+    color: var(--color-text-secondary);
     font-size: 0.85rem;
     cursor: pointer;
+    transition: all 0.2s;
   }
   
   .add-row-btn {
-    border-right: 1px solid #e5e7eb;
+    border-right: 1px solid var(--color-border);
   }
   
   .add-row-btn:hover, .add-col-btn:hover {
-    background: #f3f4f6;
-    color: #374151;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--color-text-primary);
   }
   
   .grid-container.empty-grid {
     border-style: dashed;
-    border-color: #d1d5db;
+    border-color: var(--color-border);
   }
   
   .grid-info.empty {
     text-align: center;
     justify-content: center;
     padding: 0.75rem;
-    color: #9ca3af;
+    color: var(--color-text-tertiary);
   }
   
   .empty-row td {
@@ -1698,11 +1705,11 @@ Jack Anderson`;
   
   /* Controls */
   .controls {
-    background: #f8fafc;
+    background: var(--color-surface-secondary);
     padding: 1.5rem;
     border-radius: 12px;
     margin-bottom: 1.5rem;
-    color: #1f2937;
+    border: 1px solid var(--color-border);
   }
   
   .control-row {
@@ -1721,14 +1728,14 @@ Jack Anderson`;
   
   .control-row label span {
     font-weight: 500;
-    color: #374151;
+    color: var(--color-text-primary);
   }
   
   .size-input {
     display: flex;
     align-items: center;
-    background: white;
-    border: 1px solid #e5e7eb;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     overflow: hidden;
   }
@@ -1740,15 +1747,16 @@ Jack Anderson`;
     background: none;
     font-size: 1.25rem;
     cursor: pointer;
-    color: #374151;
+    color: var(--color-text-primary);
+    transition: background 0.2s;
   }
   
   .size-btn:hover:not(:disabled) {
-    background: #f3f4f6;
+    background: rgba(99, 102, 241, 0.1);
   }
   
   .size-btn:disabled {
-    color: #d1d5db;
+    color: var(--color-text-tertiary);
     cursor: not-allowed;
   }
   
@@ -1757,11 +1765,11 @@ Jack Anderson`;
     text-align: center;
     font-weight: 600;
     font-size: 1.125rem;
-    color: #1f2937;
+    color: var(--color-text-primary);
   }
   
   .team-count {
-    color: #6b7280;
+    color: var(--color-text-secondary);
     font-size: 0.875rem;
   }
   
@@ -1985,15 +1993,17 @@ Jack Anderson`;
   .modal-content .form-group input:focus,
   .modal-content .form-group textarea:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
   }
   
   .save-error {
-    color: #dc2626;
+    color: #ef4444;
     font-size: 0.875rem;
     margin-bottom: 1rem;
     padding: 0.5rem;
-    background: #fef2f2;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
     border-radius: 6px;
   }
   
@@ -2005,11 +2015,16 @@ Jack Anderson`;
   
   .cancel-btn {
     padding: 0.75rem 1rem;
-    background: none;
-    border: 1px solid #e5e7eb;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
     font-size: 0.875rem;
     cursor: pointer;
+  }
+  
+  .cancel-btn:hover {
+    background: var(--color-surface-secondary);
   }
   
   .save-btn {
@@ -2132,8 +2147,8 @@ Jack Anderson`;
   
   /* Topics Configuration */
   .topics-config {
-    background: #fefce8;
-    border: 1px solid #fde047;
+    background: rgba(254, 252, 232, 0.1);
+    border: 1px solid rgba(253, 224, 71, 0.3);
     border-radius: 12px;
     padding: 1.25rem;
     margin-bottom: 1.5rem;
@@ -2149,33 +2164,33 @@ Jack Anderson`;
   .topics-header h3 {
     margin: 0;
     font-size: 1rem;
-    color: #854d0e;
+    color: var(--color-text-primary);
   }
   
   .toggle-topics-btn {
     padding: 0.25rem 0.75rem;
-    background: white;
-    border: 1px solid #fde047;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     font-size: 0.75rem;
     cursor: pointer;
-    color: #854d0e;
+    color: var(--color-text-primary);
   }
   
   .toggle-topics-btn:hover {
-    background: #fef9c3;
+    background: var(--color-surface-secondary);
   }
   
   .topics-help {
     margin: 0 0 1rem;
     font-size: 0.85rem;
-    color: #92400e;
+    color: var(--color-text-secondary);
   }
   
   .topics-summary {
     margin: 0;
     font-size: 0.85rem;
-    color: #a16207;
+    color: var(--color-text-secondary);
   }
   
   .topic-input-row {
@@ -2187,9 +2202,15 @@ Jack Anderson`;
   .topic-input-row input {
     flex: 1;
     padding: 0.5rem 0.75rem;
-    border: 1px solid #fde047;
+    border: 1px solid var(--color-border);
     border-radius: 6px;
     font-size: 0.9rem;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+  }
+  
+  .topic-input-row input::placeholder {
+    color: var(--color-text-tertiary);
   }
   
   .topic-input-row input:focus {
