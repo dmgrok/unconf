@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **FUNCTIONALITY_MANIFEST.json: Session Scheduling Explicitly Out of Scope**
+  - Added "Session scheduling (Sessionize, Sched.com)" to "Established Platforms" out-of-scope category
+  - Clarifies that session/agenda scheduling tools compete with established platforms
+  - Updated lastUpdated date to 2026-01-21
+
+### Removed
+- **Session Scheduler Concept from Tool Registry**
+  - Removed 'scheduler' entry from TOOL_REGISTRY in graduation.ts
+  - Decision based on: 0% community interest, duplicates free tools, violates "simple tool" philosophy
+  - Comprehensive evaluation documented in docs/evaluation-session-scheduler.md
+
 ### Fixed
 - **Agent PR Validation Workflow: Skip Notifications for Bots and Core Contributors**
   - Fixed "HttpError: Not Found" error when notifying issue creators

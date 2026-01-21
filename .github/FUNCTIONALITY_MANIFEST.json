@@ -1,7 +1,7 @@
 {
   "$schema": "./schemas/functionality-manifest.schema.json",
   "version": "1.0.0",
-  "lastUpdated": "2025-12-30",
+  "lastUpdated": "2026-01-21",
   "project": {
     "name": "unconf tools Lab",
     "purpose": "Community-driven micro-tools for professional events",
@@ -161,7 +161,7 @@
       {
         "name": "Established Platforms",
         "description": "Features that would compete with established event platforms",
-        "examples": ["Full event registration (Eventbrite)", "Call for papers (Sessionize)", "Venue management", "Ticketing systems"]
+        "examples": ["Full event registration (Eventbrite)", "Call for papers (Sessionize)", "Session scheduling (Sessionize, Sched.com)", "Venue management", "Ticketing systems"]
       }
     ]
   },

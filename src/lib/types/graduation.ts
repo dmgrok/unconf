@@ -217,18 +217,6 @@ export const TOOL_REGISTRY: GraduatedToolConfig[] = [
   
   // === WIREFRAME TOOLS (Concepts only - NO FUNCTIONALITY) ===
   {
-    toolId: 'scheduler',
-    name: 'Session Scheduler',
-    emoji: '📅',
-    description: 'Visual agenda builder for unconferences',
-    longDescription: 'Drag-and-drop interface to build your event agenda. Assign sessions to time slots and rooms. Share with participants so they can plan their day. Perfect for unconferences where the schedule emerges on the day.',
-    status: 'wireframe',
-    statusSince: '2026-01-02',
-    enabled: true,
-    path: null,  // No page - wireframe only
-    suggestedBy: { name: 'Community Request', role: 'Event Organizers' },
-  },
-  {
     toolId: 'icebreaker',
     name: 'Icebreaker Generator',
     emoji: '🎯',

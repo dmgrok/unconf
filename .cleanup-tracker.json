@@ -1,5 +1,13 @@
 {
-  "temporaryFiles": {},
+  "temporaryFiles": {
+    "docs/evaluation-session-scheduler.md": {
+      "created": "2026-01-21",
+      "purpose": "Evaluation document for Session Scheduler concept - decision: do not implement",
+      "task": "Session Scheduler concept evaluation",
+      "status": "completed",
+      "keepUntil": "2026-01-28"
+    }
+  },
   "permanentFiles": [
     "README.md",
     "CHANGELOG.md",
