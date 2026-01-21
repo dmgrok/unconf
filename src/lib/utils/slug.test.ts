@@ -41,7 +41,7 @@ describe('slug utilities', () => {
 
 		it('handles complex titles', () => {
 			expect(slugify('unconf tools Lab - Team Shuffler 2024!')).toBe(
-				'event-tools-lab-team-shuffler-2024'
+				'unconf-tools-lab-team-shuffler-2024'
 			);
 		});
 	});

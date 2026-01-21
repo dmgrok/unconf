@@ -1,6 +1,11 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+set -e
+
+echo "🧪 Running unit tests..."
+npm run test:unit -- --run
+
 # Get the commit message from the staged changes or editor
 COMMIT_MSG_FILE=".git/COMMIT_EDITMSG"
 COMMIT_MSG=""
