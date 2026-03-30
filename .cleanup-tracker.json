@@ -42,6 +42,6 @@
     "maxAgeInDays": 7,
     "cleanupSchedule": "weekly"
   },
-  "lastCleanup": "2026-03-23T04:17:59.600Z",
-  "nextCleanup": "2026-03-30T04:17:59.600Z"
+  "lastCleanup": "2026-03-30T04:36:31.973Z",
+  "nextCleanup": "2026-04-06T04:36:31.973Z"
 }
