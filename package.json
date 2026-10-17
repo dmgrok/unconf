@@ -40,8 +40,8 @@
     "@types/node": "^24.5.2",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
-    "@vitest/coverage-v8": "^3.2.4",
-    "@vitest/ui": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.7",
+    "@vitest/ui": "^3.2.7",
     "artillery": "^2.0.27",
     "axe-core": "^4.10.3",
     "eslint": "^9.36.0",
@@ -58,11 +58,11 @@
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.44.1",
     "vite": "^7.1.11",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.7"
   },
   "dependencies": {
-    "@auth/core": "^0.40.0",
-    "@auth/sveltekit": "^1.10.0",
+    "@auth/core": "^0.41.3",
+    "@auth/sveltekit": "^1.11.3",
     "@growthbook/growthbook": "^1.6.2",
     "@types/dompurify": "^3.0.5",
     "@types/jsonwebtoken": "^9.0.10",
