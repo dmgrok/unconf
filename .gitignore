@@ -49,3 +49,6 @@ node_modules/
 # tasks.json
 # tasks/ 
 .vercel/
+
+# Test coverage output
+coverage/

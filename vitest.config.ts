@@ -12,7 +12,8 @@ export default defineConfig({
 		globals: true,
 		setupFiles: ['./src/test/setup.ts'],
 		coverage: {
-			reporter: ['text', 'json', 'html'],
+			reporter: ['text', 'json', 'json-summary', 'html'],
+			include: ['src/**/*.{js,ts,svelte}'],
 			exclude: [
 				'node_modules/**',
 				'src/test/**',
@@ -22,12 +23,10 @@ export default defineConfig({
 				'.svelte-kit/**'
 			],
 			thresholds: {
-				global: {
-					branches: 80,
-					functions: 80,
-					lines: 80,
-					statements: 80
-				}
+				branches: 80,
+				functions: 80,
+				lines: 80,
+				statements: 80
 			}
 		},
 		pool: 'forks'
