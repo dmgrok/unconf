@@ -29,8 +29,10 @@ jobs:
       
       - name: Check for changes
         id: git-check
+        # The cleanup script always rewrites timestamps in .cleanup-tracker.json;
+        # only commit when actual files were cleaned up.
         run: |
-          git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
+          git diff --quiet -- . ':(exclude).cleanup-tracker.json' || echo "changes=true" >> "$GITHUB_OUTPUT"
       
       - name: Commit and push changes
         if: steps.git-check.outputs.changes == 'true'

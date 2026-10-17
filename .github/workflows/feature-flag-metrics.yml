@@ -25,6 +25,9 @@ jobs:
   generate-metrics-report:
     name: Generate Metrics Report
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     
     steps:
       - name: Checkout code
@@ -33,7 +36,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -44,10 +47,19 @@ jobs:
         run: |
           echo "📊 Analyzing feature flag configurations..."
           
-          # Count tools by status
-          GRADUATED=$(grep -c '"status": "standard"' src/lib/feature-flags/defaults.ts 2>/dev/null || echo "0")
-          PREVIEW=$(grep -c '"status": "preview"' src/lib/feature-flags/defaults.ts 2>/dev/null || echo "0")
-          BETA=$(grep -c '"status": "beta"' src/lib/feature-flags/defaults.ts 2>/dev/null || echo "0")
+          # Count tools by status inside DEFAULT_TOOL_CONFIGS only, so helper
+          # fallbacks and doc comments are not counted as tools.
+          count_status() {
+            awk -v want="$1" '
+              /^export const DEFAULT_TOOL_CONFIGS/ { inblock = 1; next }
+              inblock && /^};/ { inblock = 0 }
+              inblock && $0 ~ ("^[[:space:]]*status:[[:space:]]*[\"\047]" want "[\"\047]") { n++ }
+              END { print n + 0 }
+            ' src/lib/feature-flags/defaults.ts
+          }
+          GRADUATED=$(count_status standard)
+          PREVIEW=$(count_status preview)
+          BETA=$(count_status beta)
           
           echo "graduated=$GRADUATED" >> $GITHUB_OUTPUT
           echo "preview=$PREVIEW" >> $GITHUB_OUTPUT
