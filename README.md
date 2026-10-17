@@ -4,7 +4,7 @@
 
 > An open experiment in building software the new way: You describe the problem, AI builds the solution, we ship it live.
 
-[![Deploy Status](https://img.shields.io/badge/deploy-live-success)](https://unconference.io)
+[![Deploy Status](https://img.shields.io/badge/deploy-live-success)](https://unconference-one.vercel.app)
 [![Community Driven](https://img.shields.io/badge/community-driven-blue)](../../issues/new?template=tool-request.yml)
 [![AI Assisted](https://img.shields.io/badge/AI-Claude%20Sonnet%204.5-purple)](AGENTS.md)
 
@@ -27,13 +27,13 @@
 2. AI writes code with proper guardrails → AI tests it
 3. AI deploys → You use it (hours later)
 
-**The result?** Real tools solving real problems at unprecedented speed, while maintaining quality through automated testing, security scanning, and AI-powered code review.
+**The result?** Real tools solving real problems quickly, backed by automated tests, security scanning, and human review. The guardrails are still being hardened; see [Current Quality Status](#current-quality-status) for what is checked today.
 
 ---
 
 ## 🎯 What You Get
 
-**[unconference.io](https://unconference.io)** - Simple, focused tools for event organizers. No enterprise bloat, no feature creep, just tools that work.
+**[unconference-one.vercel.app](https://unconference-one.vercel.app)** - Simple, focused tools for event organizers. No enterprise bloat, no feature creep, just tools that work.
 
 ### The Philosophy
 
@@ -60,20 +60,17 @@ Our GitHub Actions workflow uses AI to:
 If approved, Claude (our AI partner) gets to work:
 - Reads the entire codebase context
 - Writes TypeScript/Svelte code following our patterns
-- Creates comprehensive unit tests
-- Ensures accessibility (WCAG AA)
+- Writes unit tests alongside the change
+- Targets accessibility (WCAG AA) by design; this is reviewed manually, not yet tested automatically
 - Adds proper error handling and security
 
 ### 3️⃣ **Automated Validation** (Minutes)
-Every change goes through:
+Every push and pull request to `main` runs CI:
 ```
-✓ Type checking
-✓ Linting  
-✓ Unit tests (80% coverage minimum)
-✓ Accessibility tests (axe-core)
-✓ Security scanning
-✓ Build verification
+✓ Unit tests (Vitest)
+✓ Production build
 ```
+Pull requests also get type checking when `src/` changes, a test-presence check, CodeQL code scanning, and prompt-injection screening. Some of these checks are still red on pre-existing debt; see [Current Quality Status](#current-quality-status).
 
 ### 4️⃣ **Human Review** (When Needed)
 Humans step in for:
@@ -83,85 +80,54 @@ Humans step in for:
 - Final deployment approval
 
 ### 5️⃣ **Live in Production** 🎉
-Your feature is live at [unconference.io](https://unconference.io)
+Your feature is live at [unconference-one.vercel.app](https://unconference-one.vercel.app)
 
 ---
 
-## �️ Quality Controls & Security (The Full Picture)
+## 🛡️ Quality Controls & Security (The Honest Picture)
 
-**It's not just about writing code** - see all the automated guardrails that ensure quality and security:
+**It's not just about writing code.** These are the guardrails that exist today, including the ones that still need work.
 
 ### CI/CD Pipeline Flow
 
 ```mermaid
 flowchart TD
-    A[Code Push] --> B{Pre-commit Hook}
-    B -->|Pass| C[GitHub Push]
-    B -->|Fail| Z1[❌ Block Commit]
-    
-    C --> D[GitHub Actions]
-    D --> E[Type Check]
-    D --> F[Lint Check]
-    D --> G[Build Test]
-    D --> H[Unit Tests]
-    D --> I[A11y Tests]
-    
-    E -->|Pass| K{All Checks}
-    F -->|Pass| K
-    G -->|Pass| K
-    H -->|Pass| K
-    I -->|Pass| K
-    
-    E -->|Fail| Z2[❌ Block Merge]
-    F -->|Fail| Z2
-    G -->|Fail| Z2
-    H -->|Fail| Z2
-    I -->|Fail| Z2
-    J -->|Fail| Z2
-    
-    K -->|All Pass| L[Security Scan]
-    L --> M{Dependabot}
-    M -->|Vulnerabilities| N[Auto PR Created]
-    M -->|Clean| O[Deploy Preview]
-    
-    O --> P{Human Review}
-    P -->|Approve| Q[Merge to Main]
-    P -->|Request Changes| R[Back to Dev]
-    
-    Q --> S[Vercel Deploy]
-    S --> T[🎉 Live Production]
-    
+    A[Push or PR to main] --> B[CI: unit tests + build]
+    A --> C{PR changes src/?}
+    C -->|Yes| D[Type check<br/>svelte-check]
+    A --> E{Pull request?}
+    E -->|Yes| F[Test-presence check<br/>coverage report is advisory]
+    A --> G[CodeQL code scanning]
+    H[Dependabot] -.->|Dependency update PRs| A
+    I[New issues and PRs] --> J[Prompt-injection screening]
+
+    B --> K{Human review}
+    D --> K
+    F --> K
+    G --> K
+    K -->|Merge| L[main]
+    L --> M[Vercel production deploy]
+    M --> N[🎉 Live]
+
     style A fill:#6366f1
-    style T fill:#10b981
-    style Z1 fill:#ef4444
-    style Z2 fill:#ef4444
+    style N fill:#10b981
 ```
 
-### Code Quality Gates
+Branch protection is not enabled at the moment, so these checks report status rather than block a merge.
 
-```mermaid
-graph LR
-    A[Your Code] --> B[TypeScript Strict]
-    B --> C[ESLint]
-    C --> D[Prettier]
-    D --> E{Coverage Check}
-    
-    E -->|< 80%| F[❌ Fail]
-    E -->|≥ 80%| G[✅ Pass]
-    
-    G --> H[Unit Tests]
-    G --> I[A11y Tests]
-    
-    H --> K{All Pass?}
-    I --> K
-    
-    K -->|No| F
-    K -->|Yes| L[Ready for Review]
-    
-    style A fill:#6366f1
-    style L fill:#10b981
-    style F fill:#ef4444
-```
+### Current Quality Status
+
+| Guardrail | Where it runs | Status today |
+|-----------|---------------|--------------|
+| Unit tests (Vitest) | CI on every push and PR | ✅ Runs in CI, passing. The suite is still small. |
+| Production build | CI on every push and PR | ✅ Runs in CI, passing |
+| Type check (`npm run check`) | PRs that change `src/`, local pre-commit script | ⚠️ Runs, but fails on pre-existing type errors that still need cleanup |
+| Lint (`npm run lint`) | Local pre-commit script only, warning mode | ⚠️ Not in CI. Pre-existing lint errors remain. |
+| Coverage, 80% target | `vitest.config.ts` thresholds, advisory report on PRs | ⚠️ Configured target, not met yet |
+| Test-presence check | Every PR | ⚠️ Requires unit test changes when `src/` changes. It also asks for E2E tests on larger or critical-path PRs, but the E2E suite was removed. |
+| Accessibility (WCAG AA) | Manual review | ⚠️ Not automated yet |
+| CodeQL, Dependabot, prompt-injection screening | GitHub | ✅ Active |
+| `npm audit` | Local only (`npm run security:audit`) | ⚠️ Not in CI. Known advisories remain open; see the Dependabot alerts. |
 
 ### Security Layers
 
@@ -185,9 +151,8 @@ flowchart TD
     H --> I{XSS Protection}
     I --> J[Response]
     
-    K[Dependabot] -.->|Weekly Scans| E
+    K[Dependabot] -.->|Dependency Updates| E
     L[CodeQL] -.->|Security Analysis| E
-    M[npm audit] -.->|Dependency Check| E
     
     style A fill:#6366f1
     style J fill:#10b981
@@ -197,7 +162,6 @@ flowchart TD
     style Z4 fill:#ef4444
     style K fill:#f59e0b
     style L fill:#f59e0b
-    style M fill:#f59e0b
 ```
 
 ### Feature Flag Rollout Strategy
@@ -240,19 +204,19 @@ stateDiagram-v2
 
 ### What This Means
 
-**Every change goes through:**
-- ✅ **5 automated quality checks** before merge
-- ✅ **4 security layers** on every request
+**Every change gets:**
+- ✅ **Unit tests and a production build** on every push and PR
+- ✅ **Request-level security layers** (rate limiting, CSRF, auth, security headers)
 - ✅ **Gradual rollout** via feature flags
-- ✅ **Continuous monitoring** for errors
 - ✅ **Automated dependency updates** (Dependabot)
-- ✅ **Advanced security scanning** (CodeQL, npm audit)
+- ✅ **Code scanning** (CodeQL) and prompt-injection screening
+- ⚠️ **Still in progress:** type-check, lint, and coverage cleanup, plus automated accessibility tests
 
-**Result:** AI writes code fast, automation ensures it's production-ready.
+**Result:** AI writes code fast. Automation catches regressions, and the remaining gaps are tracked in the open.
 
 ---
 
-## �🛠️ Available Tools
+## 🛠️ Available Tools
 
 Each tool is connected to an **Event** - create an event, invite participants, then use the tools.
 
@@ -269,7 +233,7 @@ Each tool is connected to an **Event** - create an event, invite participants, t
 
 ### For Event Organizers
 
-1. Go to **[unconference.io](https://unconference.io)** → **Create Event**
+1. Go to **[unconference-one.vercel.app](https://unconference-one.vercel.app)** → **Create Event**
 2. Share the **event code** with participants
 3. Enable the tools you need
 4. Run your event!
@@ -277,7 +241,7 @@ Each tool is connected to an **Event** - create an event, invite participants, t
 ### For Participants
 
 1. Get the event code from your organizer
-2. Go to **[unconference.io](https://unconference.io)** → **Join Event**
+2. Go to **[unconference-one.vercel.app](https://unconference-one.vercel.app)** → **Join Event**
 3. Enter the code
 4. Use the tools!
 
@@ -297,7 +261,7 @@ When you click that button, you trigger an entire AI-powered workflow:
 2. **AI analyzes** → Checks for duplicates, scope, value
 3. **Community votes** → 👍 on issues you want
 4. **AI builds** → Code, tests, docs in one go
-5. **You use it** → Live at unconference.io
+5. **You use it** → Live at [unconference-one.vercel.app](https://unconference-one.vercel.app)
 
 ### What Makes a Great Request?
 
@@ -341,20 +305,20 @@ We chose technologies that AI understands deeply:
 ### Frontend
 - **SvelteKit 2** with **Svelte 5 (runes)** - Modern, reactive
 - **TypeScript (strict)** - Type safety helps AI catch errors
-- **Tailwind CSS** - Utility-first styling AI can compose
+- **Scoped component CSS with design tokens** - see [DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
 - **Socket.io** - Real-time WebSocket connections
 
 ### Backend
 - **SvelteKit API routes** - Server-side TypeScript
-- **Auth.js** - Authentication (guest + OAuth)
+- **Auth.js** - Authentication (guest, email and password, Google OAuth)
 - **JSON file storage** - Intentionally simple (no DB complexity)
-- **Vercel** - Edge deployment
+- **Vercel** - Serverless deployment (Node.js 22 runtime)
 
 ### AI Guardrails
-- **Vitest** - Unit tests (80% coverage enforced)
-- **Axe-core** - Accessibility testing (WCAG AA)
-- **ESLint + TypeScript** - Code quality
-- **Pre-commit hooks** - Local validation
+- **Vitest** - Unit tests (80% coverage target, not yet met)
+- **Accessibility** - WCAG AA design target, manual review for now
+- **ESLint + TypeScript** - Code quality (cleanup of existing errors in progress)
+- **Pre-commit script** - Local type check, lint, and build
 
 ### Why These Choices?
 
@@ -362,7 +326,7 @@ We chose technologies that AI understands deeply:
 - Well-documented frameworks AI can reference
 - Patterns that AI can consistently replicate
 - Strong typing catches AI mistakes
-- Comprehensive testing validates AI output
+- Automated tests validate AI output
 
 **For developers:**
 - Modern, productive tooling
@@ -378,7 +342,7 @@ Want to see AI-assisted development in action? Set up your own environment.
 
 ### Prerequisites
 
-- **Node.js 18+** and **npm**
+- **Node.js 22.13+** and **npm** (`.npmrc` enforces engine versions)
 - **An AI coding assistant** (GitHub Copilot, Claude Code, etc.)
 - **Curiosity** about the future of software development
 
@@ -404,12 +368,14 @@ npm run dev
 ### Test Like CI Before You Commit
 
 ```bash
-# Quick checks (30 seconds) - great for rapid iteration
-npm run pre-commit:quick
+# Unit tests, as run in CI
+npm run test:unit -- --run
 
-# Full validation (2-3 min) - before pushing
+# Local pre-commit script: type check and lint (warnings only for now), then build
 npm run pre-commit
 ```
+
+See [TESTING.md](TESTING.md) for coverage and the current state of each check.
 
 ### Key Files for AI Context
 
@@ -460,7 +426,7 @@ src/
 2. **Shared Participant Context** - Tools know about event attendees
 3. **File-Based Storage** - JSON files, not databases (intentional simplicity)
 4. **Security First** - Rate limiting, CSRF, CSP on every route
-5. **Accessibility Always** - WCAG AA compliance enforced
+5. **Accessibility Always** - WCAG AA is the design target
 
 ### How Data Flows
 
@@ -490,17 +456,19 @@ If you're an AI agent working on this codebase:
 1. **Read** [AGENTS.md](AGENTS.md) - Your instruction manual
 2. **Consult** [FUNCTIONALITY_MANIFEST.json](.github/FUNCTIONALITY_MANIFEST.json) - What exists
 3. **Follow** patterns in existing code
-4. **Write tests** - 80% coverage minimum
+4. **Write tests** - every `src/` change ships with unit tests (80% coverage target)
 5. **Update docs** - Keep CHANGELOG.md current
 
-**Critical:** Always check the manifest before implementing features. Avoid duplicating existing functionality.---
+**Critical:** Always check the manifest before implementing features. Avoid duplicating existing functionality.
+
+---
 
 ## 📚 Documentation (Context for Everyone)
 
 ### For Users
 | Document | What You'll Learn |
 |----------|-------------------|
-| [unconference.io](https://unconference.io) | Try the tools live |
+| [unconference-one.vercel.app](https://unconference-one.vercel.app) | Try the tools live |
 | [Tool Request Template](../../issues/new?template=tool-request.yml) | How to request features |
 
 ### For Developers
@@ -545,9 +513,9 @@ If you're an AI agent working on this codebase:
 
 **Software Quality:**
 - Trunk-based development
-- Comprehensive testing (unit + a11y)
+- Unit testing with Vitest
 - Security best practices
-- Accessibility compliance
+- Accessibility-first design (WCAG AA target)
 
 **Community-Driven Product:**
 - Issue templates that work
@@ -581,4 +549,4 @@ MIT
 
 ---
 
-*Built with SvelteKit • Live at [unconference.io](https://unconference.io) • AI-assisted by Claude*
+*Built with SvelteKit • Live at [unconference-one.vercel.app](https://unconference-one.vercel.app) • AI-assisted by Claude*
