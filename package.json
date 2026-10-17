@@ -40,9 +40,9 @@
     "@types/node": "^24.5.2",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "@typescript-eslint/parser": "^8.44.1",
-    "@vitest/coverage-v8": "^3.2.7",
-    "@vitest/ui": "^3.2.7",
-    "artillery": "^2.0.27",
+    "@vitest/coverage-v8": "^4.1.12",
+    "@vitest/ui": "^4.1.12",
+    "artillery": "^2.0.34",
     "axe-core": "^4.10.3",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
@@ -58,7 +58,7 @@
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.44.1",
     "vite": "^7.1.11",
-    "vitest": "^3.2.7"
+    "vitest": "^4.1.12"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",
