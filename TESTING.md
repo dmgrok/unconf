@@ -6,7 +6,7 @@ This guide describes the tests and checks that exist in the repository today, an
 
 | Check | Command | Runs in CI | Status |
 |-------|---------|-----------|--------|
-| Unit tests (Vitest, jsdom) | `npm run test:unit -- --run` | Yes, every push and PR to `main` (`ci.yml`) | Passing. One test file today (`src/lib/utils/slug.test.ts`). |
+| Unit tests (Vitest, jsdom) | `npm run test:unit -- --run` | Yes, every push and PR to `main` (`ci.yml`) | Passing. Three test files today: slug utilities, the HTML and URL sanitizer, and server rendering of the docs code block. |
 | Production build | `npm run build` | Yes, every push and PR to `main` (`ci.yml`) | Passing |
 | Type check (`svelte-check`) | `npm run check` | PRs that change `src/` (`feature-flag-validation.yml`) | Failing on pre-existing type errors |
 | Lint (ESLint) | `npm run lint` | No, local pre-commit script only (warning mode) | Pre-existing errors remain |
@@ -95,7 +95,7 @@ chmod +x .git/hooks/pre-commit
 
 ## Known Gaps
 
-- Only one unit test file exists, so coverage is far below the 80% target.
+- Only three unit test files exist, so coverage is far below the 80% target.
 - `npm run check` and `npm run lint` report pre-existing errors.
 - There is no E2E or automated accessibility suite. The PR test-presence check still asks for E2E tests on some PRs.
 - `test:security` needs `ts-node`.
