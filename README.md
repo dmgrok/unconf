@@ -1,12 +1,8 @@
-# 🧪 What if AI could build and evolve apps autonomously?
+# unconf
 
-**Where Community Ideas Meet AI-Powered Development**
+A small event-management app used as a lab for agentic software delivery. Feature requests come in as issues, AI agents propose the changes, and automated checks plus human review decide what ships.
 
-> An open experiment in building software the new way: You describe the problem, AI builds the solution, we ship it live.
-
-[![Deploy Status](https://img.shields.io/badge/deploy-live-success)](https://unconference-one.vercel.app)
-[![Community Driven](https://img.shields.io/badge/community-driven-blue)](../../issues/new?template=tool-request.yml)
-[![AI Assisted](https://img.shields.io/badge/AI-Claude%20Sonnet%204.5-purple)](AGENTS.md)
+Live app: https://unconference-one.vercel.app
 
 ---
 
